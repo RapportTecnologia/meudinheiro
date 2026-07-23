@@ -15,7 +15,8 @@ publicação nas lojas devem identificar claramente o aplicativo como carteira.
 - Aplicativo React Native com Expo, inicialmente voltado ao Android.
 - Interação EVM por ethers.js na Polygon PoS, `chainId` 137.
 - Até duas contas EOA importadas no mesmo dispositivo.
-- Um contrato ERC-20 configurável como Moeda Base.
+- Um Token Oficial Meu Dinheiro ERC-20 fixado por ambiente.
+- Cotação Token Oficial/BRL por provedor validado.
 - Calculadora, leitura e exibição de QR Code.
 - Preparação dos fluxos de envio e swap.
 - Autenticação do dispositivo para qualquer operação sensível.
@@ -35,12 +36,14 @@ Não fazem parte da primeira base:
 | Ator | Responsabilidade |
 | --- | --- |
 | Usuário | Controlar as contas, revisar e autorizar operações |
-| Caixa/recebedor | Criar uma solicitação de pagamento com ativo e valor |
+| Usuário comum | Enviar e receber o Token Oficial e manter POL para gás |
+| Comerciante | Distribuir o Token Oficial e POL, operar estoque e receber pagamentos |
 | Aplicativo | Calcular, validar, montar e transmitir transações |
 | Dispositivo | Proteger segredos e autenticar operações |
 | RPC Polygon | Consultar a rede e transmitir transações assinadas |
-| Contrato ERC-20 | Representar a Moeda Base ou outro token |
-| Roteador de swap | Executar uma rota previamente cotada e validada |
+| Token Oficial ERC-20 | Único ativo de pagamento do aplicativo |
+| QuoteProvider | Cotar o Token Oficial em BRL com prazo de validade |
+| Roteador de swap | Converter estoque do comerciante entre Token Oficial e POL |
 
 ## 4. Requisitos funcionais
 
@@ -68,21 +71,19 @@ Não fazem parte da primeira base:
 - **RF-ACC-07:** importar uma conta deve validar a chave e derivar o endereço,
   sem registrar o segredo em logs.
 
-### 4.3 Moeda Base
+### 4.3 Token Oficial
 
-- **RF-TKN-01:** o usuário deve informar um endereço de contrato ERC-20.
-- **RF-TKN-02:** o app deve validar checksum, bytecode, `name`, `symbol` e
-  `decimals` na Polygon.
-- **RF-TKN-03:** o token configurado não pode ser editado.
-- **RF-TKN-04:** para trocar a Moeda Base, o usuário deve removê-la e cadastrar
-  uma nova.
-- **RF-TKN-05:** a remoção deve exigir confirmação e não pode apagar contas.
-- **RF-TKN-06:** decisões de segurança não podem confiar somente no símbolo do
-  token; o endereço do contrato é sua identidade.
-- **RF-TKN-07:** a vinculação nominal ao BRL deve ser uma opção explícita da
-  configuração da Moeda Base.
-- **RF-TKN-08:** uma configuração antiga sem referência BRL deve ser removida e
-  cadastrada novamente para habilitar cobranças em R$.
+- **RF-TKN-01:** todas as transferências de valor do app devem usar o Token
+  Oficial Meu Dinheiro ERC-20.
+- **RF-TKN-02:** o contrato oficial deve vir de configuração compilada ou
+  assinada para cada ambiente; o usuário não pode substituí-lo.
+- **RF-TKN-03:** o app deve validar `chainId`, checksum, bytecode, `name`,
+  `symbol` e `decimals`.
+- **RF-TKN-04:** a identidade do token é o contrato, não o símbolo.
+- **RF-TKN-05:** POL não pode ser selecionado como ativo de pagamento.
+- **RF-TKN-06:** POL deve ser tratado exclusivamente como moeda de gás.
+- **RF-TKN-07:** a interface deve exibir saldo do Token Oficial e saldo de POL
+  separadamente.
 
 ### 4.4 Saldos
 
@@ -104,8 +105,7 @@ Não fazem parte da primeira base:
   `chainId`, destinatário, ativo e valor.
 - **RF-QR-08:** uma solicitação ERC-20 deve representar
   `transfer(address,uint256)`.
-- **RF-QR-09:** uma solicitação POL deve expressar a quantidade em wei no
-  parâmetro `value`.
+- **RF-QR-09:** o contrato presente no QR deve ser exatamente o Token Oficial.
 - **RF-QR-10:** uma cobrança com valor deve prevalecer sobre o valor previamente
   digitado pelo pagador.
 - **RF-QR-11:** um QR com somente endereço pode herdar o valor e ativo
@@ -114,7 +114,7 @@ Não fazem parte da primeira base:
 ### 4.6 Envio
 
 - **RF-SEND-01:** receber da Home o valor calculado como intenção inicial.
-- **RF-SEND-02:** permitir selecionar POL ou Moeda Base quando aplicável.
+- **RF-SEND-02:** o ativo transmitido deve ser sempre o Token Oficial.
 - **RF-SEND-03:** validar destinatário, saldo, decimais e valor.
 - **RF-SEND-04:** exibir tela de revisão com rede, conta, destinatário, ativo,
   valor e estimativa de gás.
@@ -124,19 +124,21 @@ Não fazem parte da primeira base:
   em andamento.
 - **RF-SEND-08:** acompanhar hash, recibo e estado final.
 - **RF-SEND-09:** bloquear transferência para a mesma conta de origem.
-- **RF-SEND-10:** para POL, validar saldo para o valor e a estimativa de gás.
-- **RF-SEND-11:** para ERC-20, validar saldo do token e estimar a chamada
-  `transfer`.
+- **RF-SEND-10:** validar saldo do Token Oficial para o pagamento.
+- **RF-SEND-11:** estimar a chamada ERC-20 `transfer` e verificar POL suficiente
+  para gás antes da autenticação.
+- **RF-SEND-12:** saldo POL insuficiente deve bloquear a transação e informar
+  saldo atual, necessidade estimada e opções de abastecimento.
 
 ### 4.7 Pedido de pagamento e abastecimento
 
-- **RF-PAY-01:** permitir selecionar `R$ • Moeda Base` ou POL antes de informar
-  o valor.
-- **RF-PAY-02:** em BRL, exigir Moeda Base configurada.
-- **RF-PAY-03:** BRL é unidade de exibição; a liquidação on-chain ocorre no
-  token da Moeda Base.
-- **RF-PAY-04:** o app não deve afirmar paridade com o real sem uma política de
-  representação ou cotação configurada.
+- **RF-PAY-01:** permitir informar o valor em BRL ou diretamente em unidades do
+  Token Oficial.
+- **RF-PAY-02:** a liquidação on-chain deve ocorrer sempre no Token Oficial.
+- **RF-PAY-03:** ao receber um valor em BRL, consultar o QuoteProvider antes de
+  gerar o QR ou a transação.
+- **RF-PAY-04:** exibir BRL, preço do token, quantidade final de tokens, fonte,
+  horário e expiração.
 - **RF-PAY-05:** o botão Receber deve usar o resultado validado da calculadora.
 - **RF-PAY-06:** o recebedor deve visualizar valor, símbolo, rede e endereço
   junto ao QR.
@@ -146,10 +148,17 @@ Não fazem parte da primeira base:
   da autenticação.
 - **RF-PAY-09:** pagamentos em estabelecimento e entre pessoas devem usar o
   mesmo modelo de solicitação.
+- **RF-PAY-10:** cotação ausente, expirada ou inconsistente deve bloquear o
+  fluxo em BRL.
+- **RF-PAY-11:** cálculos de conversão devem usar decimal/integer e arredondar
+  somente na menor unidade do token.
+- **RF-PAY-12:** o QR deve transportar a quantidade final do Token Oficial, não
+  apenas o valor original em BRL.
 
 ### 4.8 Swap
 
-- **RF-SWP-01:** suportar Moeda Base ↔ POL, USDC ou BRLA.
+- **RF-SWP-01:** o swap Token Oficial ↔ POL é reservado ao modo comerciante
+  autorizado para gestão de estoque e gás.
 - **RF-SWP-02:** resolver POL nativo e WPOL explicitamente.
 - **RF-SWP-03:** obter cotação de um provedor validado.
 - **RF-SWP-04:** exibir rota, preço, impacto, taxa, gás, slippage e mínimo a
@@ -165,6 +174,8 @@ Não fazem parte da primeira base:
 - **RF-SWP-10:** cada aprovação e cada swap devem exigir autenticação.
 - **RF-SWP-11:** swap deve permanecer desabilitado enquanto contratos e
   cotador não estiverem configurados e auditados.
+- **RF-SWP-12:** a interface do usuário comum não deve oferecer swap nem
+  seleção de outros tokens.
 
 ### 4.9 Exportação de chave
 
@@ -176,6 +187,36 @@ Não fazem parte da primeira base:
   limpeza imediata.
 - **RF-KEY-06:** não permitir captura ou telemetria da tela sensível quando a
   plataforma oferecer bloqueio apropriado.
+
+### 4.10 Agenda de destinatários
+
+- **RF-CON-01:** manter uma agenda interna de destinatários frequentes.
+- **RF-CON-02:** cada contato deve possuir nome, endereço com checksum,
+  favorito, data do último uso e contador de uso.
+- **RF-CON-03:** ordenar por favorito, frequência e recência.
+- **RF-CON-04:** permitir adicionar, editar, visualizar e remover contatos.
+- **RF-CON-05:** alteração de endereço deve exigir confirmação explícita.
+- **RF-CON-06:** QR ou clipboard não podem atualizar um contato
+  automaticamente.
+- **RF-CON-07:** selecionar um contato somente preenche o destinatário; revisão
+  e autenticação continuam obrigatórias.
+- **RF-CON-08:** não solicitar acesso à agenda do Android por padrão.
+- **RF-CON-09:** nunca armazenar chave, seed ou segredo em um contato.
+
+### 4.11 Área de transferência
+
+- **RF-CLP-01:** a tela Receber deve permitir copiar a solicitação EIP-681.
+- **RF-CLP-02:** o código deve conter contrato oficial, `chainId` 137,
+  operação `transfer`, destino e quantidade proposta.
+- **RF-CLP-03:** quando a entrada for BRL, a quantidade deve ser calculada pela
+  cotação antes da cópia.
+- **RF-CLP-04:** o app só pode ler o clipboard após ação explícita do usuário.
+- **RF-CLP-05:** conteúdo colado deve passar pelas mesmas validações do QR.
+- **RF-CLP-06:** colar uma solicitação nunca pode enviar automaticamente.
+- **RF-CLP-07:** disponibilizar ação para limpar o conteúdo copiado.
+- **RF-CLP-08:** nunca copiar chaves, seeds ou credenciais.
+- **RF-CLP-09:** agenda, QR, clipboard e endereço manual devem convergir para a
+  mesma tela de revisão.
 
 ## 5. Requisitos de segurança
 
@@ -222,7 +263,8 @@ Não fazem parte da primeira base:
 ## 7. Regras de negócio
 
 - **RN-01:** duas contas é um limite absoluto da versão inicial.
-- **RN-02:** Moeda Base configurada é imutável até remoção explícita.
+- **RN-02:** o contrato do Token Oficial é fixado pelo aplicativo e não pode ser
+  alterado pelo usuário.
 - **RN-03:** resultado da calculadora é uma intenção; nunca uma autorização.
 - **RN-04:** QR Code é dado de entrada; nunca confirmação.
 - **RN-05:** nenhuma transação ocorre sem revisão e autenticação.
@@ -234,8 +276,15 @@ Não fazem parte da primeira base:
   o dispositivo pagador autentica cada transação.
 - **RN-11:** para abastecimento em estabelecimento, o caixa só deve transferir
   após conferir a contraprestação externa.
-- **RN-12:** uma Moeda Base arbitrária não deve ser apresentada como equivalente
-  a BRL sem cotação ou política de paridade verificável.
+- **RN-12:** todo valor em BRL deve ser convertido pela cotação vigente para a
+  quantidade adequada do Token Oficial.
+- **RN-13:** POL é reservado ao gás e não constitui ativo de pagamento.
+- **RN-14:** saldo do Token Oficial e POL suficiente são condições cumulativas
+  para transmitir.
+- **RN-15:** o usuário comum somente envia e recebe o Token Oficial; operações
+  de estoque e swap pertencem ao modo comerciante.
+- **RN-16:** comerciantes são pontos regionais de distribuição do Token Oficial
+  e POL e devem possuir reservas compatíveis com suas operações.
 
 ## 8. Critérios de aceite da base
 
@@ -244,13 +293,15 @@ Não fazem parte da primeira base:
 - `npm test -- --runInBand` aprova todos os testes.
 - A Home executa as quatro operações básicas.
 - A terceira conta é rejeitada.
-- Uma Moeda Base configurada não pode ser substituída diretamente.
+- O contrato do Token Oficial não pode ser substituído na interface.
 - QR inválido não altera o destinatário.
 - A chave não aparece no estado persistido.
 - Exportação chama a autenticação antes de acessar o segredo.
-- O swap informa que está bloqueado até a configuração de produção.
-- Receber R$ 10 gera URI ERC-20 com 10 unidades da Moeda Base.
-- Receber POL gera URI nativa com `value` em wei.
+- O swap não aparece para o usuário comum.
+- Receber R$ 10 consulta a cotação e gera URI ERC-20 com a quantidade calculada
+  do Token Oficial.
+- POL nunca aparece como opção de pagamento.
+- POL insuficiente bloqueia o envio e apresenta as alternativas previstas.
 - Ler uma cobrança abre a revisão, sem transmitir automaticamente.
 - Confirmar um pagamento exige biometria, PIN ou padrão.
 
@@ -263,17 +314,20 @@ Não fazem parte da primeira base:
 5. Teste E2E em development build Android.
 6. Auditoria de contrato/ABI, threat modeling e testes de segurança.
 
-Casos obrigatórios incluem limite de contas, token duplicado, token sem
-bytecode, decimais extremos, QR inválido, chainId incorreto, autenticação
-cancelada, saldo insuficiente, slippage, cotação expirada, allowance, nonce e
-duplo toque.
+Casos obrigatórios incluem limite de contas, contrato oficial divergente,
+token sem bytecode, decimais extremos, QR inválido, chainId incorreto,
+autenticação cancelada, saldo insuficiente do token, POL insuficiente,
+cotação expirada, indisponibilidade do cotador, slippage do swap comercial,
+allowance, nonce e duplo toque.
 
 ## 10. Definition of Done para produção
 
 - Tela completa de envio e revisão implementada.
 - QuoteProvider e lista de contratos oficiais verificados.
-- Endereços de USDC, BRLA, WPOL e roteador confirmados na Polygon.
-- Tratamento de POL nativo implementado e testado.
+- Contrato do Token Oficial, WPOL e roteador comercial confirmados na Polygon.
+- Verificação de POL para gás implementada e testada.
+- Perfis de usuário comum e comerciante separados.
+- Cotação Token Oficial/BRL com fonte, integridade e expiração.
 - Slippage, deadline, aprovação, gás e simulação cobertos por testes.
 - Política de backup e recuperação definida.
 - Threat model e auditoria independente concluídos.

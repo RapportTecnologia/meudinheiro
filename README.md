@@ -1,14 +1,16 @@
 # Meu Dinheiro
 
 Base arquitetural de uma carteira autocustodial Polygon, com calculadora como
-tela principal, pedidos de pagamento EIP-681, leitura e exibição de QR Code,
-duas contas, Moeda Base imutável até remoção e adaptador de swap.
+tela principal, Token Oficial ERC-20, cotação em BRL, pedidos EIP-681, agenda,
+QR Code, clipboard, duas contas e POL reservado ao gás.
 
 ## Passo 0 — arquitetura e requisitos
 
 - [Especificação de requisitos](docs/REQUIREMENTS.md)
 - [Arquitetura e decisões técnicas](docs/ARCHITECTURE.md)
 - [Histórias e casos de uso](docs/USE_CASES.md)
+- [Modelo do Token Oficial, cotação e gás](docs/ECONOMIC_MODEL.md)
+- [Agenda e compartilhamento de solicitações](docs/CONTACTS_AND_SHARING.md)
 
 A base é intencionalmente **não pronta para fundos reais**: swap e envio
 exigem revisão, configuração oficial, testes de integração e auditoria.
@@ -64,5 +66,5 @@ docs/              arquitetura e requisitos
 
 ## Próximo incremento
 
-Conclua o `QuoteProvider`, a expiração de cobranças e uma configuração de
-contratos verificada. Use Amoy/fork antes da Polygon.
+Implemente o contrato oficial fixo, `QuoteProvider`, `GasPolicy`, agenda e
+clipboard; remova POL como ativo de pagamento. Use Amoy/fork antes da Polygon.

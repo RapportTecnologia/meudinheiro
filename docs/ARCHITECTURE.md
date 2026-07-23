@@ -11,12 +11,13 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 - RF01: realizar operações `+`, `-`, `×`, `÷` sem `eval` irrestrito;
 - RF02: importar no máximo duas EOAs da Polygon;
 - RF03: selecionar uma conta ativa;
-- RF04: cadastrar um ERC-20 como Moeda Base após validar código, `name`, `symbol` e `decimals`;
-- RF05: impedir edição da Moeda Base; trocar somente pelo fluxo remover → cadastrar;
-- RF06: enviar ERC-20/POL usando o valor calculado;
+- RF04: carregar o contrato do Token Oficial por configuração confiável;
+- RF05: impedir que o usuário substitua o Token Oficial;
+- RF06: enviar exclusivamente o Token Oficial; POL é reservado ao gás;
 - RF07: ler endereço `0x...` ou URI `ethereum:` por QR;
 - RF08: exibir QR interoperável EIP-681;
-- RF09: cotar e trocar Moeda Base ↔ POL/USDC/BRLA;
+- RF09: cotar Token Oficial/BRL e reservar swap Token Oficial ↔ POL ao
+  comerciante;
 - RF10: autenticar cada assinatura, aprovação, swap, envio e exportação;
 - RF11: manter o swap bloqueado até que configuração e cotação tenham sido validadas.
 
@@ -36,6 +37,7 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 
 - `domain`: entidades e invariantes puras (contas, cálculo, pagamento e cotação).
 - `domain/payment`: criação e interpretação de pedidos EIP-681.
+- `domain/contacts`: contatos, invariantes e ranking de frequentes.
 - `application`: casos de uso/hooks e portas.
 - `infrastructure`: RPC, contratos, armazenamento e autenticação.
 - `presentation`: telas, navegação e componentes.
@@ -44,31 +46,55 @@ Dependências apontam para dentro: UI → application → domain. Infrastructure
 
 ## 5. Fluxo de transação
 
-1. Home calcula, seleciona o ativo e registra a intenção.
-2. Receber gera um QR EIP-681 com rede, destinatário, token e quantidade.
-3. Scanner interpreta a solicitação sem executar ações.
-4. SendReview valida rede, endereço, token, saldo, valor e gás.
-5. Para swap: QuoteProvider retorna rota; app calcula `minimumAmountOut`.
-6. `requireDeviceAuth` autoriza a operação específica por biometria, PIN ou
+1. Home calcula e seleciona a unidade de entrada: BRL ou Token Oficial.
+2. Em BRL, QuoteProvider calcula a quantidade final do Token Oficial.
+3. Receber gera um QR/clipboard EIP-681 com contrato, destinatário e tokens.
+4. Scanner, agenda ou clipboard resolvem o destinatário sem executar ações.
+5. SendReview valida rede, contrato, endereço, cotação, tokens e POL para gás.
+6. No modo comerciante, o swap de estoque possui fluxo separado.
+7. `requireDeviceAuth` autoriza a operação específica por biometria, PIN ou
    padrão do dispositivo.
-7. A chave é lida somente nesse momento e cria um signer efêmero.
-8. Simulação/estimativa; assinatura; transmissão; acompanhamento do recibo.
-9. Referências à chave e objetos sensíveis saem de escopo.
+8. A chave é lida somente nesse momento e cria um signer efêmero.
+9. Simulação/estimativa; assinatura; transmissão; acompanhamento do recibo.
+10. Referências à chave e objetos sensíveis saem de escopo.
 
 ### Pedidos de pagamento
 
-`PaymentRequest` é um value object do domínio. Para POL, o endereço-alvo é o
-destinatário e a quantidade vai em `value`. Para ERC-20, o endereço-alvo é o
-contrato e a URI descreve `transfer(address,uint256)`. O parser aceita somente
-Polygon e, para ERC-20, somente o contrato configurado como Moeda Base.
+`PaymentRequest` é um value object do domínio. O endereço-alvo da URI é o
+contrato do Token Oficial e a operação descreve `transfer(address,uint256)`.
+O parser aceita somente Polygon e o contrato oficial. POL não aparece no pedido
+de pagamento.
 
 O mesmo objeto atende abastecimento em estabelecimento, cobrança comercial e
 transferência entre pessoas. A diferença é o acordo externo entre as partes,
 não o mecanismo blockchain.
 
-## 6. Swap
+### Agenda e clipboard
 
-O adaptador `UniswapV3SwapGateway` contém o esqueleto de `exactInputSingle`. POL nativo exige tratamento separado via WPOL e `value`; o fluxo recomendado normaliza POL↔WPOL antes/depois da rota. O app não deve inventar pools. O cotador precisa confirmar liquidez, fee tier e endereço oficial dos tokens na Polygon. Aprovação ilimitada é conveniente, porém produção deve oferecer aprovação exata como padrão.
+`ContactRepository` persiste somente nomes, endereços públicos e métricas de
+uso. `ContactRankingService` ordena favoritos, frequência e recência. O acesso
+à agenda telefônica não é necessário.
+
+`ClipboardPaymentAdapter` reutiliza o mesmo `PaymentRequestCodec` do QR. A
+leitura ocorre somente após toque em Colar, e qualquer entrada converge para
+`SendReviewScreen`. Agenda e clipboard nunca acessam a chave privada nem
+autorizam uma transferência.
+
+### Cotação e gás
+
+`QuoteProvider` converte BRL para Token Oficial e retorna preço, quantidade
+inteira, fonte, horário, expiração e evidência de integridade. Uma cotação
+inválida bloqueia o fluxo em BRL.
+
+`GasPolicy` estima a chamada ERC-20, aplica margem e confere o saldo POL antes
+da autenticação. Saldo insuficiente bloqueia a transação e orienta o usuário a
+procurar um comerciante participante ou serviço externo compatível.
+
+## 6. Swap comercial
+
+O adaptador `UniswapV3SwapGateway` é reservado ao modo comerciante para gestão
+de estoque Token Oficial ↔ POL. O fluxo normaliza POL/WPOL, valida pools,
+liquidez, fee tier, slippage e contratos. A interface comum não oferece swap.
 
 ## 7. TDD
 
@@ -78,11 +104,14 @@ Ordem por feature: escrever teste de regra → implementar domínio → teste do
 
 - revisão de segurança e testes de integração da tela de envio;
 - expiração e identificador único opcional para pedidos de pagamento;
-- serviço de cotação quando o valor for expresso em BRL e o token não tiver
-  paridade nominal verificável;
+- QuoteProvider Token Oficial/BRL com integridade e expiração;
+- GasPolicy e fluxo de orientação quando POL for insuficiente;
+- remoção de POL como ativo de pagamento no protótipo;
+- substituição da Moeda Base configurável pelo contrato oficial;
+- ContactRepository, seleção por agenda e ClipboardPaymentAdapter;
 - seleção de conta ativa;
 - provider de cotações auditado;
-- endereços oficiais verificados de USDC, BRLA, WPOL e roteador;
+- contrato do Token Oficial, WPOL e roteador comercial verificados;
 - política de backup/recuperação;
 - PIN interno com derivação forte, se realmente necessário;
 - auditoria independente, threat model, pentest e publicação com política de privacidade;

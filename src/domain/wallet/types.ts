@@ -14,6 +14,7 @@ export type BaseToken = {
   name: string;
   decimals: number;
   chainId: 137;
+  referenceCurrency?: 'BRL';
   configuredAt: string;
 };
 

@@ -1,6 +1,6 @@
 import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { useWalletStore } from '../../application/hooks/useWalletStore';
 import { requireDeviceAuth } from '../../infrastructure/security/deviceAuth';
 import { secureSecrets } from '../../infrastructure/storage/secureSecrets';
@@ -10,6 +10,7 @@ export function ConfigScreen() {
   const [name, setName] = useState('');
   const [privateKey, setPrivateKey] = useState('');
   const [token, setToken] = useState('');
+  const [useAsBrl, setUseAsBrl] = useState(false);
 
   const importAccount = async () => {
     try { await state.importAccount(name, privateKey.trim()); setPrivateKey(''); }
@@ -44,13 +45,29 @@ export function ConfigScreen() {
       <Text style={styles.heading}>Moeda Base</Text>
       {state.baseToken ? <View style={styles.card}>
         <Text>{state.baseToken.name} ({state.baseToken.symbol})</Text><Text selectable>{state.baseToken.address}</Text>
+        <Text>
+          Referência: {state.baseToken.referenceCurrency === 'BRL'
+            ? 'BRL nominal 1:1'
+            : 'unidades do token'}
+        </Text>
         <Button title="Remover Moeda Base" color="#B91C1C" onPress={() => Alert.alert('Remover configuração?', 'Para trocar o token, esta configuração deve ser removida.', [
           { text: 'Cancelar' }, { text: 'Remover', style: 'destructive', onPress: state.removeBaseToken },
         ])} />
       </View> : <View style={styles.card}>
         <TextInput placeholder="Contrato ERC-20 0x..." value={token} onChangeText={setToken} autoCapitalize="none" style={styles.input} />
+        <View style={styles.switchRow}>
+          <Switch value={useAsBrl} onValueChange={setUseAsBrl} />
+          <Text style={styles.switchText}>
+            Vincular R$ ao token em proporção nominal 1:1. Use somente quando
+            houver paridade verificável; caso contrário, será necessário um cotador.
+          </Text>
+        </View>
         <Button title="Validar e salvar" onPress={async () => {
-          try { await state.configureBaseToken(token); setToken(''); }
+          try {
+            await state.configureBaseToken(token, useAsBrl);
+            setToken('');
+            setUseAsBrl(false);
+          }
           catch (e) { Alert.alert('Token inválido', (e as Error).message); }
         }} />
       </View>}
@@ -62,4 +79,6 @@ const styles = StyleSheet.create({
   heading: { fontSize: 20, fontWeight: '700', marginTop: 8 },
   card: { padding: 14, borderRadius: 12, backgroundColor: '#F3F4F6', gap: 8 },
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 8, padding: 10, backgroundColor: '#fff' },
+  switchRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  switchText: { flex: 1, fontSize: 12 },
 });

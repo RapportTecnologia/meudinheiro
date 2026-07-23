@@ -34,7 +34,8 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 
 ## 4. Camadas (DDD pragmático)
 
-- `domain`: entidades e invariantes puras (contas, cálculo, cotação).
+- `domain`: entidades e invariantes puras (contas, cálculo, pagamento e cotação).
+- `domain/payment`: criação e interpretação de pedidos EIP-681.
 - `application`: casos de uso/hooks e portas.
 - `infrastructure`: RPC, contratos, armazenamento e autenticação.
 - `presentation`: telas, navegação e componentes.
@@ -43,14 +44,27 @@ Dependências apontam para dentro: UI → application → domain. Infrastructure
 
 ## 5. Fluxo de transação
 
-1. Home calcula e registra a intenção.
-2. Scanner/formulário resolve destinatário.
-3. Review valida rede, endereço, token, saldo, valor e gás.
-4. Para swap: QuoteProvider retorna rota; app calcula `minimumAmountOut`.
-5. `requireDeviceAuth` autoriza a operação específica.
-6. A chave é lida somente nesse momento e cria um signer efêmero.
-7. Simulação/estimativa; assinatura; transmissão; acompanhamento do recibo.
-8. Referências à chave e objetos sensíveis saem de escopo.
+1. Home calcula, seleciona o ativo e registra a intenção.
+2. Receber gera um QR EIP-681 com rede, destinatário, token e quantidade.
+3. Scanner interpreta a solicitação sem executar ações.
+4. SendReview valida rede, endereço, token, saldo, valor e gás.
+5. Para swap: QuoteProvider retorna rota; app calcula `minimumAmountOut`.
+6. `requireDeviceAuth` autoriza a operação específica por biometria, PIN ou
+   padrão do dispositivo.
+7. A chave é lida somente nesse momento e cria um signer efêmero.
+8. Simulação/estimativa; assinatura; transmissão; acompanhamento do recibo.
+9. Referências à chave e objetos sensíveis saem de escopo.
+
+### Pedidos de pagamento
+
+`PaymentRequest` é um value object do domínio. Para POL, o endereço-alvo é o
+destinatário e a quantidade vai em `value`. Para ERC-20, o endereço-alvo é o
+contrato e a URI descreve `transfer(address,uint256)`. O parser aceita somente
+Polygon e, para ERC-20, somente o contrato configurado como Moeda Base.
+
+O mesmo objeto atende abastecimento em estabelecimento, cobrança comercial e
+transferência entre pessoas. A diferença é o acordo externo entre as partes,
+não o mecanismo blockchain.
 
 ## 6. Swap
 
@@ -62,7 +76,10 @@ Ordem por feature: escrever teste de regra → implementar domínio → teste do
 
 ## 8. Pendências antes de produção
 
-- Tela de revisão e envio completa;
+- revisão de segurança e testes de integração da tela de envio;
+- expiração e identificador único opcional para pedidos de pagamento;
+- serviço de cotação quando o valor for expresso em BRL e o token não tiver
+  paridade nominal verificável;
 - seleção de conta ativa;
 - provider de cotações auditado;
 - endereços oficiais verificados de USDC, BRLA, WPOL e roteador;

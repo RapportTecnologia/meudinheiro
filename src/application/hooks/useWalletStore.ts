@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { addAccountRule, normalizeAddress } from '../../domain/wallet/rules';
 import type { Address, BalanceMap, BaseToken, WalletAccount } from '../../domain/wallet/types';
+import type { PaymentRequest } from '../../domain/payment/paymentRequest';
 import { validateErc20 } from '../../infrastructure/blockchain/polygon';
 import { secureSecrets } from '../../infrastructure/storage/secureSecrets';
 
@@ -13,13 +14,18 @@ type WalletState = {
   baseToken?: BaseToken;
   balances: BalanceMap;
   homeAmount: string;
+  selectedAsset: 'BRL' | 'POL';
   scannedAddress?: Address;
+  pendingPayment?: PaymentRequest;
   importAccount(name: string, privateKey: string): Promise<void>;
   removeAccount(id: string): Promise<void>;
-  configureBaseToken(address: string): Promise<void>;
+  configureBaseToken(address: string, useAsBrl: boolean): Promise<void>;
   removeBaseToken(): void;
   setHomeAmount(value: string): void;
+  setSelectedAsset(value: 'BRL' | 'POL'): void;
   setScannedAddress(value: string): void;
+  setPendingPayment(value: PaymentRequest): void;
+  clearPendingPayment(): void;
 };
 
 export const useWalletStore = create<WalletState>()(
@@ -28,6 +34,7 @@ export const useWalletStore = create<WalletState>()(
       accounts: [],
       balances: {},
       homeAmount: '0',
+      selectedAsset: 'BRL',
       async importAccount(name, privateKey) {
         const wallet = new Wallet(privateKey);
         const id = globalThis.crypto.randomUUID();
@@ -46,21 +53,32 @@ export const useWalletStore = create<WalletState>()(
         const accounts = get().accounts.filter((account) => account.id !== id);
         set({ accounts, activeAccountId: accounts[0]?.id });
       },
-      async configureBaseToken(rawAddress) {
+      async configureBaseToken(rawAddress, useAsBrl) {
         if (get().baseToken) throw new Error('Remova a Moeda Base antes de cadastrar outra.');
         const address = normalizeAddress(rawAddress);
         const metadata = await validateErc20(address);
-        set({ baseToken: { address, ...metadata, chainId: 137, configuredAt: new Date().toISOString() } });
+        set({
+          baseToken: {
+            address,
+            ...metadata,
+            chainId: 137,
+            referenceCurrency: useAsBrl ? 'BRL' : undefined,
+            configuredAt: new Date().toISOString(),
+          },
+        });
       },
       removeBaseToken() { set({ baseToken: undefined }); },
       setHomeAmount(homeAmount) { set({ homeAmount }); },
+      setSelectedAsset(selectedAsset) { set({ selectedAsset }); },
       setScannedAddress(value) { set({ scannedAddress: normalizeAddress(value) }); },
+      setPendingPayment(pendingPayment) { set({ pendingPayment }); },
+      clearPendingPayment() { set({ pendingPayment: undefined }); },
     }),
     {
       name: 'meu-dinheiro.public-state.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ accounts, activeAccountId, baseToken, homeAmount }) =>
-        ({ accounts, activeAccountId, baseToken, homeAmount }),
+      partialize: ({ accounts, activeAccountId, baseToken, homeAmount, selectedAsset }) =>
+        ({ accounts, activeAccountId, baseToken, homeAmount, selectedAsset }),
     },
   ),
 );

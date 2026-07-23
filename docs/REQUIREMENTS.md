@@ -35,6 +35,7 @@ Não fazem parte da primeira base:
 | Ator | Responsabilidade |
 | --- | --- |
 | Usuário | Controlar as contas, revisar e autorizar operações |
+| Caixa/recebedor | Criar uma solicitação de pagamento com ativo e valor |
 | Aplicativo | Calcular, validar, montar e transmitir transações |
 | Dispositivo | Proteger segredos e autenticar operações |
 | RPC Polygon | Consultar a rede e transmitir transações assinadas |
@@ -78,6 +79,10 @@ Não fazem parte da primeira base:
 - **RF-TKN-05:** a remoção deve exigir confirmação e não pode apagar contas.
 - **RF-TKN-06:** decisões de segurança não podem confiar somente no símbolo do
   token; o endereço do contrato é sua identidade.
+- **RF-TKN-07:** a vinculação nominal ao BRL deve ser uma opção explícita da
+  configuração da Moeda Base.
+- **RF-TKN-08:** uma configuração antiga sem referência BRL deve ser removida e
+  cadastrada novamente para habilitar cobranças em R$.
 
 ### 4.4 Saldos
 
@@ -95,6 +100,16 @@ Não fazem parte da primeira base:
 - **RF-QR-05:** mostrar também o endereço em texto selecionável para
   conferência.
 - **RF-QR-06:** um QR Code nunca deve disparar uma transação automaticamente.
+- **RF-QR-07:** o botão Receber deve gerar uma solicitação EIP-681 contendo
+  `chainId`, destinatário, ativo e valor.
+- **RF-QR-08:** uma solicitação ERC-20 deve representar
+  `transfer(address,uint256)`.
+- **RF-QR-09:** uma solicitação POL deve expressar a quantidade em wei no
+  parâmetro `value`.
+- **RF-QR-10:** uma cobrança com valor deve prevalecer sobre o valor previamente
+  digitado pelo pagador.
+- **RF-QR-11:** um QR com somente endereço pode herdar o valor e ativo
+  selecionados pelo pagador, mas ainda deve passar pela revisão.
 
 ### 4.6 Envio
 
@@ -108,8 +123,31 @@ Não fazem parte da primeira base:
 - **RF-SEND-07:** impedir submissão duplicada enquanto uma tentativa estiver
   em andamento.
 - **RF-SEND-08:** acompanhar hash, recibo e estado final.
+- **RF-SEND-09:** bloquear transferência para a mesma conta de origem.
+- **RF-SEND-10:** para POL, validar saldo para o valor e a estimativa de gás.
+- **RF-SEND-11:** para ERC-20, validar saldo do token e estimar a chamada
+  `transfer`.
 
-### 4.7 Swap
+### 4.7 Pedido de pagamento e abastecimento
+
+- **RF-PAY-01:** permitir selecionar `R$ • Moeda Base` ou POL antes de informar
+  o valor.
+- **RF-PAY-02:** em BRL, exigir Moeda Base configurada.
+- **RF-PAY-03:** BRL é unidade de exibição; a liquidação on-chain ocorre no
+  token da Moeda Base.
+- **RF-PAY-04:** o app não deve afirmar paridade com o real sem uma política de
+  representação ou cotação configurada.
+- **RF-PAY-05:** o botão Receber deve usar o resultado validado da calculadora.
+- **RF-PAY-06:** o recebedor deve visualizar valor, símbolo, rede e endereço
+  junto ao QR.
+- **RF-PAY-07:** recebimento de dinheiro físico é confirmado externamente e
+  nunca prova, por si só, uma transferência on-chain.
+- **RF-PAY-08:** o pagador deve revisar valor, ativo, rede e destinatário antes
+  da autenticação.
+- **RF-PAY-09:** pagamentos em estabelecimento e entre pessoas devem usar o
+  mesmo modelo de solicitação.
+
+### 4.8 Swap
 
 - **RF-SWP-01:** suportar Moeda Base ↔ POL, USDC ou BRLA.
 - **RF-SWP-02:** resolver POL nativo e WPOL explicitamente.
@@ -128,7 +166,7 @@ Não fazem parte da primeira base:
 - **RF-SWP-11:** swap deve permanecer desabilitado enquanto contratos e
   cotador não estiverem configurados e auditados.
 
-### 4.8 Exportação de chave
+### 4.9 Exportação de chave
 
 - **RF-KEY-01:** exibir aviso de alto risco antes da exportação.
 - **RF-KEY-02:** exigir autenticação biométrica ou credencial do dispositivo.
@@ -146,7 +184,7 @@ Não fazem parte da primeira base:
 - **RS-02:** segredos devem usar SecureStore/Keystore e proteção vinculada ao
   dispositivo.
 - **RS-03:** toda operação que possa movimentar fundos deve autenticar o
-  usuário.
+  usuário por biometria, PIN ou padrão do dispositivo.
 - **RS-04:** a autenticação deve autorizar uma operação concreta e expirar ao
   término dela.
 - **RS-05:** a conexão deve confirmar `chainId === 137`.
@@ -192,6 +230,12 @@ Não fazem parte da primeira base:
 - **RN-07:** cotação expirada não pode ser executada.
 - **RN-08:** falha ou cancelamento de autenticação encerra a operação.
 - **RN-09:** o app não garante preço, liquidez, conclusão nem rentabilidade.
+- **RN-10:** gerar ou mostrar um QR não movimenta fundos e não exige assinatura;
+  o dispositivo pagador autentica cada transação.
+- **RN-11:** para abastecimento em estabelecimento, o caixa só deve transferir
+  após conferir a contraprestação externa.
+- **RN-12:** uma Moeda Base arbitrária não deve ser apresentada como equivalente
+  a BRL sem cotação ou política de paridade verificável.
 
 ## 8. Critérios de aceite da base
 
@@ -205,6 +249,10 @@ Não fazem parte da primeira base:
 - A chave não aparece no estado persistido.
 - Exportação chama a autenticação antes de acessar o segredo.
 - O swap informa que está bloqueado até a configuração de produção.
+- Receber R$ 10 gera URI ERC-20 com 10 unidades da Moeda Base.
+- Receber POL gera URI nativa com `value` em wei.
+- Ler uma cobrança abre a revisão, sem transmitir automaticamente.
+- Confirmar um pagamento exige biometria, PIN ou padrão.
 
 ## 9. Estratégia de testes
 
@@ -232,4 +280,3 @@ duplo toque.
 - Política de privacidade, termos e avisos revisados.
 - Testes com valores reduzidos em ambiente controlado aprovados.
 - Processo de build, assinatura, atualização e resposta a incidentes definido.
-

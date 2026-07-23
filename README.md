@@ -1,11 +1,14 @@
 # Meu Dinheiro
 
-Base arquitetural de uma carteira autocustodial Polygon, com calculadora como tela principal, QR Code, duas contas, Moeda Base imutável até remoção e adaptador de swap.
+Base arquitetural de uma carteira autocustodial Polygon, com calculadora como
+tela principal, pedidos de pagamento EIP-681, leitura e exibição de QR Code,
+duas contas, Moeda Base imutável até remoção e adaptador de swap.
 
 ## Passo 0 — arquitetura e requisitos
 
 - [Especificação de requisitos](docs/REQUIREMENTS.md)
 - [Arquitetura e decisões técnicas](docs/ARCHITECTURE.md)
+- [Histórias e casos de uso](docs/USE_CASES.md)
 
 A base é intencionalmente **não pronta para fundos reais**: swap e envio
 exigem revisão, configuração oficial, testes de integração e auditoria.
@@ -61,4 +64,5 @@ docs/              arquitetura e requisitos
 
 ## Próximo incremento
 
-Implemente `SendReviewScreen`, `QuoteProvider` e uma configuração de contratos verificada. Use Amoy/fork antes da Polygon.
+Conclua o `QuoteProvider`, a expiração de cobranças e uma configuração de
+contratos verificada. Use Amoy/fork antes da Polygon.

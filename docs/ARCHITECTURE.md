@@ -108,7 +108,6 @@ Ordem por feature: escrever teste de regra → implementar domínio → teste do
 - GasPolicy e fluxo de orientação quando POL for insuficiente;
 - remoção de POL como ativo de pagamento no protótipo;
 - substituição da Moeda Base configurável pelo contrato oficial;
-- ContactRepository, seleção por agenda e ClipboardPaymentAdapter;
 - seleção de conta ativa;
 - provider de cotações auditado;
 - contrato do Token Oficial, WPOL e roteador comercial verificados;

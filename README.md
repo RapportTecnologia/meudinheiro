@@ -66,5 +66,5 @@ docs/              arquitetura e requisitos
 
 ## Próximo incremento
 
-Implemente o contrato oficial fixo, `QuoteProvider`, `GasPolicy`, agenda e
-clipboard; remova POL como ativo de pagamento. Use Amoy/fork antes da Polygon.
+Implemente o contrato oficial fixo, `QuoteProvider` e `GasPolicy`; remova POL
+como ativo de pagamento. Use Amoy/fork antes da Polygon.

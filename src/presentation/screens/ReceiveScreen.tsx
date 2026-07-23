@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useWalletStore } from '../../application/hooks/useWalletStore';
 import { createPaymentRequestUri, type PaymentAsset } from '../../domain/payment/paymentRequest';
@@ -20,6 +21,14 @@ export function ReceiveScreen() {
   const uri = account && asset
     ? createPaymentRequestUri({ recipient: account.address, amount: homeAmount, asset })
     : undefined;
+  const copyRequest = async () => {
+    if (!uri) return;
+    await Clipboard.setStringAsync(uri);
+    Alert.alert(
+      'Solicitação copiada',
+      'O código contém o destino e o valor proposto. Ele não movimenta fundos sem revisão e autenticação do pagador.',
+    );
+  };
   return (
     <View style={styles.container}>
       {account && uri && asset ? <>
@@ -28,6 +37,12 @@ export function ReceiveScreen() {
           {selectedAsset === 'BRL' ? 'R$ ' : ''}{homeAmount} {asset.symbol}
         </Text>
         <QRCode value={uri} size={240} />
+        <Button title="Copiar solicitação" onPress={copyRequest} />
+        <Button
+          title="Limpar área de transferência"
+          color="#6B7280"
+          onPress={() => Clipboard.setStringAsync('')}
+        />
         <Text>Polygon • chainId 137</Text>
         <Text selectable style={styles.address}>{account.address}</Text>
         {selectedAsset === 'BRL' && (

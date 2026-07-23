@@ -21,6 +21,9 @@ describe('pedido de pagamento EIP-681', () => {
 
   it('gera e interpreta um pedido em token da Moeda Base', () => {
     const uri = createPaymentRequestUri({ recipient, amount: '10', asset: token });
+    expect(uri).toBe(
+      `ethereum:${token.address}@137/transfer?address=${recipient}&uint256=10000000000000000000`,
+    );
     expect(parsePaymentRequestUri(uri, token)).toMatchObject({
       recipient,
       amount: '10.0',

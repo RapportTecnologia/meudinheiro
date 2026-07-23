@@ -21,7 +21,7 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParam
   const send = () => {
     try {
       prepareAmount();
-      navigation.navigate('Scanner');
+      navigation.navigate('Contacts');
     } catch (error) { Alert.alert('Valor inválido', (error as Error).message); }
   };
   const receive = () => {

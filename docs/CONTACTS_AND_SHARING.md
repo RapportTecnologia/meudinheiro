@@ -105,3 +105,21 @@ Metadados da agenda devem permanecer locais, com backup desabilitado ou
 protegido conforme a política do produto. Caso seja adotada sincronização, ela
 exigirá consentimento, criptografia e uma especificação separada.
 
+## 6. Estado da implementação
+
+A base implementa:
+
+- entidade e regras puras de contato em `domain/contacts`;
+- persistência pública local da agenda pelo store, sem chaves ou seeds;
+- ordenação por favorito, frequência e recência;
+- inclusão, remoção e marcação de favoritos;
+- seleção de contato como destinatário de uma intenção;
+- incremento do uso somente após confirmação da transação;
+- cópia e limpeza da URI EIP-681 na tela Receber;
+- leitura do clipboard somente após toque em **Colar solicitação**;
+- validação do conteúdo colado pelo mesmo parser usado pelo QR;
+- encaminhamento obrigatório para a tela de revisão e autenticação.
+
+Edição do nome/endereço de um contato e sincronização permanecem fora deste
+incremento. Alterar um endereço deverá usar confirmação explícita quando esse
+fluxo for implementado.

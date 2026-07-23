@@ -10,7 +10,7 @@ export function SendReviewScreen({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, 'SendReview'>) {
   const [busy, setBusy] = useState(false);
-  const { pendingPayment, clearPendingPayment } = useWalletStore();
+  const { pendingPayment, clearPendingPayment, recordContactUse } = useWalletStore();
   const authorizeSigner = useAuthorizedSigner();
 
   if (!pendingPayment) {
@@ -53,6 +53,7 @@ export function SendReviewScreen({
 
       const receipt = await transaction.wait(1);
       if (!receipt || receipt.status !== 1) throw new Error('A transação não foi confirmada.');
+      recordContactUse(pendingPayment.recipient);
       clearPendingPayment();
       Alert.alert('Pagamento confirmado', `Hash: ${transaction.hash}`, [
         { text: 'OK', onPress: () => navigation.popToTop() },

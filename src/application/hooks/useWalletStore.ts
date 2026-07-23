@@ -2,6 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Wallet } from 'ethers';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  addContact,
+  markContactAddressUsed,
+  removeContact,
+  toggleContactFavorite,
+  type Contact,
+} from '../../domain/contacts/contact';
 import { addAccountRule, normalizeAddress } from '../../domain/wallet/rules';
 import type { Address, BalanceMap, BaseToken, WalletAccount } from '../../domain/wallet/types';
 import type { PaymentRequest } from '../../domain/payment/paymentRequest';
@@ -17,6 +24,7 @@ type WalletState = {
   selectedAsset: 'BRL' | 'POL';
   scannedAddress?: Address;
   pendingPayment?: PaymentRequest;
+  contacts: Contact[];
   importAccount(name: string, privateKey: string): Promise<void>;
   removeAccount(id: string): Promise<void>;
   configureBaseToken(address: string, useAsBrl: boolean): Promise<void>;
@@ -26,6 +34,10 @@ type WalletState = {
   setScannedAddress(value: string): void;
   setPendingPayment(value: PaymentRequest): void;
   clearPendingPayment(): void;
+  addContact(name: string, address: string): void;
+  removeContact(id: string): void;
+  toggleContactFavorite(id: string): void;
+  recordContactUse(address: string): void;
 };
 
 export const useWalletStore = create<WalletState>()(
@@ -35,6 +47,7 @@ export const useWalletStore = create<WalletState>()(
       balances: {},
       homeAmount: '0',
       selectedAsset: 'BRL',
+      contacts: [],
       async importAccount(name, privateKey) {
         const wallet = new Wallet(privateKey);
         const id = globalThis.crypto.randomUUID();
@@ -73,12 +86,38 @@ export const useWalletStore = create<WalletState>()(
       setScannedAddress(value) { set({ scannedAddress: normalizeAddress(value) }); },
       setPendingPayment(pendingPayment) { set({ pendingPayment }); },
       clearPendingPayment() { set({ pendingPayment: undefined }); },
+      addContact(name, address) {
+        set({
+          contacts: addContact(get().contacts, {
+            id: globalThis.crypto.randomUUID(),
+            name,
+            address,
+            now: new Date().toISOString(),
+          }),
+        });
+      },
+      removeContact(id) { set({ contacts: removeContact(get().contacts, id) }); },
+      toggleContactFavorite(id) {
+        set({ contacts: toggleContactFavorite(get().contacts, id) });
+      },
+      recordContactUse(address) {
+        set({
+          contacts: markContactAddressUsed(
+            get().contacts,
+            address,
+            new Date().toISOString(),
+          ),
+        });
+      },
     }),
     {
       name: 'meu-dinheiro.public-state.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ accounts, activeAccountId, baseToken, homeAmount, selectedAsset }) =>
-        ({ accounts, activeAccountId, baseToken, homeAmount, selectedAsset }),
+      partialize: ({
+        accounts, activeAccountId, baseToken, homeAmount, selectedAsset, contacts,
+      }) => ({
+        accounts, activeAccountId, baseToken, homeAmount, selectedAsset, contacts,
+      }),
     },
   ),
 );

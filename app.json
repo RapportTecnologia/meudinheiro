@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Meu Dinheiro",
+    "slug": "meu-dinheiro",
+    "scheme": "meudinheiro",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "android": {
+      "package": "br.com.rapport.meudinheiro",
+      "permissions": ["CAMERA", "USE_BIOMETRIC", "USE_FINGERPRINT"]
+    },
+    "plugins": [
+      ["expo-camera", { "cameraPermission": "Permitir que Meu Dinheiro leia QR Codes de carteiras." }],
+      ["expo-local-authentication", { "faceIDPermission": "Autorizar transações e acesso às chaves." }],
+      ["expo-secure-store", { "configureAndroidBackup": true }]
+    ],
+    "extra": {
+      "polygonRpcUrl": "https://polygon-rpc.com",
+      "chainId": 137,
+      "swapEnabled": false
+    }
+  }
+}

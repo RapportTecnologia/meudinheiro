@@ -1,4 +1,15 @@
-# Meu Dinheiro — histórias e casos de uso
+<div align="center">
+  <h1>Meu Dinheiro — Histórias e casos de uso</h1>
+  <p>Fluxos de abastecimento, pagamento, transferência e agenda.</p>
+
+  <img alt="Documento Casos de uso" src="https://img.shields.io/badge/documento-Casos%20de%20uso-f97316?style=flat-square">
+  <a href="https://github.com/RapportTecnologia/meudinheiro"><img alt="Repositório público" src="https://img.shields.io/badge/repositório-público-111827?style=flat-square&logo=github"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/commits/main/docs/USE_CASES.md"><img alt="Última atualização" src="https://img.shields.io/github/last-commit/RapportTecnologia/meudinheiro?style=flat-square&color=f97316&label=atualização"></a>
+  <img alt="Formato BDD" src="https://img.shields.io/badge/formato-Histórias%20e%20fluxos-111827?style=flat-square">
+  <img alt="Visitantes dos casos de uso" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-use-cases&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
+
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+</div>
 
 ## Premissas comuns
 

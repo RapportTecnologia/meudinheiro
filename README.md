@@ -1,4 +1,20 @@
-# Meu Dinheiro
+<div align="center">
+  <h1>Meu Dinheiro</h1>
+  <p>Carteira Web3 na Polygon com interface principal de calculadora.</p>
+
+  <a href="https://github.com/RapportTecnologia/meudinheiro/stargazers"><img alt="Estrelas" src="https://img.shields.io/github/stars/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/issues"><img alt="Issues" src="https://img.shields.io/github/issues/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/commits/main"><img alt="Último commit" src="https://img.shields.io/github/last-commit/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
+  <img alt="Tamanho do repositório" src="https://img.shields.io/github/repo-size/RapportTecnologia/meudinheiro?style=flat-square&color=111827">
+  <img alt="Linguagem principal" src="https://img.shields.io/github/languages/top/RapportTecnologia/meudinheiro?style=flat-square&color=111827">
+  <img alt="Visitantes do README" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-readme&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
+  <br>
+  <img alt="Status do projeto" src="https://img.shields.io/badge/status-em%20desenvolvimento-f97316?style=flat-square">
+  <img alt="Rede Polygon" src="https://img.shields.io/badge/rede-Polygon-8247E5?style=flat-square&logo=polygon">
+  <img alt="Expo" src="https://img.shields.io/badge/Expo-57-000020?style=flat-square&logo=expo">
+  <img alt="React Native" src="https://img.shields.io/badge/React%20Native-0.86-61DAFB?style=flat-square&logo=react">
+</div>
 
 Base arquitetural de uma carteira autocustodial Polygon, com calculadora como
 tela principal, Token Oficial ERC-20, cotação em BRL, pedidos EIP-681, agenda,

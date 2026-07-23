@@ -1,4 +1,15 @@
-# Meu Dinheiro — arquitetura e requisitos
+<div align="center">
+  <h1>Meu Dinheiro — Arquitetura</h1>
+  <p>Visão técnica, camadas, dependências e decisões arquiteturais.</p>
+
+  <img alt="Documento Arquitetura" src="https://img.shields.io/badge/documento-Arquitetura-f97316?style=flat-square">
+  <a href="https://github.com/RapportTecnologia/meudinheiro"><img alt="Repositório público" src="https://img.shields.io/badge/repositório-público-111827?style=flat-square&logo=github"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/commits/main/docs/ARCHITECTURE.md"><img alt="Última atualização" src="https://img.shields.io/github/last-commit/RapportTecnologia/meudinheiro?style=flat-square&color=f97316&label=atualização"></a>
+  <img alt="Branch principal" src="https://img.shields.io/badge/branch-main-111827?style=flat-square&logo=git">
+  <img alt="Visitantes da arquitetura" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-architecture&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
+
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+</div>
 
 ## 1. Escopo
 

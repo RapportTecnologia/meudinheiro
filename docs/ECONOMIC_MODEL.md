@@ -1,4 +1,15 @@
-# Meu Dinheiro — modelo operacional do token e do gás
+<div align="center">
+  <h1>Meu Dinheiro — Modelo econômico</h1>
+  <p>Token Oficial, cotação em reais, gás em POL e papéis operacionais.</p>
+
+  <img alt="Documento Modelo econômico" src="https://img.shields.io/badge/documento-Modelo%20econômico-f97316?style=flat-square">
+  <a href="https://github.com/RapportTecnologia/meudinheiro"><img alt="Repositório público" src="https://img.shields.io/badge/repositório-público-111827?style=flat-square&logo=github"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/commits/main/docs/ECONOMIC_MODEL.md"><img alt="Última atualização" src="https://img.shields.io/github/last-commit/RapportTecnologia/meudinheiro?style=flat-square&color=f97316&label=atualização"></a>
+  <img alt="Rede Polygon" src="https://img.shields.io/badge/rede-Polygon-8247E5?style=flat-square&logo=polygon">
+  <img alt="Visitantes do modelo econômico" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-economic-model&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
+
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+</div>
 
 ## 1. Decisão principal
 
@@ -200,4 +211,3 @@ O protótipo ainda contém parte desses comportamentos. Uma próxima alteração
 código deverá fixar o Token Oficial, remover POL da seleção de pagamento e
 implementar `QuoteProvider`, validade da cotação e verificação preventiva do
 saldo de gás.
-

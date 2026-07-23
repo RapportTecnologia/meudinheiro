@@ -1,4 +1,15 @@
-# Meu Dinheiro — especificação de requisitos
+<div align="center">
+  <h1>Meu Dinheiro — Requisitos</h1>
+  <p>Requisitos funcionais, segurança, regras de negócio e critérios de aceite.</p>
+
+  <img alt="Documento Requisitos" src="https://img.shields.io/badge/documento-Requisitos-f97316?style=flat-square">
+  <a href="https://github.com/RapportTecnologia/meudinheiro"><img alt="Repositório público" src="https://img.shields.io/badge/repositório-público-111827?style=flat-square&logo=github"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/commits/main/docs/REQUIREMENTS.md"><img alt="Última atualização" src="https://img.shields.io/github/last-commit/RapportTecnologia/meudinheiro?style=flat-square&color=f97316&label=atualização"></a>
+  <img alt="Status do documento" src="https://img.shields.io/badge/status-evolutivo-111827?style=flat-square">
+  <img alt="Visitantes dos requisitos" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-requirements&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
+
+  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+</div>
 
 ## 1. Visão do produto
 

@@ -29,10 +29,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v6
-
       - name: Build Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
@@ -48,11 +44,6 @@ jobs:
           test -s _site/arquitetura/index.html
           test -s _site/requisitos/index.html
           test -s _site/casos-de-uso/index.html
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./_site
 
       - name: Publish compiled files to site branch
         shell: bash
@@ -83,6 +74,15 @@ jobs:
           git -C "${publish_dir}" commit -m "site: publish ${GITHUB_SHA}"
           git -C "${publish_dir}" push origin HEAD:site
           git worktree remove --force "${publish_dir}"
+
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./_site
 
   deploy:
     name: Deploy GitHub Pages

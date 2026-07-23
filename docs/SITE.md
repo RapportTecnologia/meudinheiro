@@ -28,12 +28,16 @@ O workflow é executado quando há alteração em `site/**`, no próprio workflo
 por acionamento manual.
 
 1. Faz checkout com histórico completo.
-2. Configura os metadados do GitHub Pages.
-3. Compila `site/` para `_site/` com Jekyll.
-4. Verifica os arquivos essenciais gerados.
-5. Envia o artefato para o GitHub Pages.
-6. Atualiza o branch `site` com o mesmo conteúdo compilado.
+2. Compila `site/` para `_site/` com Jekyll.
+3. Verifica os arquivos essenciais gerados.
+4. Atualiza o branch `site` com o conteúdo compilado.
+5. Configura os metadados do GitHub Pages.
+6. Envia o mesmo conteúdo como artefato do Pages.
 7. Publica o artefato no ambiente `github-pages`.
+
+A publicação no branch ocorre antes da configuração do Pages. Com isso, uma
+configuração inicial pendente no repositório não impede que o resultado
+compilado seja criado e auditado no branch `site`.
 
 O workflow concede somente as permissões necessárias:
 
@@ -78,4 +82,3 @@ configurado para produção é `/meudinheiro`.
 - O job valida páginas essenciais antes de publicar.
 - Execuções concorrentes do site são canceladas para evitar ordem incorreta.
 - O push para o branch `site` não dispara novamente o workflow.
-

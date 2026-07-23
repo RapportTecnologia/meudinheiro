@@ -25,6 +25,8 @@ export function ContactsScreen({
   const state = useWalletStore();
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
+  const [directAddress, setDirectAddress] = useState('');
+  const [editingId, setEditingId] = useState<string>();
   const contacts = useMemo(() => rankContacts(state.contacts), [state.contacts]);
   const baseAsset: PaymentAsset | undefined = state.baseToken
     ? {
@@ -56,20 +58,61 @@ export function ContactsScreen({
     }
   };
 
-  const save = () => {
+  const resetForm = () => {
+    setName('');
+    setAddress('');
+    setEditingId(undefined);
+  };
+
+  const persistContact = () => {
     try {
-      state.addContact(name, address);
-      setName('');
-      setAddress('');
+      if (editingId) state.updateContact(editingId, name, address);
+      else state.addContact(name, address);
+      resetForm();
     } catch (error) {
-      Alert.alert('Contato inválido', (error as Error).message);
+      Alert.alert(
+        'Conflito na agenda',
+        `${(error as Error).message}\n\nUse outro nome ou edite o contato existente.`,
+      );
     }
+  };
+
+  const save = () => {
+    const current = state.contacts.find(({ id }) => id === editingId);
+    const addressChanged = current
+      && current.address.toLowerCase() !== address.trim().toLowerCase();
+
+    if (addressChanged) {
+      Alert.alert(
+        'Confirmar novo endereço',
+        `Você está alterando o endereço de ${current.name}. Confira o endereço completo antes de continuar:\n\n${address.trim()}`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Confirmar alteração', onPress: persistContact },
+        ],
+      );
+      return;
+    }
+    persistContact();
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.methods}>
         <Button title="Ler QR" onPress={() => navigation.navigate('Scanner')} />
+        <TextInput
+          placeholder="Ou informe um novo endereço 0x..."
+          value={directAddress}
+          onChangeText={setDirectAddress}
+          autoCapitalize="none"
+          autoCorrect={false}
+          style={styles.input}
+        />
+        <Button
+          title="Revisar novo endereço"
+          onPress={() => selectRecipient(directAddress)}
+          disabled={!directAddress.trim()}
+        />
       </View>
 
       <Text style={styles.heading}>Destinatários mais usados</Text>
@@ -85,6 +128,14 @@ export function ContactsScreen({
               <Text>{item.useCount} uso(s)</Text>
             </Pressable>
             <View style={styles.row}>
+              <Button
+                title="Editar"
+                onPress={() => {
+                  setEditingId(item.id);
+                  setName(item.name);
+                  setAddress(item.address);
+                }}
+              />
               <Button
                 title={item.favorite ? 'Desfavoritar' : 'Favoritar'}
                 onPress={() => state.toggleContactFavorite(item.id)}
@@ -111,7 +162,7 @@ export function ContactsScreen({
       />
 
       <View style={styles.form}>
-        <Text style={styles.heading}>Novo contato</Text>
+        <Text style={styles.heading}>{editingId ? 'Editar contato' : 'Novo contato'}</Text>
         <TextInput
           placeholder="Nome ou apelido"
           value={name}
@@ -126,7 +177,8 @@ export function ContactsScreen({
           autoCorrect={false}
           style={styles.input}
         />
-        <Button title="Salvar contato" onPress={save} />
+        <Button title={editingId ? 'Salvar alterações' : 'Salvar contato'} onPress={save} />
+        {editingId && <Button title="Cancelar edição" color="#6B7280" onPress={resetForm} />}
       </View>
     </View>
   );
@@ -134,12 +186,12 @@ export function ContactsScreen({
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, gap: 12 },
-  methods: { alignItems: 'flex-start' },
+  methods: { gap: 8 },
   heading: { fontSize: 20, fontWeight: '700' },
   card: { padding: 14, borderRadius: 12, backgroundColor: '#F3F4F6', gap: 10, marginBottom: 10 },
   contact: { gap: 4 },
   name: { fontSize: 17, fontWeight: '700' },
-  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 },
   form: { gap: 8, borderTopWidth: 1, borderTopColor: '#D1D5DB', paddingTop: 12 },
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 8, padding: 10, backgroundColor: '#fff' },
 });

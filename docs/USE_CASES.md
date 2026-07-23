@@ -146,6 +146,43 @@ para enviá-lo ao pagador por um canal escolhido.
 7. O app lê somente após o toque, valida o conteúdo e abre a revisão.
 8. O pagador confere Token Oficial e POL, autentica e transmite.
 
+## UC-06 — salvar novo destinatário após transferência
+
+### História
+
+Como usuário, quero ser consultado ao enviar para um endereço ainda não salvo,
+para poder identificá-lo por um nome e reutilizá-lo com segurança.
+
+### Fluxo principal
+
+1. QR, clipboard ou entrada manual resolve o endereço de destino.
+2. A tela de revisão constata que o endereço não está na agenda.
+3. O app pergunta **Salvar** ou **Agora não**.
+4. O usuário escolhe **Salvar** e informa um nome.
+5. O domínio valida nome e endereço contra toda a agenda.
+6. O usuário revisa o pagamento e autentica.
+7. O app transmite e aguarda a confirmação.
+8. Após a confirmação, salva o contato e registra o primeiro uso.
+
+### Fluxo alternativo
+
+- **Agora não:** a transferência pode continuar, mas não cria contato.
+- **Nome repetido:** bloquear o salvamento e orientar outro nome ou edição do
+  contato existente.
+- **Endereço repetido:** mostrar a qual contato pertence e orientar a edição.
+- **Transação falhou ou foi cancelada:** não criar contato.
+- **Pagamento confirmado e persistência falhou:** manter o pagamento como
+  confirmado e avisar separadamente que o contato não foi salvo.
+
+## UC-07 — editar contato
+
+1. O usuário abre a Agenda e escolhe **Editar**.
+2. Altera nome, endereço ou ambos.
+3. Se o endereço mudou, o app mostra o novo endereço completo.
+4. O usuário confirma explicitamente a alteração.
+5. O domínio verifica conflitos, excluindo o próprio registro.
+6. A agenda salva os novos dados preservando favorito e métricas.
+
 ## Critérios de aceite dos casos
 
 - O botão **Receber** utiliza o resultado atual da calculadora.
@@ -162,3 +199,7 @@ para enviá-lo ao pagador por um canal escolhido.
 - Agenda, QR e clipboard convergem para a mesma revisão.
 - O app não lê o clipboard em segundo plano.
 - O payload copiado contém destino e quantidade proposta do Token Oficial.
+- Um endereço desconhecido produz a pergunta de salvamento na revisão.
+- Novo contato só é gravado depois de confirmação on-chain.
+- Nome e endereço são únicos; conflitos oferecem orientação acionável.
+- Edição de endereço exige confirmação explícita.

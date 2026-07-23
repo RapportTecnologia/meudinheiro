@@ -26,6 +26,9 @@ completo nunca fazem parte da agenda.
 - Sempre exibir o endereço abreviado e permitir ver o endereço completo.
 - Validar checksum antes de salvar ou usar.
 - Ao alterar um endereço existente, exigir confirmação explícita.
+- Nomes são únicos após remoção de espaços excedentes e comparação sem
+  diferença entre maiúsculas e minúsculas.
+- Endereços são únicos após normalização EVM.
 - Nunca atualizar silenciosamente um contato com base em QR ou clipboard.
 - Contatos frequentes são sugestões, não autorização de pagamento.
 - A tela de revisão continua mostrando o destinatário completo.
@@ -41,6 +44,34 @@ completo nunca fazem parte da agenda.
 7. Verifica saldo do token e POL para gás.
 8. Mostra a revisão e solicita biometria, PIN ou padrão.
 9. Somente após autorização transmite a transferência.
+
+### Novo destinatário
+
+Quando o endereço resolvido por QR, clipboard ou entrada manual não estiver na
+agenda, a tela de revisão deve perguntar se o usuário deseja salvá-lo.
+
+1. O usuário escolhe **Salvar** ou **Agora não** antes de autorizar.
+2. Ao escolher salvar, informa um nome único.
+3. O domínio valida o nome e o endereço antes de acessar a chave.
+4. Se o nome já existir, o app orienta usar outro nome ou editar o contato
+   existente.
+5. Se o endereço já existir, o app identifica o contato correspondente e
+   orienta editar o registro existente.
+6. O contato é persistido somente depois que a transferência for confirmada.
+7. Uma transferência rejeitada ou não confirmada não cria o contato.
+
+Falha local ao salvar o contato depois de uma confirmação on-chain nunca pode
+alterar o estado financeiro para “pagamento não realizado”. O app mostra
+**Pagamento confirmado** e acrescenta um aviso de que o contato não foi salvo.
+
+### Edição e conflitos
+
+- Nome e endereço podem ser editados na Agenda.
+- A edição preserva favorito, contador, criação e data do último uso.
+- Alterar endereço mostra o endereço completo e exige confirmação explícita.
+- Um contato não pode assumir nome ou endereço pertencente a outro registro.
+- Em conflito, o usuário permanece no formulário para escolher outro nome ou
+  editar/remover o contato já existente.
 
 ## 3. Solicitação pela área de transferência
 
@@ -113,13 +144,15 @@ A base implementa:
 - persistência pública local da agenda pelo store, sem chaves ou seeds;
 - ordenação por favorito, frequência e recência;
 - inclusão, remoção e marcação de favoritos;
+- edição de nome e endereço, com confirmação para mudança de endereço;
+- unicidade de nomes normalizados e endereços EVM;
 - seleção de contato como destinatário de uma intenção;
+- consulta para salvar um destinatário desconhecido na tela de revisão;
+- persistência do novo contato somente após confirmação da transferência;
 - incremento do uso somente após confirmação da transação;
 - cópia e limpeza da URI EIP-681 na tela Receber;
 - leitura do clipboard somente após toque em **Colar solicitação**;
 - validação do conteúdo colado pelo mesmo parser usado pelo QR;
 - encaminhamento obrigatório para a tela de revisão e autenticação.
 
-Edição do nome/endereço de um contato e sincronização permanecem fora deste
-incremento. Alterar um endereço deverá usar confirmação explícita quando esse
-fluxo for implementado.
+Sincronização entre dispositivos permanece fora deste incremento.

@@ -202,6 +202,27 @@ Não fazem parte da primeira base:
   e autenticação continuam obrigatórias.
 - **RF-CON-08:** não solicitar acesso à agenda do Android por padrão.
 - **RF-CON-09:** nunca armazenar chave, seed ou segredo em um contato.
+- **RF-CON-10:** ao revisar uma transferência para endereço desconhecido, o app
+  deve perguntar se o usuário deseja salvá-lo.
+- **RF-CON-11:** escolher salvar deve exigir um nome antes da autenticação da
+  transferência.
+- **RF-CON-12:** nomes devem ser únicos após normalização de espaços, Unicode e
+  maiúsculas/minúsculas.
+- **RF-CON-13:** endereços devem ser únicos após normalização EVM.
+- **RF-CON-14:** conflito de nome deve orientar o usuário a escolher outro nome
+  ou editar o contato existente.
+- **RF-CON-15:** conflito de endereço deve identificar o contato existente e
+  orientar sua edição.
+- **RF-CON-16:** um novo destinatário deve ser persistido somente após
+  confirmação da transferência.
+- **RF-CON-17:** transação cancelada, rejeitada ou sem confirmação não deve
+  criar o contato.
+- **RF-CON-18:** editar nome ou endereço deve preservar favoritos e métricas de
+  uso.
+- **RF-CON-19:** mudar o endereço de um contato deve mostrar o endereço completo
+  e exigir confirmação explícita.
+- **RF-CON-20:** falha ao salvar um contato após confirmação on-chain não pode
+  fazer o app declarar que o pagamento falhou.
 
 ### 4.11 Área de transferência
 
@@ -304,6 +325,13 @@ Não fazem parte da primeira base:
 - POL insuficiente bloqueia o envio e apresenta as alternativas previstas.
 - Ler uma cobrança abre a revisão, sem transmitir automaticamente.
 - Confirmar um pagamento exige biometria, PIN ou padrão.
+- Endereço desconhecido exige a escolha **Salvar** ou **Agora não** antes da
+  autorização.
+- Escolher salvar exige nome único e cria o contato apenas após confirmação.
+- Nome ou endereço duplicado bloqueia o salvamento e orienta editar o contato
+  existente.
+- Editar um endereço exige confirmação exibindo o novo endereço completo.
+- Falha de persistência após confirmação não altera o status do pagamento.
 
 ## 9. Estratégia de testes
 
@@ -319,6 +347,9 @@ token sem bytecode, decimais extremos, QR inválido, chainId incorreto,
 autenticação cancelada, saldo insuficiente do token, POL insuficiente,
 cotação expirada, indisponibilidade do cotador, slippage do swap comercial,
 allowance, nonce e duplo toque.
+Também devem ser cobertos: nome duplicado com variação de espaços/caixa,
+endereço duplicado, edição preservando métricas e tentativa de edição usando
+nome ou endereço de outro contato.
 
 ## 10. Definition of Done para produção
 

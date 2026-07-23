@@ -7,6 +7,7 @@ import {
   markContactAddressUsed,
   removeContact,
   toggleContactFavorite,
+  updateContact,
   type Contact,
 } from '../../domain/contacts/contact';
 import { addAccountRule, normalizeAddress } from '../../domain/wallet/rules';
@@ -35,6 +36,7 @@ type WalletState = {
   setPendingPayment(value: PaymentRequest): void;
   clearPendingPayment(): void;
   addContact(name: string, address: string): void;
+  updateContact(id: string, name: string, address: string): void;
   removeContact(id: string): void;
   toggleContactFavorite(id: string): void;
   recordContactUse(address: string): void;
@@ -95,6 +97,9 @@ export const useWalletStore = create<WalletState>()(
             now: new Date().toISOString(),
           }),
         });
+      },
+      updateContact(id, name, address) {
+        set({ contacts: updateContact(get().contacts, { id, name, address }) });
       },
       removeContact(id) { set({ contacts: removeContact(get().contacts, id) }); },
       toggleContactFavorite(id) {

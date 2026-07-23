@@ -4,6 +4,9 @@ Base arquitetural de uma carteira autocustodial Polygon, com calculadora como
 tela principal, Token Oficial ERC-20, cotação em BRL, pedidos EIP-681, agenda,
 QR Code, clipboard, duas contas e POL reservado ao gás.
 
+A agenda valida nomes e endereços únicos, permite edição protegida e oferece
+salvar destinatários desconhecidos somente após uma transferência confirmada.
+
 ## Passo 0 — arquitetura e requisitos
 
 - [Especificação de requisitos](docs/REQUIREMENTS.md)

@@ -80,6 +80,17 @@ leitura ocorre somente após toque em Colar, e qualquer entrada converge para
 `SendReviewScreen`. Agenda e clipboard nunca acessam a chave privada nem
 autorizam uma transferência.
 
+`validateContactDraft` concentra as invariantes de unicidade para inclusão e
+edição. A comparação de nome normaliza Unicode, espaços e caixa; o endereço é
+normalizado por ethers. A edição exclui o próprio identificador da busca por
+conflitos e preserva métricas.
+
+Ao receber um destinatário desconhecido, `SendReviewScreen` obtém uma decisão
+explícita: salvar com nome ou não salvar. A validação ocorre antes da
+autenticação, mas a persistência ocorre somente depois do recibo confirmado.
+Erros posteriores de armazenamento são tratados separadamente do resultado
+on-chain para impedir um falso estado de falha financeira.
+
 ### Cotação e gás
 
 `QuoteProvider` converte BRL para Token Oficial e retorna preço, quantidade

@@ -1,25 +1,54 @@
 ---
 title: Meu Dinheiro
-description: Carteira autocustodial Polygon com calculadora, QR Code e Token Oficial.
+description: Meu Dinheiro fortalece a região com pagamentos no Token Oficial, calculadora, QR Code e segurança na Polygon.
 permalink: /
 ---
 
-<section class="hero">
+<section class="hero brand-hero">
+  <picture class="hero-art" aria-hidden="true">
+    <source srcset="{{ '/assets/images/hero-regiao.webp' | relative_url }}" type="image/webp">
+    <img
+      src="{{ '/assets/images/social-card.jpg' | relative_url }}"
+      width="1672"
+      height="941"
+      alt=""
+      fetchpriority="high"
+    >
+  </picture>
+  <div class="hero-scrim" aria-hidden="true"></div>
   <div class="shell hero-grid">
-    <div>
-      <p class="eyebrow">Carteira autocustodial • Polygon PoS</p>
-      <h1>Seu dinheiro.<em>Uma interface familiar.</em></h1>
+    <div class="hero-content">
+      <p class="eyebrow">Tecnologia que circula valor perto de você</p>
+      <h1>Meu Dinheiro.<em>Fortalece minha região.</em></h1>
       <p class="hero-copy">
-        O Meu Dinheiro transforma uma calculadora funcional na porta de entrada
-        para pagamentos com o Token Oficial, mantendo revisão clara,
-        autenticação por transação e controle local das contas.
+        Uma carteira Polygon com a simplicidade de uma calculadora, criada para
+        tornar pagamentos locais mais acessíveis, seguros e conectados à
+        comunidade.
       </p>
       <div class="hero-actions">
         <a class="button" href="{{ '/casos-de-uso/' | relative_url }}">Conhecer os fluxos <span aria-hidden="true">→</span></a>
         <a class="button secondary" href="https://github.com/RapportTecnologia/meudinheiro">Ver código no GitHub <span aria-hidden="true">↗</span></a>
       </div>
+      <div class="brand-signature" aria-label="Princípios da marca">
+        <span>Simples para usar</span>
+        <span>Local por propósito</span>
+        <span>Seguro por padrão</span>
+      </div>
     </div>
+  </div>
+</section>
 
+<section class="trust-strip" aria-label="Características principais">
+  <div class="shell trust-grid">
+    <div><strong>Polygon PoS</strong><span>Rede EVM, chainId 137</span></div>
+    <div><strong>2 contas</strong><span>Limite local da primeira versão</span></div>
+    <div><strong>Token Oficial</strong><span>Único ativo de pagamento</span></div>
+    <div><strong>POL</strong><span>Reservado ao pagamento do gás</span></div>
+  </div>
+</section>
+
+<section class="section product-section">
+  <div class="shell product-grid">
     <div class="calculator" aria-label="Representação da calculadora do aplicativo">
       <div class="calculator-top">
         <span>Token Oficial</span>
@@ -39,15 +68,20 @@ permalink: /
         <span>0</span><span>,</span><span>=</span><span>+</span>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="trust-strip" aria-label="Características principais">
-  <div class="shell trust-grid">
-    <div><strong>Polygon PoS</strong><span>Rede EVM, chainId 137</span></div>
-    <div><strong>2 contas</strong><span>Limite local da primeira versão</span></div>
-    <div><strong>Token Oficial</strong><span>Único ativo de pagamento</span></div>
-    <div><strong>POL</strong><span>Reservado ao pagamento do gás</span></div>
+    <div class="product-copy">
+      <p class="section-kicker">Familiar desde o primeiro toque</p>
+      <h2>A calculadora prepara. Você revisa e autoriza.</h2>
+      <p>
+        O valor digitado se transforma em uma intenção de pagamento. Antes de
+        qualquer transferência, o aplicativo mostra destino, cotação, saldo do
+        Token Oficial e POL necessário ao gás.
+      </p>
+      <ul class="brand-values">
+        <li><strong>Clareza</strong><span>O usuário entende quanto e para quem está enviando.</span></li>
+        <li><strong>Proximidade</strong><span>Agenda, QR Code e comerciantes conectam a economia da região.</span></li>
+        <li><strong>Proteção</strong><span>Toda transação exige biometria, PIN ou padrão.</span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -109,6 +143,34 @@ permalink: /
   </div>
 </section>
 
+<section class="section regional-section">
+  <div class="shell regional-grid">
+    <figure class="regional-art">
+      <img
+        src="{{ '/assets/images/ecossistema-local.webp' | relative_url }}"
+        width="1448"
+        height="1086"
+        loading="lazy"
+        alt="Ilustração de moradores e pequenos comércios conectados por pagamentos digitais seguros na mesma região"
+      >
+    </figure>
+    <div class="regional-copy">
+      <p class="section-kicker">Fortalece minha região</p>
+      <h2>Quando o valor circula perto, a comunidade avança junto.</h2>
+      <p>
+        O Meu Dinheiro aproxima pessoas e pequenos negócios com uma experiência
+        comum de pagamento. A tecnologia fica nos bastidores; na frente,
+        permanecem confiança, autonomia e relações locais.
+      </p>
+      <div class="impact-grid">
+        <div><strong>Moradores</strong><span>Pagam e transferem o Token Oficial com revisão simples.</span></div>
+        <div><strong>Comerciantes</strong><span>Abastecem a circulação regional e apoiam o acesso a POL.</span></div>
+        <div><strong>Comunidade</strong><span>Constrói uma rede transparente, aberta e interoperável.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="shell">
     <div class="section-heading">
@@ -151,4 +213,3 @@ permalink: /
     </div>
   </div>
 </section>
-

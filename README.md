@@ -1,5 +1,7 @@
 <div align="center">
+  <img src="site/assets/images/logo-meu-dinheiro.webp" width="150" alt="Símbolo do Meu Dinheiro">
   <h1>Meu Dinheiro</h1>
+  <p><strong>Fortalece minha região</strong></p>
   <p>Carteira Web3 na Polygon com interface principal de calculadora.</p>
 
   <a href="https://github.com/RapportTecnologia/meudinheiro/stargazers"><img alt="Estrelas" src="https://img.shields.io/github/stars/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
@@ -32,6 +34,7 @@ salvar destinatários desconhecidos somente após uma transferência confirmada.
 - [Modelo do Token Oficial, cotação e gás](docs/ECONOMIC_MODEL.md)
 - [Agenda e compartilhamento de solicitações](docs/CONTACTS_AND_SHARING.md)
 - [Site Jekyll e pipeline de publicação](docs/SITE.md)
+- [Identidade de marca](docs/BRAND.md)
 
 Site público: [rapporttecnologia.github.io/meudinheiro](https://rapporttecnologia.github.io/meudinheiro/)
 

@@ -1,4 +1,4 @@
-name: Build and publish Jekyll site
+name: Site | Build and publish Jekyll
 
 on:
   push:
@@ -10,9 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 concurrency:
   group: meu-dinheiro-site
@@ -22,6 +20,10 @@ jobs:
   build:
     name: Build Jekyll and update site branch
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pages: write
 
     steps:
       - name: Checkout repository
@@ -44,6 +46,10 @@ jobs:
           test -s _site/arquitetura/index.html
           test -s _site/requisitos/index.html
           test -s _site/casos-de-uso/index.html
+          test -s _site/assets/images/logo-meu-dinheiro.webp
+          test -s _site/assets/images/hero-regiao.webp
+          test -s _site/assets/images/ecossistema-local.webp
+          test -s _site/sitemap.xml
 
       - name: Publish compiled files to site branch
         shell: bash
@@ -88,6 +94,11 @@ jobs:
     name: Deploy GitHub Pages
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

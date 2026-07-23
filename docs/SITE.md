@@ -22,7 +22,19 @@
 O branch `site` é uma saída gerada. Alterações manuais nele serão substituídas
 pelo próximo build e não devem ser usadas como fonte.
 
-## 2. Pipeline
+## 2. Inventário e unificação
+
+Existe um único workflow responsável pelo site:
+
+```text
+.github/workflows/site.yml
+```
+
+Não há workflow concorrente de Jekyll, Pages ou publicação por branch. Novos
+passos relativos à geração do site devem ser incorporados a esse arquivo para
+preservar uma única origem operacional.
+
+## 3. Pipeline
 
 O workflow é executado quando há alteração em `site/**`, no próprio workflow ou
 por acionamento manual.
@@ -39,13 +51,16 @@ A publicação no branch ocorre antes da configuração do Pages. Com isso, uma
 configuração inicial pendente no repositório não impede que o resultado
 compilado seja criado e auditado no branch `site`.
 
-O workflow concede somente as permissões necessárias:
+O workflow segue a estratégia oficial do GitHub Pages:
 
-- `contents: write` para atualizar o branch `site`;
-- `pages: write` para publicar o site;
-- `id-token: write` para autenticação do deployment Pages.
+- `actions/jekyll-build-pages@v1` gera `_site`;
+- `actions/upload-pages-artifact@v5` empacota o resultado;
+- `actions/deploy-pages@v5` publica o mesmo artefato;
+- o ambiente protegido é `github-pages`;
+- `pages: write` e `id-token: write` ficam restritos ao job de deploy;
+- `contents: write` fica restrito ao job que atualiza o branch `site`.
 
-## 3. Estratégia de publicação
+## 4. Estratégia de publicação
 
 O site é publicado diretamente pelo GitHub Actions usando o artefato já
 compilado. O branch `site` funciona como cópia auditável do resultado final.
@@ -53,6 +68,10 @@ compilado. O branch `site` funciona como cópia auditável do resultado final.
 Essa arquitetura evita depender de um segundo build do GitHub Pages após o
 push automatizado. O arquivo `.nojekyll` no branch de saída também impede que
 o conteúdo compilado seja processado novamente.
+
+O branch `site` é um espelho auditável, não a fonte do deployment. A publicação
+oficial usa o artefato do workflow porque commits feitos com `GITHUB_TOKEN` não
+disparam um novo build de Pages.
 
 URL esperada:
 
@@ -62,7 +81,7 @@ https://rapporttecnologia.github.io/meudinheiro/
 
 No repositório, a fonte do Pages deve ser configurada como **GitHub Actions**.
 
-## 4. Desenvolvimento local
+## 5. Desenvolvimento local
 
 Em um ambiente com Ruby e Bundler:
 
@@ -75,10 +94,12 @@ bundle exec jekyll serve --livereload
 O site estará disponível no endereço informado pelo Jekyll. O `baseurl`
 configurado para produção é `/meudinheiro`.
 
-## 5. Controles
+## 6. Controles
 
 - O pipeline não recebe nem publica chaves privadas ou arquivos `.env`.
 - Toda action usada no deployment pertence ao ecossistema oficial do GitHub.
 - O job valida páginas essenciais antes de publicar.
+- O job valida também logo, imagens da marca e sitemap.
 - Execuções concorrentes do site são canceladas para evitar ordem incorreta.
 - O push para o branch `site` não dispara novamente o workflow.
+- O pipeline possui limites de tempo para evitar execuções presas.

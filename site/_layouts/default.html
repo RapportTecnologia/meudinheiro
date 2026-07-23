@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#f97316">
     <meta name="color-scheme" content="dark">
     {% seo %}
+    <link rel="icon" type="image/png" href="{{ '/assets/images/favicon.png' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
   </head>
   <body>
@@ -14,10 +15,17 @@
     <header class="site-header">
       <div class="shell header-inner">
         <a class="brand" href="{{ '/' | relative_url }}" aria-label="Meu Dinheiro — início">
-          <span class="brand-mark" aria-hidden="true">MD</span>
+          <span class="brand-mark">
+            <img
+              src="{{ '/assets/images/logo-meu-dinheiro.webp' | relative_url }}"
+              width="42"
+              height="42"
+              alt=""
+            >
+          </span>
           <span>
             <strong>Meu Dinheiro</strong>
-            <small>Carteira Polygon</small>
+            <small>Fortalece minha região</small>
           </span>
         </a>
 
@@ -56,8 +64,16 @@
       <div class="shell footer-grid">
         <div>
           <a class="brand footer-brand" href="{{ '/' | relative_url }}">
-            <span class="brand-mark" aria-hidden="true">MD</span>
-            <span><strong>Meu Dinheiro</strong><small>Rapport Tecnologia</small></span>
+            <span class="brand-mark">
+              <img
+                src="{{ '/assets/images/logo-meu-dinheiro.webp' | relative_url }}"
+                width="42"
+                height="42"
+                alt=""
+                loading="lazy"
+              >
+            </span>
+            <span><strong>Meu Dinheiro</strong><small>Fortalece minha região</small></span>
           </a>
           <p>
             Base técnica experimental. Não utilize com fundos reais antes das
@@ -78,12 +94,11 @@
         </div>
       </div>
       <div class="shell footer-bottom">
-        <span>Meu Dinheiro • Polygon PoS</span>
-        <span>Documento evolutivo</span>
+        <span>Meu Dinheiro • Fortalece minha região</span>
+        <span>Polygon PoS • Documento evolutivo</span>
       </div>
     </footer>
 
     <script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
   </body>
 </html>
-

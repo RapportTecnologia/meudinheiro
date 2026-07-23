@@ -1,0 +1,34 @@
+title: Meu Dinheiro
+tagline: Carteira Web3 Polygon com uma interface familiar
+description: >-
+  Documentação pública do Meu Dinheiro, uma carteira autocustodial para a
+  Polygon com calculadora, Token Oficial, QR Code e autenticação por transação.
+url: https://rapporttecnologia.github.io
+baseurl: /meudinheiro
+repository: RapportTecnologia/meudinheiro
+lang: pt-BR
+timezone: America/Fortaleza
+encoding: utf-8
+markdown: kramdown
+permalink: pretty
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - scripts
+
+sass:
+  style: compressed
+

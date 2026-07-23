@@ -1,0 +1,64 @@
+---
+title: Casos de uso
+description: Histórias e fluxos operacionais do Meu Dinheiro.
+permalink: /casos-de-uso/
+---
+
+<header class="doc-hero">
+  <div class="shell">
+    <p class="section-kicker">Experiência do usuário</p>
+    <h1>Histórias e casos de uso</h1>
+    <p>Como clientes, comerciantes e amigos usam o mesmo modelo de solicitação para diferentes acordos de pagamento.</p>
+    <div class="doc-meta"><span>Abastecimento</span><span>Compra</span><span>Transferência</span><span>Agenda</span></div>
+  </div>
+</header>
+
+<div class="shell document">
+  <aside class="doc-aside">
+    <strong>Nesta página</strong>
+    <a href="#abastecer">Abastecer</a>
+    <a href="#pagar">Pagar compra</a>
+    <a href="#transferir">Transferir</a>
+    <a href="#compartilhar">Compartilhar</a>
+    <a href="#novo-contato">Novo contato</a>
+  </aside>
+  <article class="doc-content">
+    <section id="abastecer" class="content-card highlight">
+      <h2>Abastecer em estabelecimento</h2>
+      <ol>
+        <li>O cliente solicita um valor em reais.</li>
+        <li>O app consulta a cotação Token Oficial/BRL.</li>
+        <li>O cliente apresenta QR com endereço e quantidade.</li>
+        <li>O comerciante verifica contraprestação, estoque e POL.</li>
+        <li>Após autenticação, envia o Token Oficial.</li>
+      </ol>
+    </section>
+
+    <section id="pagar" class="content-card">
+      <h2>Pagar uma compra</h2>
+      <ol>
+        <li>O caixa informa o preço em BRL e gera a cobrança.</li>
+        <li>O cliente lê o QR e revisa cotação, tokens e destino.</li>
+        <li>O app verifica saldo do Token Oficial e POL para gás.</li>
+        <li>O cliente autentica e acompanha a confirmação.</li>
+      </ol>
+    </section>
+
+    <section id="transferir" class="content-card">
+      <h2>Transferir para um amigo</h2>
+      <p>O destinatário pode apresentar QR, copiar uma URI EIP-681 ou já estar na agenda. O emissor sempre chega à mesma revisão antes da autenticação.</p>
+    </section>
+
+    <section id="compartilhar" class="content-card">
+      <h2>Compartilhar solicitação</h2>
+      <p>O código contém contrato, Polygon, destino e quantidade proposta. O pagador escolhe explicitamente colar, valida o conteúdo e só então revisa a intenção.</p>
+    </section>
+
+    <section id="novo-contato" class="content-card">
+      <h2>Salvar novo destinatário</h2>
+      <p>Quando o endereço não existe na agenda, o app pergunta se deve salvá-lo. Nome e endereço passam por verificação de conflitos antes da autenticação, mas a persistência só ocorre após o recibo confirmado.</p>
+      <a href="https://github.com/RapportTecnologia/meudinheiro/blob/main/docs/USE_CASES.md">Consultar histórias completas no GitHub ↗</a>
+    </section>
+  </article>
+</div>
+

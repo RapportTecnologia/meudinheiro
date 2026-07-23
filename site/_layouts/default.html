@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'pt-BR' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f97316">
+    <meta name="color-scheme" content="dark">
+    {% seo %}
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="{{ '/' | relative_url }}" aria-label="Meu Dinheiro — início">
+          <span class="brand-mark" aria-hidden="true">MD</span>
+          <span>
+            <strong>Meu Dinheiro</strong>
+            <small>Carteira Polygon</small>
+          </span>
+        </a>
+
+        <button
+          class="menu-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="main-navigation"
+        >
+          <span></span><span></span><span></span>
+          <span class="sr-only">Abrir menu</span>
+        </button>
+
+        <nav id="main-navigation" class="main-navigation" aria-label="Navegação principal">
+          {% for item in site.data.navigation %}
+            {% assign target = item.url | relative_url %}
+            <a
+              href="{{ target }}"
+              {% if page.url == item.url %}class="active" aria-current="page"{% endif %}
+            >{{ item.title }}</a>
+          {% endfor %}
+          <a
+            class="nav-github"
+            href="https://github.com/RapportTecnologia/meudinheiro"
+            rel="noopener noreferrer"
+          >GitHub <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div>
+          <a class="brand footer-brand" href="{{ '/' | relative_url }}">
+            <span class="brand-mark" aria-hidden="true">MD</span>
+            <span><strong>Meu Dinheiro</strong><small>Rapport Tecnologia</small></span>
+          </a>
+          <p>
+            Base técnica experimental. Não utilize com fundos reais antes das
+            auditorias e validações indicadas na documentação.
+          </p>
+        </div>
+        <div>
+          <strong>Documentação</strong>
+          <a href="{{ '/arquitetura/' | relative_url }}">Arquitetura</a>
+          <a href="{{ '/requisitos/' | relative_url }}">Requisitos</a>
+          <a href="{{ '/casos-de-uso/' | relative_url }}">Casos de uso</a>
+        </div>
+        <div>
+          <strong>Projeto</strong>
+          <a href="https://github.com/RapportTecnologia/meudinheiro">Código-fonte</a>
+          <a href="https://github.com/RapportTecnologia/meudinheiro/issues">Issues</a>
+          <a href="https://rapport.tec.br">Rapport Tecnologia</a>
+        </div>
+      </div>
+      <div class="shell footer-bottom">
+        <span>Meu Dinheiro • Polygon PoS</span>
+        <span>Documento evolutivo</span>
+      </div>
+    </footer>
+
+    <script src="{{ '/assets/js/main.js' | relative_url }}" defer></script>
+  </body>
+</html>
+

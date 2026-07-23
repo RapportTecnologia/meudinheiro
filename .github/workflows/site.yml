@@ -1,0 +1,99 @@
+name: Build and publish Jekyll site
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "site/**"
+      - ".github/workflows/site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: meu-dinheiro-site
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Jekyll and update site branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./site
+          destination: ./_site
+
+      - name: Validate generated site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s _site/index.html
+          test -s _site/assets/css/main.css
+          test -s _site/arquitetura/index.html
+          test -s _site/requisitos/index.html
+          test -s _site/casos-de-uso/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+      - name: Publish compiled files to site branch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          publish_dir="${RUNNER_TEMP}/meu-dinheiro-site-branch"
+          if git ls-remote --exit-code --heads origin site >/dev/null 2>&1; then
+            git fetch --no-tags origin site
+            git worktree add --detach "${publish_dir}" origin/site
+          else
+            git worktree add --detach "${publish_dir}" HEAD
+          fi
+
+          git -C "${publish_dir}" rm -rf .
+          cp -a "${GITHUB_WORKSPACE}/_site/." "${publish_dir}/"
+          touch "${publish_dir}/.nojekyll"
+
+          git -C "${publish_dir}" add --all
+          if git -C "${publish_dir}" diff --cached --quiet; then
+            echo "O conteúdo compilado não mudou."
+            git worktree remove --force "${publish_dir}"
+            exit 0
+          fi
+
+          git -C "${publish_dir}" config user.name "github-actions[bot]"
+          git -C "${publish_dir}" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "${publish_dir}" commit -m "site: publish ${GITHUB_SHA}"
+          git -C "${publish_dir}" push origin HEAD:site
+          git worktree remove --force "${publish_dir}"
+
+  deploy:
+    name: Deploy GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

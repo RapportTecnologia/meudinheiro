@@ -4,7 +4,11 @@ Base arquitetural de uma carteira autocustodial Polygon, com calculadora como te
 
 ## Passo 0 — arquitetura e requisitos
 
-Leia `docs/ARCHITECTURE.md`. A base é intencionalmente **não pronta para fundos reais**: swap e envio exigem revisão, configuração oficial e auditoria.
+- [Especificação de requisitos](docs/REQUIREMENTS.md)
+- [Arquitetura e decisões técnicas](docs/ARCHITECTURE.md)
+
+A base é intencionalmente **não pronta para fundos reais**: swap e envio
+exigem revisão, configuração oficial, testes de integração e auditoria.
 
 ## Passo 1 — setup
 

@@ -1,10 +1,10 @@
 <div align="center">
   <h1>Meu Dinheiro — Site Jekyll</h1>
-  <p>Fonte, compilação, publicação e operação do site documental.</p>
+  <p>Fonte, compilação e publicação do site documental.</p>
 
   <img alt="Documento Site" src="https://img.shields.io/badge/documento-Site%20Jekyll-f97316?style=flat-square">
-  <a href="https://github.com/RapportTecnologia/meudinheiro/actions/workflows/site.yml"><img alt="Build do site" src="https://img.shields.io/github/actions/workflow/status/RapportTecnologia/meudinheiro/site.yml?branch=main&style=flat-square&label=site"></a>
-  <a href="https://github.com/RapportTecnologia/meudinheiro/tree/site"><img alt="Branch site" src="https://img.shields.io/badge/saída-branch%20site-111827?style=flat-square&logo=git"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/actions/workflows/jekyll-gh-pages.yml"><img alt="Build do site" src="https://img.shields.io/github/actions/workflow/status/RapportTecnologia/meudinheiro/jekyll-gh-pages.yml?branch=main&style=flat-square&label=pages"></a>
+  <img alt="Estratégia" src="https://img.shields.io/badge/deploy-GitHub%20Pages-222222?style=flat-square&logo=github">
   <img alt="Visitantes do documento" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-site-doc&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
   <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a></p>
@@ -15,73 +15,71 @@
 - `site/`: fonte Jekyll versionado na `main`;
 - `site/_layouts/`: estrutura HTML compartilhada;
 - `site/_data/`: dados de navegação;
-- `site/assets/`: estilos e JavaScript;
-- `.github/workflows/site.yml`: build, validação e publicação;
-- branch `site`: somente o resultado estático compilado.
+- `site/assets/`: estilos, JavaScript e imagens;
+- `.github/workflows/jekyll-gh-pages.yml`: único workflow do site;
+- `_site/`: resultado temporário gerado durante o job de build;
+- artefato `github-pages`: pacote entregue ao job oficial de deployment.
 
-O branch `site` é uma saída gerada. Alterações manuais nele serão substituídas
-pelo próximo build e não devem ser usadas como fonte.
+## 2. Decisão de CI/CD
 
-## 2. Inventário e unificação
+O projeto usa exclusivamente o padrão de GitHub Pages baseado em artefato.
+Não existe um segundo workflow para Jekyll e o branch `site` não participa da
+publicação.
 
-Existe um único workflow responsável pelo site:
+Essa decisão elimina a disputa entre dois workflows que tentavam publicar no
+mesmo ambiente `github-pages`:
 
-```text
-.github/workflows/site.yml
-```
+- o workflow padrão compilava por engano a raiz `./`;
+- o workflow customizado compilava `./site` e gravava o resultado em um branch;
+- ambos possuíam jobs de deploy para o mesmo ambiente.
 
-Não há workflow concorrente de Jekyll, Pages ou publicação por branch. Novos
-passos relativos à geração do site devem ser incorporados a esse arquivo para
-preservar uma única origem operacional.
+O workflow consolidado mantém a estrutura do template oficial, mas configura
+corretamente `source: ./site` e `destination: ./_site`.
 
 ## 3. Pipeline
 
 O workflow é executado quando há alteração em `site/**`, no próprio workflow ou
 por acionamento manual.
 
-1. Faz checkout com histórico completo.
-2. Compila `site/` para `_site/` com Jekyll.
-3. Verifica os arquivos essenciais gerados.
-4. Atualiza o branch `site` com o conteúdo compilado.
-5. Configura os metadados do GitHub Pages.
-6. Envia o mesmo conteúdo como artefato do Pages.
-7. Publica o artefato no ambiente `github-pages`.
+1. Faz checkout da `main`.
+2. Configura os metadados do GitHub Pages.
+3. Compila `site/` para `_site/` com Jekyll.
+4. Verifica páginas, estilos, imagens da marca e sitemap.
+5. Envia `_site/` com `actions/upload-pages-artifact`.
+6. Publica o artefato com `actions/deploy-pages`.
 
-A publicação no branch ocorre antes da configuração do Pages. Com isso, uma
-configuração inicial pendente no repositório não impede que o resultado
-compilado seja criado e auditado no branch `site`.
+Actions utilizadas:
 
-O workflow segue a estratégia oficial do GitHub Pages:
+- `actions/checkout@v7`;
+- `actions/configure-pages@v6`;
+- `actions/jekyll-build-pages@v1`;
+- `actions/upload-pages-artifact@v5`;
+- `actions/deploy-pages@v5`.
 
-- `actions/jekyll-build-pages@v1` gera `_site`;
-- `actions/upload-pages-artifact@v5` empacota o resultado;
-- `actions/deploy-pages@v5` publica o mesmo artefato;
-- o ambiente protegido é `github-pages`;
-- `pages: write` e `id-token: write` ficam restritos ao job de deploy;
-- `contents: write` fica restrito ao job que atualiza o branch `site`.
+## 4. Permissões e concorrência
 
-## 4. Estratégia de publicação
+O workflow declara somente:
 
-O site é publicado diretamente pelo GitHub Actions usando o artefato já
-compilado. O branch `site` funciona como cópia auditável do resultado final.
+- `contents: read` para ler o repositório;
+- `pages: write` para criar o deployment;
+- `id-token: write` para autenticação federada do Pages.
 
-Essa arquitetura evita depender de um segundo build do GitHub Pages após o
-push automatizado. O arquivo `.nojekyll` no branch de saída também impede que
-o conteúdo compilado seja processado novamente.
+O grupo de concorrência é `pages` e uma publicação em andamento não é
+cancelada. Isso segue o comportamento conservador do template do GitHub para
+deployments de produção.
 
-O branch `site` é um espelho auditável, não a fonte do deployment. A publicação
-oficial usa o artefato do workflow porque commits feitos com `GITHUB_TOKEN` não
-disparam um novo build de Pages.
+## 5. URL
 
-URL esperada:
+URL prevista:
 
 ```text
 https://rapporttecnologia.github.io/meudinheiro/
 ```
 
-No repositório, a fonte do Pages deve ser configurada como **GitHub Actions**.
+Em **Settings → Pages**, a fonte de publicação deve permanecer configurada
+como **GitHub Actions**.
 
-## 5. Desenvolvimento local
+## 6. Desenvolvimento local
 
 Em um ambiente com Ruby e Bundler:
 
@@ -91,15 +89,12 @@ bundle install
 bundle exec jekyll serve --livereload
 ```
 
-O site estará disponível no endereço informado pelo Jekyll. O `baseurl`
-configurado para produção é `/meudinheiro`.
+O `baseurl` de produção é `/meudinheiro`.
 
-## 6. Controles
+## 7. Controles
 
-- O pipeline não recebe nem publica chaves privadas ou arquivos `.env`.
-- Toda action usada no deployment pertence ao ecossistema oficial do GitHub.
-- O job valida páginas essenciais antes de publicar.
-- O job valida também logo, imagens da marca e sitemap.
-- Execuções concorrentes do site são canceladas para evitar ordem incorreta.
-- O push para o branch `site` não dispara novamente o workflow.
-- O pipeline possui limites de tempo para evitar execuções presas.
+- o pipeline não recebe chaves privadas nem arquivos `.env`;
+- todas as actions de deployment pertencem ao GitHub;
+- páginas essenciais, sitemap e imagens são verificados antes do deploy;
+- apenas um workflow possui permissão para publicar no ambiente Pages;
+- o site novo, sua identidade visual e seus assets permanecem em `site/`.

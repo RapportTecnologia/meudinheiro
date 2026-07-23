@@ -16,7 +16,7 @@
   <img alt="Rede Polygon" src="https://img.shields.io/badge/rede-Polygon-8247E5?style=flat-square&logo=polygon">
   <img alt="Expo" src="https://img.shields.io/badge/Expo-57-000020?style=flat-square&logo=expo">
   <img alt="React Native" src="https://img.shields.io/badge/React%20Native-0.86-61DAFB?style=flat-square&logo=react">
-  <a href="https://github.com/RapportTecnologia/meudinheiro/actions/workflows/site.yml"><img alt="Site Jekyll" src="https://img.shields.io/github/actions/workflow/status/RapportTecnologia/meudinheiro/site.yml?branch=main&style=flat-square&label=site"></a>
+  <a href="https://github.com/RapportTecnologia/meudinheiro/actions/workflows/jekyll-gh-pages.yml"><img alt="Site Jekyll" src="https://img.shields.io/github/actions/workflow/status/RapportTecnologia/meudinheiro/jekyll-gh-pages.yml?branch=main&style=flat-square&label=pages"></a>
 </div>
 
 Base arquitetural de uma carteira autocustodial Polygon, com calculadora como

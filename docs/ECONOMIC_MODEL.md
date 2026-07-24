@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Meu Dinheiro — Modelo econômico</h1>
-  <p>Token Oficial, cotação em reais e gás patrocinado pela plataforma.</p>
+  <p>Token Oficial lastreado em BRL, Mint & Burn, resgate Pix e gás patrocinado.</p>
 
   <img alt="Documento Modelo econômico" src="https://img.shields.io/badge/documento-Modelo%20econômico-f97316?style=flat-square">
   <a href="https://github.com/RapportTecnologia/meudinheiro"><img alt="Repositório público" src="https://img.shields.io/badge/repositório-público-111827?style=flat-square&logo=github"></a>
@@ -8,202 +8,172 @@
   <img alt="Rede Polygon" src="https://img.shields.io/badge/rede-Polygon-8247E5?style=flat-square&logo=polygon">
   <img alt="Visitantes do modelo econômico" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-economic-model&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a></p>
 </div>
 
-## 1. Decisões principais
+## 1. Princípios
 
-Todas as transferências de valor do Meu Dinheiro usam exclusivamente o
-**Token Oficial Meu Dinheiro**, um ERC-20 na Polygon. POL não é ativo de
-pagamento da interface.
+- Toda transferência no aplicativo usa o **Token Oficial Meu Dinheiro** da
+  região na Polygon PoS.
+- A referência de emissão e resgate é bruta: **1 Token Oficial = R$ 1,00**.
+- Cada emissão exige um Pix efetivamente liquidado na conta de reserva.
+- Cada resgate bloqueia os tokens antes do Pix e os queima somente após a
+  confirmação bancária.
+- O contrato não acessa Pix nem conta bancária. A integração é híbrida,
+  auditável e idempotente.
+- A reserva não é capital operacional e deve permanecer segregada, líquida e
+  conciliada.
+- O usuário final paga `0 POL` nas operações elegíveis: o Paymaster ERC-4337
+  assume o gás.
 
-Nas transferências elegíveis, o usuário final também não precisa manter POL:
-a conta operacional é uma Smart Account ERC-4337 e o Paymaster da plataforma
-paga o gás. A tela informa **custo de gás para o usuário: 0 POL**.
+O token não representa participação societária, promessa de rendimento ou
+direito sobre o resultado da plataforma.
 
-O contrato oficial deve ser definido por ambiente em configuração assinada ou
-compilada no aplicativo. Usuários não podem substituí-lo. Endereço, `chainId`,
-nome, símbolo, decimais e bytecode precisam ser verificados.
+## 2. Entrada de capital — Mint
 
-## 2. Entrada em reais e cotação
+Exemplo: o usuário solicita uma carga de R$ 100.
 
-O usuário pode expressar o valor em BRL ou em quantidade direta do Token
-Oficial. Mesmo quando a entrada é BRL, a liquidação on-chain ocorre no token.
+1. O backend cria uma cobrança Pix com `operationId` único.
+2. O banco/PSP confirma por webhook assinado que R$ 100 foram liquidados na
+   conta segregada de reserva.
+3. O reconciliador valida valor, titularidade/regras de compliance, duplicidade
+   e o `endToEndId`.
+4. Somente então o operador autorizado chama `mintFromPix`.
+5. A facet emite 100 tokens para a Smart Account indicada.
+6. O hash opaco do identificador Pix e o `operationId` ficam registrados
+   on-chain; dados pessoais e payload Pix não.
+
+Não existe oferta inicial livre: cada Diamond regional nasce com oferta zero.
+Uma mesma operação ou referência Pix não pode emitir duas vezes.
+
+## 3. Saída de capital — Burn e Pix
+
+O resgate usa uma saga em duas fases para não queimar antes de o dinheiro
+chegar ao usuário:
+
+1. A tela mostra valor bruto, taxa e Pix líquido.
+2. O usuário autentica com biometria, PIN ou padrão.
+3. `requestRedemption` move o valor bruto para o cofre do Diamond.
+4. O backend confirma o bloqueio e ordena o Pix líquido.
+5. Após confirmação bancária, o operador chama `finalizeRedemption`.
+6. O contrato queima todos os tokens brutos bloqueados.
+
+Se o Pix falhar, o operador estorna imediatamente. Depois do prazo configurado,
+o próprio usuário pode recuperar os tokens bloqueados. `operationId` e
+referência Pix são de uso único.
+
+## 4. Taxa de resgate
+
+A sustentabilidade pode incluir uma taxa somente na conversão de volta para
+Pix, configurável entre **0% e 1%**. A faixa comercial pretendida é de
+**0,5% a 1%**.
 
 ```text
-quantidadeToken = valorBRL / precoTokenEmBRL
+taxa = arredondarParaCima(valorBruto × taxaBps / 10.000)
+pixLiquido = valorBruto - taxa
 ```
 
-Exemplo apenas matemático: a R$ 2,00 por token, uma cobrança de R$ 10,00
-solicita 5 tokens. A interface mostra valor em BRL, tokens, fonte, horário e
-validade da cotação.
+| Resgate bruto | Taxa | Pix líquido |
+| ---: | ---: | ---: |
+| R$ 100,00 | 0,5% | R$ 99,50 |
+| R$ 100,00 | 1,0% | R$ 99,00 |
 
-Uma cotação deve conter contrato, chainId, preço, quantidade em menor unidade,
-fonte, data, expiração, identificador, regra de arredondamento e evidência de
-integridade. O cálculo usa aritmética decimal/integer, nunca ponto flutuante.
-Cotação ausente, vencida ou inconsistente bloqueia o fluxo em BRL.
+Regras:
 
-## 3. Custo zero para o usuário
+- a paridade de R$ 1,00 é bruta; a taxa não altera o preço do token;
+- a taxa aparece antes da autenticação;
+- transferências on-chain comuns não recebem essa taxa;
+- Pix falho ou cancelado resulta em estorno integral dos tokens e nenhuma taxa;
+- receita de taxa só é reconhecida após Pix confirmado, burn e conciliação;
+- a configuração on-chain limita a taxa a 100 basis points.
 
-### 3.1 Quem paga
+## 5. Reservas e sustentabilidade
 
-A rede Polygon continua cobrando gás em POL. A diferença é quem assume o custo:
+A plataforma pode obter receita com a taxa de resgate e, se juridicamente
+permitido, com o rendimento conservador das reservas em BRL. Essa estratégia
+jamais pode reduzir o lastro, atrasar resgates ou prometer rendimento ao
+portador.
+
+Invariante operacional:
+
+```text
+reservaBRL >= tokensEmCirculacao + resgatesBloqueadosAindaNaoPagos
+```
+
+Controles mínimos:
+
+- conta de reserva separada da conta operacional;
+- ativos de altíssima liquidez e política de risco aprovada;
+- conciliação bancária × banco de dados × eventos on-chain;
+- prova periódica de reservas e passivos;
+- auditoria independente e trilha imutável;
+- limites por operação, região e período;
+- pausa de Mint/resgate em divergência;
+- dupla aprovação e chaves operacionais em KMS/HSM;
+- reconhecimento separado de principal, taxa e eventual rendimento;
+- plano de liquidez, contingência do PSP e tratamento de chargeback/fraude.
+
+O Paymaster, operação da plataforma, impostos, auditorias e compliance são
+custos operacionais. A reserva que lastreia tokens não pode ser consumida para
+pagá-los.
+
+## 6. Custo zero para o usuário
+
+A Polygon continua cobrando gás. O Paymaster paga POL em background para
+transferências do Token Oficial e pedidos de resgate expressamente autorizados
+na política.
 
 | Item | Responsável |
 | --- | --- |
-| Token Oficial transferido | Smart Account do usuário |
-| Assinatura da intenção | EOA proprietária no dispositivo |
-| Gás em POL | Depósito do Paymaster da plataforma |
+| Token Oficial | Smart Account do usuário |
+| Assinatura | Chave local após autenticação |
+| Gás Polygon | Paymaster da plataforma |
 | Envio ao EntryPoint | Bundler |
-| Custo de gás debitado do usuário | **0 POL** |
+| POL debitado do usuário | **0 POL** |
 
-Logo, “custo zero” é uma experiência subsidiada, não uma transação sem custo
-econômico. A RapportTecnologia deve contabilizar o POL gasto como custo
-operacional por aquisição, retenção e circulação regional.
+Se o patrocínio estiver indisponível, o app bloqueia com segurança. Não existe
+fallback silencioso usando POL da EOA do usuário.
 
-### 3.2 Elegibilidade
+## 7. Comerciantes e circulação regional
 
-O patrocínio padrão cobre somente:
+Comerciantes continuam sendo pontos de circulação local: recebem pagamentos,
+podem carregar usuários por transferência on-chain e operar estoque. O fluxo
+Pix/Mint da plataforma, porém, é a fonte contábil primária de nova emissão.
+Transferências entre carteiras nunca criam oferta.
 
-- Polygon `chainId` 137;
-- Smart Accounts e factory auditadas;
-- Token Oficial configurado;
-- uma chamada `transfer(address,uint256)`;
-- valor nativo zero;
-- limite de valor e gás dentro da política;
-- usuário/dispositivo/conta dentro das cotas;
-- operação válida, simulada, não repetida e não expirada.
+Swap de tesouraria Token Oficial ↔ POL permanece separado, sujeito a liquidez,
+slippage e política comercial. Usuários comuns apenas enviam e recebem o Token
+Oficial; não precisam comprar POL quando o patrocínio está disponível.
 
-Swap, aprovação ilimitada, transferência de POL, contrato arbitrário, batch não
-permitido e chamadas administrativas não entram automaticamente no subsídio.
-Políticas adicionais exigem revisão de segurança e orçamento específico.
+## 8. Segurança e privacidade
 
-### 3.3 Recusa ou indisponibilidade
+- Toda ação financeira exige revisão e autenticação local.
+- Chaves privadas nunca chegam ao Gateway Pix/ERC-4337.
+- Dados Pix, CPF/CNPJ e dados bancários não vão para a blockchain.
+- Webhooks exigem assinatura, allowlist, replay protection e idempotência.
+- O app e o backend reproduzem valor bruto, taxa, líquido, contrato e chainId.
+- O backend nunca considera um webhook isolado como prova suficiente: consulta
+  o PSP quando necessário e reconcilia estados.
+- Estados terminais não podem regredir.
 
-Se Gateway, Bundler ou Paymaster recusarem ou estiverem indisponíveis, o app:
+## 9. Conformidade antes de produção
 
-1. não assina uma transação EOA alternativa;
-2. não debita POL do usuário;
-3. informa que o patrocínio está indisponível;
-4. permite tentar novamente;
-5. conserva uma operação já enviada como pendente até conciliação.
+O modelo depende de integração com banco/PSP regulado e análise jurídica,
+contábil, fiscal, consumerista e de prevenção à lavagem de dinheiro no Brasil.
+Antes de operar com dinheiro real são obrigatórios, no mínimo:
 
-Não há fallback silencioso para uma taxa paga pelo usuário.
+- parecer jurídico sobre o enquadramento do token e do arranjo;
+- parceiro bancário/PSP regulado;
+- KYC/KYB, AML/CFT, sanções e monitoramento;
+- termos claros de emissão, resgate, taxa, prazo e indisponibilidade;
+- segregação patrimonial e política de reservas;
+- auditoria independente de contratos, sistemas e reconciliação.
 
-## 4. Orçamento e sustentabilidade do Paymaster
+Referências oficiais: [Lei 14.478/2022](https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/l14478.htm),
+[Decreto 11.563/2023](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/d11563.htm),
+[Lei 12.865/2013](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12865.htm),
+[Resolução BCB 520](https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?numero=520&tipo=Resolu%C3%A7%C3%A3o+BCB)
+e [Parecer CVM 40](https://www.gov.br/cvm/pt-br/assuntos/noticias/2022/cvm-divulga-parecer-de-orientacao-sobre-criptoativos-e-o-mercado-de-valores-mobiliarios).
 
-O orçamento mínimo deve considerar:
-
-```text
-custoMensalGas =
-  operaçõesPatrocinadas
-  × gásMédioPorOperação
-  × preçoMédioDoGasEmPOL
-  × preçoDoPOL
-  × margemDeSegurança
-```
-
-Além do gás de transferências, devem ser previstos implantação inicial das
-Smart Accounts, operações revertidas, picos de taxa, redundância de Bundler,
-infraestrutura, observabilidade, auditoria e reserva.
-
-Controles financeiros obrigatórios:
-
-- teto diário/mensal global;
-- cota por conta, dispositivo, comerciante e região;
-- saldo mínimo e alertas do depósito do Paymaster;
-- separação entre depósito, stake e tesouraria;
-- conciliação `requestId` → `userOpHash` → `transactionHash` → custo;
-- custo médio, p95, taxa de revert, abuso e sucesso;
-- pausa de emergência e reposição com aprovação administrativa;
-- centro de custo específico para subsídio de gás.
-
-O preço, spread ou modelo comercial do Token Oficial pode absorver esse custo,
-mas qualquer repasse deve ser transparente. “Gás zero” não pode esconder uma
-taxa cobrada por outro nome na mesma operação.
-
-## 5. Papéis operacionais
-
-### Usuário comum
-
-- mantém, envia e recebe o Token Oficial;
-- usa BRL como unidade de entrada mediante cotação;
-- não precisa comprar nem manter POL para pagamentos patrocinados;
-- autentica toda UserOperation por biometria, PIN ou padrão;
-- vê limites ou indisponibilidade antes de assinar.
-
-### Comerciante
-
-- mantém estoque regional do Token Oficial;
-- abastece clientes e recebe pagamentos;
-- utiliza as mesmas transferências ERC-4337 patrocinadas quando elegível;
-- pode ter cotas operacionais próprias;
-- opera swap e gestão de estoque em fluxo separado, sem presumir patrocínio.
-
-### Plataforma
-
-- financia e monitora o Paymaster;
-- define política objetiva de elegibilidade e limites;
-- protege chaves do patrocinador em KMS/HSM;
-- mantém Gateway, Bundler e RPC redundantes;
-- simula operações e previne replay, spam e griefing;
-- publica condições e disponibilidade do benefício.
-
-## 6. Fluxos consolidados
-
-### Abastecimento
-
-1. Cliente e comerciante acordam o valor externo.
-2. O sistema converte BRL para Token Oficial.
-3. O cliente apresenta o QR de sua Smart Account.
-4. O comerciante revisa token, quantidade e destino.
-5. O app solicita patrocínio, valida a UserOperation e autentica o comerciante.
-6. O Paymaster paga o gás e a Smart Account do comerciante envia o token.
-
-### Pagamento de compra
-
-1. O comerciante gera a cobrança em BRL/token.
-2. O cliente lê o QR e revisa destinatário, cotação e quantidade.
-3. O app confere saldo do Token Oficial e autorização do Paymaster.
-4. O cliente autentica e assina a UserOperation.
-5. O Paymaster paga o gás; as partes conferem a confirmação.
-
-### Transferência pessoal
-
-Agenda, QR ou clipboard resolvem o destinatário. O pagador revisa, autentica e
-assina. O mesmo fluxo de patrocínio é aplicado; novo contato só é salvo depois
-da inclusão confirmada.
-
-## 7. Controles de segurança
-
-- Toda operação financeira exige autenticação local.
-- O QR apenas transporta uma solicitação.
-- O app valida e decodifica a UserOperation antes de assinar.
-- O backend repete a política e nunca recebe a chave privada.
-- Autorização do Paymaster possui nonce, validade curta e uso único.
-- Limites de gás e valor são verificados no app, backend, Bundler e contrato.
-- Falha de RPC, cotação, simulação ou patrocínio resulta em bloqueio seguro.
-- Operação revertida pode consumir o depósito; por isso há cotas e
-  monitoramento.
-
-Detalhes técnicos estão em
-[Account Abstraction](ACCOUNT_ABSTRACTION.md).
-
-## 8. Conformidade e responsabilidades
-
-Emissão, venda, distribuição, cotação, conversão e subsídio de transações podem
-gerar obrigações legais, fiscais, contábeis, consumeristas e de prevenção à
-lavagem de dinheiro. O modelo deve receber avaliação jurídica específica para
-o Brasil antes da operação pública.
-
-O aplicativo não promete estabilidade, valorização, liquidez, disponibilidade
-ilimitada de patrocínio ou conversibilidade. Preço, spread, limites e riscos
-devem ser informados antes da autorização.
-
-## 9. Impacto sobre requisitos anteriores
-
-Esta decisão substitui a regra anterior segundo a qual cada usuário precisava
-manter POL ou procurar um comerciante para abastecer gás. A necessidade de POL
-passa para a infraestrutura da plataforma. O swap Token Oficial ↔ POL continua
-possível no modo comercial, mas serve à gestão de estoque/tesouraria e não é
-pré-requisito para o usuário pagar.
+Este documento é uma especificação técnica, não um parecer jurídico nem uma
+oferta pública.

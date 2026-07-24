@@ -47,7 +47,7 @@
 
 O **Meu Dinheiro** aproxima pessoas, pequenos negócios e serviços da mesma região por meio de uma experiência familiar: a tela principal funciona como uma calculadora. O valor digitado ou calculado torna-se uma **intenção de pagamento**, nunca uma transferência automática.
 
-Antes de qualquer movimentação, o aplicativo apresenta token, cotação, quantidade, endereço completo, rede e patrocinador do gás. O usuário revisa esses dados e autoriza a operação com biometria, PIN ou padrão do dispositivo.
+Antes de qualquer movimentação, o aplicativo apresenta token, paridade ou cotação, quantidade, taxa aplicável, endereço completo, rede e patrocinador do gás. O usuário revisa esses dados e autoriza a operação com biometria, PIN ou padrão do dispositivo.
 
 O produto combina quatro princípios:
 
@@ -63,7 +63,7 @@ O produto combina quatro princípios:
 ```text
 1. CALCULE          2. ESCOLHA          3. CONFIRA          4. AUTORIZE
 Valor em BRL    ->  QR, agenda ou   ->  token, destino, ->  biometria, PIN
-ou no Token         solicitação         cotação e gás       ou padrão
+ou no Token         solicitação         taxa e gás          ou padrão
 Oficial              copiada             patrocinado
 ```
 
@@ -74,7 +74,10 @@ A calculadora prepara o valor. O QR Code ou a agenda resolve o destinatário. A 
 - **Calculadora funcional:** soma, subtração, multiplicação e divisão por parser restrito.
 - **Até duas contas:** duas EOAs proprietárias, cada uma vinculada à sua Smart Account ERC-4337.
 - **Token Oficial:** único ERC-20 usado nos pagamentos comuns do aplicativo.
-- **Entrada em reais:** o valor em BRL é convertido para o Token Oficial por cotação identificada e com prazo de validade.
+- **Paridade bruta:** R$ 1,00 corresponde a 1 Token Oficial em carga e resgate.
+- **Carga via Pix:** o Mint ocorre somente após liquidação na reserva segregada.
+- **Resgate para Pix:** tokens são bloqueados, o Pix líquido é pago e só então ocorre o Burn.
+- **Taxa transparente:** de 0% a 1% sobre o resgate, exibida antes da autenticação.
 - **Enviar e receber:** solicitações interoperáveis por QR Code no padrão EIP-681.
 - **Agenda segura:** favoritos, frequência, recência e proteção contra nomes ou endereços duplicados.
 - **Clipboard:** compartilhamento de destino e valor proposto sem autorizar automaticamente a transferência.
@@ -91,18 +94,20 @@ A calculadora prepara o valor. O QR Code ou a agenda resolve o destinatário. A 
 | **Transferir para um amigo** | O emissor calcula o valor e lê o QR ou a solicitação compartilhada pelo destinatário |
 | **Solicitar um pagamento** | O recebedor compartilha endereço e valor proposto por QR ou área de transferência |
 | **Reutilizar contatos** | Destinatários frequentes ficam na agenda após confirmação e validação de conflitos |
+| **Carregar via Pix** | Um depósito liquidado emite exatamente o mesmo valor bruto em tokens |
+| **Resgatar para Pix** | Tokens são bloqueados; Pix confirmado gera Burn e falha gera estorno |
 
 Em todos os fluxos, QR Code, clipboard e agenda são apenas fontes de dados não confiáveis. Eles nunca acessam a chave nem autorizam sozinhos uma movimentação.
 
 ## Token Oficial e valores em reais
 
-Toda transferência comum acontece no **Token Oficial Meu Dinheiro** da região. Quando o usuário escolhe BRL, o aplicativo não envia reais para a blockchain: ele consulta uma cotação vigente e calcula a quantidade equivalente do ERC-20 em unidades mínimas.
+Toda transferência comum acontece no **Token Oficial Meu Dinheiro** da região. Em carga e resgate, a referência é bruta: **1 Token Oficial = R$ 1,00**.
 
-A cotação deve informar fonte, horário, validade e evidência de integridade. Se estiver ausente, expirada ou divergente, a transação é bloqueada. O projeto não apresenta o token como investimento, não promete valorização e não garante liquidez.
+Um Pix de entrada só gera Mint depois de liquidado na conta segregada de reserva. No resgate, os tokens são primeiro bloqueados; o Burn ocorre apenas após o Pix líquido confirmado. A taxa de saque fica entre 0,5% e 1%, limitada on-chain a 1% e exibida antes da autenticação. Se o Pix falhar, os tokens são estornados integralmente.
 
-Comerciantes atuam como pontos regionais de circulação e abastecimento. O swap de estoque é uma função comercial separada; usuários comuns apenas enviam e recebem o Token Oficial.
+A reserva deve cobrir tokens em circulação mais resgates bloqueados ainda não pagos. Eventual rendimento da reserva não pode reduzir o lastro nem ser prometido ao portador. Produção exige banco/PSP regulado, KYC/KYB, AML/CFT, conciliação, auditoria e parecer jurídico.
 
-Detalhes: [modelo econômico, cotação e gás](docs/ECONOMIC_MODEL.md).
+Detalhes: [modelo econômico, reservas, Mint & Burn e gás](docs/ECONOMIC_MODEL.md).
 
 ## Custo zero com Account Abstraction
 
@@ -177,7 +182,7 @@ A infraestrutura implementa as portas definidas pela aplicação. Regras finance
 | Cliente do Gateway ERC-4337 | Contrato HTTP e validações locais implementados |
 | Smart Account Factory e Paymaster | Contratos e operação precisam ser implantados e auditados |
 | Gateway, Bundler e signer em KMS/HSM | Backend ainda necessário para operação real |
-| Cotação Token Oficial/BRL | Provider de produção pendente |
+| Gateway Pix, PSP e reconciliador | Integração de produção pendente; contratos e app têm a base do fluxo |
 | Swap comercial | Desabilitado por padrão com `swapEnabled: false` |
 | Polygon mainnet | Não homologada para fundos reais |
 
@@ -217,6 +222,7 @@ npx expo run:android
 | `EXPO_PUBLIC_ERC4337_GATEWAY_URL` | endpoint público do Gateway da plataforma |
 | `EXPO_PUBLIC_ERC4337_ENTRY_POINT` | endereço esperado do EntryPoint v0.7 |
 | `EXPO_PUBLIC_ERC4337_SIMPLE_ACCOUNT_FACTORY` | factory auditada da Smart Account |
+| `EXPO_PUBLIC_FIAT_GATEWAY_URL` | Gateway de carga, resgate e conciliação Pix |
 
 > [!CAUTION]
 > Variáveis `EXPO_PUBLIC_*` fazem parte do aplicativo distribuído. Nunca coloque nelas chave privada, seed, credencial de Bundler, chave do sponsor, token administrativo ou segredo RPC.
@@ -227,7 +233,9 @@ npx expo run:android
 - A chave é armazenada por referência no SecureStore e usada apenas após autenticação.
 - O Gateway recebe assinatura, nunca seed ou chave privada.
 - Valores on-chain usam `bigint` e `parseUnits`; nunca `number`.
-- Rede, contrato, código, destinatário, cotação e hash são conferidos antes da assinatura.
+- Rede, contrato, código, destinatário, paridade, taxa e hash são conferidos antes da assinatura.
+- Mint exige Pix liquidado e identificadores idempotentes; Burn exige Pix de saída confirmado.
+- A reserva segregada deve cobrir circulação e resgates bloqueados ainda não pagos.
 - QR Code e clipboard são tratados como entrada externa não confiável.
 - Toque duplo, replay, cotação expirada e operação divergente devem ser bloqueados.
 - Credenciais de Bundler/Paymaster e chave de patrocínio pertencem ao backend/KMS.
@@ -242,7 +250,7 @@ Leia a [arquitetura de segurança](docs/ARCHITECTURE.md) e a [política ERC-4337
 | [Requisitos](docs/REQUIREMENTS.md) | regras funcionais, não funcionais e critérios de aceite |
 | [Arquitetura](docs/ARCHITECTURE.md) | camadas, fluxos, decisões técnicas e pendências |
 | [Casos de uso](docs/USE_CASES.md) | abastecimento, compra, cobrança e transferência |
-| [Modelo econômico](docs/ECONOMIC_MODEL.md) | Token Oficial, cotação em BRL, comerciantes e gás |
+| [Modelo econômico](docs/ECONOMIC_MODEL.md) | Token Oficial, reservas, Mint & Burn, taxa e gás |
 | [Account Abstraction](docs/ACCOUNT_ABSTRACTION.md) | Smart Account, Gateway, Bundler e Paymaster |
 | [Agenda e compartilhamento](docs/CONTACTS_AND_SHARING.md) | contatos, conflitos, QR e clipboard |
 | [Identidade de marca](docs/BRAND.md) | posicionamento, símbolo, paleta e tom de voz |
@@ -263,7 +271,7 @@ A sequência recomendada por feature é:
 5. testar o componente React Native;
 6. validar o fluxo E2E em development build.
 
-Casos mínimos incluem limite de duas contas, parser de pagamento, conflito de contatos, QR inválido, chainId incorreto, autenticação cancelada, cotação expirada, hash divergente e envio duplicado.
+Casos mínimos incluem limite de duas contas, parser de pagamento, conflito de contatos, QR inválido, chainId incorreto, autenticação cancelada, taxa inválida, reserva insuficiente, operação Pix repetida, hash divergente e envio duplicado.
 
 ## Como contribuir
 

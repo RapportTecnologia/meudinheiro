@@ -17,15 +17,16 @@
 - A pessoa que paga controla uma Smart Account com saldo do Token Oficial.
 - A pessoa que recebe possui uma conta ativa no Meu Dinheiro.
 - O Token Oficial Meu Dinheiro é o único ativo de pagamento.
-- BRL é uma unidade de entrada convertida pela cotação vigente do Token Oficial.
+- Em pagamentos, carga e resgate, 1 Token Oficial corresponde a R$ 1,00 bruto.
 - O Paymaster da plataforma paga o gás; o usuário final paga `0 POL`.
 - O QR Code segue EIP-681 e contém rede, destinatário, contrato oficial e a
   quantidade calculada de tokens.
 - O QR nunca autoriza nem executa uma transação sozinho.
 - Toda aprovação, transferência ou swap exige biometria, PIN ou padrão do
   dispositivo pagador.
-- Dinheiro físico, cartão ou Pix não são processados pelo aplicativo. Quando
-  existem, são conferidos fora da blockchain pelas partes.
+- O Pix é processado por banco/PSP integrado ao Gateway fiduciário; o smart
+  contract nunca acessa a rede bancária.
+- Novos tokens só são emitidos após Pix liquidado na reserva segregada.
 
 ## UC-01 — abastecer a carteira em um estabelecimento
 
@@ -41,13 +42,12 @@ após o caixa conferir o dinheiro.
 2. O caixa confere e aceita o meio de pagamento externo.
 3. No Meu Dinheiro, o cliente seleciona BRL como unidade de entrada.
 4. O cliente digita `10` na calculadora.
-5. O app consulta a cotação Token Oficial/BRL e exibe a quantidade de tokens,
-   fonte, horário e expiração.
-6. O cliente aceita a cotação e toca em **Receber**.
+5. O app exibe 10 tokens pela paridade bruta de R$ 1,00 e toca em **Receber**.
+6. O cliente aceita o valor e toca em **Receber**.
 7. O app exibe uma solicitação contendo Polygon, contrato oficial, endereço da
    carteira e quantidade ERC-20 calculada.
 8. O caixa lê o QR Code e verifica o estoque do token.
-9. O aplicativo do caixa mostra BRL, cotação, tokens, rede e destinatário.
+9. O aplicativo do caixa mostra BRL, tokens, rede e destinatário.
 10. O caixa confirma e autentica com biometria, PIN ou padrão.
 11. O app valida e assina uma UserOperation; o Paymaster paga o gás.
 12. As partes conferem o `userOpHash`, a transação e a confirmação na Polygon.
@@ -63,10 +63,9 @@ após o caixa conferir o dinheiro.
 
 ### Observação de negócio
 
-O app não assume paridade de R$ 1 por token. O QuoteProvider calcula quantos
-tokens correspondem aos R$ 10 e a cotação deve permanecer válida até a
-autorização. O comerciante é responsável por manter estoque do Token Oficial;
-o custo de gás elegível é patrocinado pela plataforma.
+O fluxo de balcão é uma transferência de estoque já emitido. Ele não cria
+oferta. A entrada primária de novos tokens ocorre pelo caso Pix/Mint, sempre
+lastreada na reserva.
 
 ## UC-02 — pagar uma compra no caixa
 
@@ -78,12 +77,12 @@ exato, para que o cliente revise e autorize o pagamento na própria carteira.
 ### Fluxo principal
 
 1. O caixa digita o preço da compra em BRL.
-2. O app consulta a cotação e apresenta a quantidade do Token Oficial.
-3. O caixa aceita a cotação e toca em **Receber**.
+2. O app apresenta a mesma quantidade bruta do Token Oficial.
+3. O caixa aceita o valor e toca em **Receber**.
 4. O app gera um QR EIP-681 com destinatário, contrato oficial e tokens.
 5. O cliente toca em **Enviar** ou **Scan QR**.
-6. O app valida rede, destinatário, contrato, cotação e quantidade.
-7. A tela de revisão mostra BRL, cotação, tokens, endereço, patrocinador e
+6. O app valida rede, destinatário, contrato e quantidade.
+7. A tela de revisão mostra BRL, tokens, endereço, patrocinador e
    custo `0 POL`.
 8. O app confere saldo do Token Oficial e elegibilidade do patrocínio.
 9. O cliente autentica com biometria, PIN ou padrão.
@@ -109,10 +108,10 @@ transferência.
 ### Fluxo principal
 
 1. O destinatário informa BRL ou quantidade direta do Token Oficial.
-2. Em BRL, o app consulta a cotação.
+2. Em BRL, o app aplica a paridade bruta.
 3. O destinatário toca em **Receber** e apresenta o QR do Token Oficial.
 4. O emissor toca em **Enviar** ou **Scan QR** e faz a leitura.
-5. O emissor confere BRL, cotação, tokens, patrocinador, rede e destinatário.
+5. O emissor confere BRL, tokens, patrocinador, rede e destinatário.
 6. O app verifica Token Oficial e prepara o patrocínio.
 7. O emissor autoriza com biometria, PIN ou padrão.
 8. O app transmite a UserOperation patrocinada e ambos conferem a confirmação.
@@ -139,9 +138,9 @@ precisar ler o QR ou digitar o endereço em cada transferência.
 3. A agenda apresenta favoritos e contatos ordenados por uso recente e
    frequência.
 4. O remetente seleciona um contato e confere o endereço.
-5. O app obtém a cotação, quando necessária, e monta a intenção.
+5. O app aplica a paridade BRL quando necessária e monta a intenção.
 6. Verifica saldo do Token Oficial e elegibilidade do Paymaster.
-7. A tela de revisão mostra contato, endereço, tokens, BRL, cotação e custo de
+7. A tela de revisão mostra contato, endereço, tokens, BRL e custo de
    gás `0 POL`.
 8. O remetente autentica e transmite a UserOperation patrocinada.
 
@@ -155,7 +154,7 @@ para enviá-lo ao pagador por um canal escolhido.
 ### Fluxo principal
 
 1. O destinatário informa o valor e toca em **Receber**.
-2. Em BRL, o app consulta e fixa uma cotação válida.
+2. Em BRL, o app aplica a paridade bruta.
 3. A tela mostra QR e **Copiar solicitação**.
 4. O app copia a URI EIP-681 com contrato oficial, Polygon, endereço e tokens.
 5. O destinatário compartilha o texto pelo canal de sua escolha.
@@ -225,10 +224,63 @@ para enviar o Token Oficial sem precisar comprar ou manter POL.
 - EntryPoint ou proprietário divergente: rejeitar a ativação.
 - Fundos existentes na EOA: não migrar automaticamente.
 
+## UC-09 — carregar a carteira via Pix com Mint
+
+### História
+
+Como usuário, quero depositar R$ 100 via Pix e receber exatamente 100 Tokens
+Oficiais, para carregar minha carteira com lastro verificável.
+
+### Fluxo principal
+
+1. O usuário digita `100`, abre **Pix** e escolhe **Carregar carteira**.
+2. O app mostra paridade bruta, carteira de destino e exige autenticação local.
+3. O Gateway cria uma cobrança Pix e uma operação idempotente.
+4. O usuário paga; banco/PSP confirma a liquidação na conta de reserva.
+5. O reconciliador confere valor e duplicidade, sem colocar PII on-chain.
+6. O operador chama `mintFromPix` com operação, destinatário, 100 tokens e hash
+   opaco da referência Pix.
+7. O contrato rejeita reuso e emite exatamente 100 tokens.
+8. O app acompanha os estados `aguardando Pix`, `liquidado` e `emitido`.
+
+### Exceções
+
+- Pix expirado/cancelado: não emitir.
+- Valor divergente: bloquear para conciliação manual.
+- Webhook repetido: devolver o estado existente sem novo Mint.
+- Reserva ou reconciliação divergente: pausar novas emissões.
+
+## UC-10 — resgatar tokens para Pix com taxa
+
+### História
+
+Como comerciante ou usuário elegível, quero resgatar 100 tokens para Pix,
+conhecendo antecipadamente a taxa e o valor líquido.
+
+### Fluxo principal
+
+1. O usuário digita `100`, abre **Pix** e escolhe **Resgatar para Pix**.
+2. Com taxa de 0,5%, a tela mostra R$ 100,00 brutos, R$ 0,50 de taxa e
+   R$ 99,50 líquidos.
+3. O usuário revisa o destino Pix e autentica com biometria, PIN ou padrão.
+4. A Smart Account envia `requestRedemption` por UserOperation patrocinada.
+5. O Diamond bloqueia 100 tokens e emite o evento de solicitação.
+6. O reconciliador confirma o bloqueio e o PSP envia R$ 99,50.
+7. Após confirmação bancária, o operador finaliza e queima os 100 tokens.
+8. A taxa é reconhecida somente após Pix, Burn e conciliação.
+
+### Exceções
+
+- Saldo insuficiente: não preparar a UserOperation.
+- Pix falhou: estornar os 100 tokens, sem taxa.
+- Operador indisponível: após o timeout, o usuário pode solicitar o estorno.
+- Taxa acima de 1% ou diferente da revisão: rejeitar.
+- Patrocínio indisponível: bloquear sem cobrar POL do usuário.
+
 ## Critérios de aceite dos casos
 
 - O botão **Receber** utiliza o resultado atual da calculadora.
-- A seleção de BRL exige cotação válida do Token Oficial.
+- A seleção de BRL aplica paridade bruta e aritmética inteira.
 - A cobrança ERC-20 usa `transfer(address,uint256)` no URI EIP-681.
 - POL nunca é solicitado como ativo de pagamento.
 - O scanner aceita cobrança com valor ou endereço simples.
@@ -250,3 +302,6 @@ para enviar o Token Oficial sem precisar comprar ou manter POL.
 - Novo contato só é gravado depois de confirmação on-chain.
 - Nome e endereço são únicos; conflitos oferecem orientação acionável.
 - Edição de endereço exige confirmação explícita.
+- Mint exige Pix liquidado e identificadores não reutilizados.
+- Resgate informa bruto, taxa e líquido antes da autenticação.
+- Burn só ocorre depois da confirmação bancária; falha produz estorno integral.

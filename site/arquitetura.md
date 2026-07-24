@@ -26,7 +26,8 @@ permalink: /arquitetura/
     <section id="camadas" class="content-card highlight">
       <h2>Arquitetura em camadas</h2>
       <ul>
-        <li><strong>Domain:</strong> entidades e invariantes de contas, pagamentos, cotação e patrocínio.</li>
+        <li><strong>Domain:</strong> entidades e invariantes de contas, pagamentos, taxa, reserva e patrocínio.</li>
+        <li><strong>Fiat Gateway:</strong> cobrança Pix, resgate e reconciliação sem receber chaves.</li>
         <li><strong>Application:</strong> casos de uso, estado global e portas substituíveis.</li>
         <li><strong>Infrastructure:</strong> RPC, Gateway ERC-4337, contratos, SecureStore e autenticação.</li>
         <li><strong>Presentation:</strong> navegação, telas e componentes React Native.</li>

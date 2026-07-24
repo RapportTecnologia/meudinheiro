@@ -30,7 +30,8 @@ publicação nas lojas devem identificar claramente o aplicativo como carteira.
 - Gás patrocinado pelo Paymaster da plataforma, com custo `0 POL` para o
   usuário final em transferências elegíveis.
 - Um Token Oficial Meu Dinheiro ERC-20 fixado por ambiente.
-- Cotação Token Oficial/BRL por provedor validado.
+- Paridade bruta de emissão e resgate: 1 Token Oficial = R$ 1,00.
+- Carga Pix com Mint somente após liquidação e resgate com bloqueio, Pix e Burn.
 - Calculadora, leitura e exibição de QR Code.
 - Preparação dos fluxos de envio e swap.
 - Autenticação do dispositivo para qualquer operação sensível.
@@ -38,12 +39,12 @@ publicação nas lojas devem identificar claramente o aplicativo como carteira.
 Não fazem parte da primeira base:
 
 - custódia de chaves em servidor;
-- compra de cripto com moeda fiduciária;
+- execução bancária direta pelo smart contract;
 - bridge entre blockchains;
 - recuperação social;
 - suporte a redes diferentes da Polygon;
 - execução de swap ou envio sem tela de revisão;
-- promessa de rentabilidade, cotação ou liquidez.
+- promessa de rentabilidade ao portador ou uso do lastro como capital operacional.
 
 ## 3. Atores
 
@@ -60,7 +61,9 @@ Não fazem parte da primeira base:
 | EntryPoint v0.7 | Validar, executar e contabilizar UserOperations |
 | RPC Polygon | Consultar estado, código, hash e recibos |
 | Token Oficial ERC-20 | Único ativo de pagamento do aplicativo |
-| QuoteProvider | Cotar o Token Oficial em BRL com prazo de validade |
+| Banco/PSP | Liquidar Pix e emitir confirmação autenticada |
+| Gateway fiduciário | Orquestrar carga, resgate e reconciliação sem custodiar chaves |
+| Reconciliador | Conferir banco, base operacional e eventos on-chain |
 | Roteador de swap | Converter estoque do comerciante entre Token Oficial e POL |
 
 ## 4. Requisitos funcionais
@@ -371,15 +374,16 @@ Não fazem parte da primeira base:
 - **RN-04:** QR Code é dado de entrada; nunca confirmação.
 - **RN-05:** nenhuma transação ocorre sem revisão e autenticação.
 - **RN-06:** símbolos iguais não significam tokens iguais.
-- **RN-07:** cotação expirada não pode ser executada.
+- **RN-07:** uma cotação de swap expirada não pode ser executada.
 - **RN-08:** falha ou cancelamento de autenticação encerra a operação.
-- **RN-09:** o app não garante preço, liquidez, conclusão nem rentabilidade.
+- **RN-09:** a paridade bruta de R$ 1 exige reserva integral; o app não promete
+  rentabilidade, prazo ilimitado nem liquidez fora das condições publicadas.
 - **RN-10:** gerar ou mostrar um QR não movimenta fundos e não exige assinatura;
   o dispositivo pagador autentica cada transação.
 - **RN-11:** para abastecimento em estabelecimento, o caixa só deve transferir
   após conferir a contraprestação externa.
-- **RN-12:** todo valor em BRL deve ser convertido pela cotação vigente para a
-  quantidade adequada do Token Oficial.
+- **RN-12:** para pagamentos, carga e resgate, cada centavo bruto corresponde à
+  unidade equivalente do Token Oficial; swap segue cotação própria.
 - **RN-13:** POL não constitui ativo de pagamento; nas UserOperations elegíveis
   ele é pago pelo Paymaster da plataforma.
 - **RN-14:** saldo suficiente do Token Oficial e autorização válida do
@@ -392,6 +396,31 @@ Não fazem parte da primeira base:
   plataforma; todo gás patrocinado entra no orçamento e na contabilidade.
 - **RN-18:** o Paymaster pode aplicar limites transparentes, mas não pode gerar
   cobrança silenciosa na EOA.
+- **RN-19:** cada Mint exige Pix liquidado e `operationId`/referência únicos.
+- **RN-20:** oferta inicial regional é zero; não existe emissão administrativa
+  sem evidência do depósito.
+- **RN-21:** resgate bloqueia tokens antes do Pix e só os queima após confirmação.
+- **RN-22:** falha do Pix estorna integralmente os tokens bloqueados.
+- **RN-23:** taxa de resgate deve ficar entre 0% e 1%, ser exibida antes da
+  autenticação e incidir somente sobre a conversão para Pix.
+- **RN-24:** a reserva segregada deve cobrir circulação mais resgates bloqueados
+  e ainda não pagos.
+- **RN-25:** rendimento da reserva não pode reduzir o lastro nem ser prometido
+  ao titular do token.
+- **RN-26:** dados pessoais/Pix não devem ser publicados on-chain; somente hashes
+  opacos e não reversíveis.
+
+### 7.1 Carga e resgate fiduciário
+
+- **RF-FIAT-01:** gerar cobrança Pix vinculada a carteira, valor e operação únicos.
+- **RF-FIAT-02:** emitir exatamente o valor bruto em tokens apenas após liquidação.
+- **RF-FIAT-03:** rejeitar referência Pix ou operação já processada.
+- **RF-FIAT-04:** apresentar valor bruto, taxa em basis points e Pix líquido.
+- **RF-FIAT-05:** submeter o bloqueio por Smart Account/ERC-4337 após autenticação.
+- **RF-FIAT-06:** finalizar Burn somente depois da confirmação do Pix de saída.
+- **RF-FIAT-07:** permitir estorno pelo operador e pelo usuário após timeout.
+- **RF-FIAT-08:** conciliar reserva, supply, bloqueios, Mint, Burn e Pix.
+- **RF-FIAT-09:** pausar automaticamente novas operações em divergência.
 
 ## 8. Critérios de aceite da base
 
@@ -405,8 +434,11 @@ Não fazem parte da primeira base:
 - A chave não aparece no estado persistido.
 - Exportação chama a autenticação antes de acessar o segredo.
 - O swap não aparece para o usuário comum.
-- Receber R$ 10 consulta a cotação e gera URI ERC-20 com a quantidade calculada
-  do Token Oficial.
+- Receber R$ 10 gera URI ERC-20 para 10 tokens na paridade bruta.
+- Depositar R$ 100 via Pix emite 100 tokens somente após liquidação.
+- Resgatar 100 tokens a 0,5% mostra R$ 0,50 de taxa e R$ 99,50 líquidos.
+- Pix de resgate falho devolve os 100 tokens e não reconhece taxa.
+- Reprocessar `operationId` ou referência Pix não altera a oferta.
 - POL nunca aparece como opção de pagamento.
 - Usuário sem POL consegue enviar uma transferência elegível patrocinada.
 - Patrocínio indisponível bloqueia o envio sem fallback pago.

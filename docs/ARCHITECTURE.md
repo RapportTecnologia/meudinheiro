@@ -33,8 +33,8 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 - RF06: enviar exclusivamente o Token Oficial; o Paymaster paga o gás em POL;
 - RF07: ler endereço `0x...` ou URI `ethereum:` por QR;
 - RF08: exibir QR interoperável EIP-681;
-- RF09: cotar Token Oficial/BRL e reservar swap Token Oficial ↔ POL ao
-  comerciante;
+- RF09: manter paridade bruta 1 Token Oficial = R$ 1,00 em carga/resgate e
+  reservar swap Token Oficial ↔ POL ao comerciante;
 - RF10: autenticar cada assinatura, aprovação, swap, envio e exportação;
 - RF11: manter o swap bloqueado até que configuração e cotação tenham sido validadas;
 - RF12: validar e assinar `UserOperation` localmente após autenticação;
@@ -56,7 +56,8 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 
 ## 4. Camadas (DDD pragmático)
 
-- `domain`: entidades e invariantes puras (contas, cálculo, pagamento e cotação).
+- `domain`: entidades e invariantes puras (contas, cálculo, pagamento, taxa e reserva).
+- `domain/fiat`: centavos BRL, cotação de resgate e cobertura da reserva.
 - `domain/payment`: criação e interpretação de pedidos EIP-681.
 - `domain/contacts`: contatos, invariantes e ranking de frequentes.
 - `domain/accountAbstraction`: tipos e política defensiva de patrocínio.
@@ -69,7 +70,7 @@ Dependências apontam para dentro: UI → application → domain. Infrastructure
 ## 5. Fluxo de transação
 
 1. Home calcula e seleciona a unidade de entrada: BRL ou Token Oficial.
-2. Em BRL, QuoteProvider calcula a quantidade final do Token Oficial.
+2. Em BRL, a paridade bruta converte centavos na quantidade equivalente.
 3. Receber gera um QR/clipboard EIP-681 com contrato, destinatário e tokens.
 4. Scanner, agenda ou clipboard resolvem o destinatário sem executar ações.
 5. SendReview valida rede, contrato, endereço, cotação, tokens, Smart Account e
@@ -121,14 +122,19 @@ autenticação, mas a persistência ocorre somente depois do recibo confirmado.
 Erros posteriores de armazenamento são tratados separadamente do resultado
 on-chain para impedir um falso estado de falha financeira.
 
-### Cotação e patrocínio de gás
+### Carga, resgate e patrocínio de gás
 
-`QuoteProvider` converte BRL para Token Oficial e retorna preço, quantidade
-inteira, fonte, horário, expiração e evidência de integridade. Uma cotação
-inválida bloqueia o fluxo em BRL.
+`fiatOperations` calcula em `bigint` a paridade e a taxa de 0% a 1%.
+`fiatGateway` coordena o PSP sem receber chaves. O Mint depende de webhook
+liquidado e idempotente. O resgate bloqueia tokens no Diamond; o reconciliador
+ordena o Pix e somente após a confirmação autoriza o Burn. Em falha, estorna.
 
-`SponsorshipPolicy` aceita apenas `execute` com valor nativo zero e
-`transfer(address,uint256)` do Token Oficial. O app rejeita divergências de
+PII e payload Pix permanecem off-chain. O contrato recebe apenas `operationId`
+e hashes opacos. A reserva deve cobrir tokens em circulação mais resgates
+bloqueados ainda não pagos.
+
+`SponsorshipPolicy` aceita `execute` com valor nativo zero para
+`transfer(address,uint256)` e para `requestRedemption` do Diamond regional. O app rejeita divergências de
 conta, token, destino, quantidade, EntryPoint, validade, hash ou limites de gás.
 O backend repete a política, simula a UserOperation, aplica cotas e obtém a
 autorização do Paymaster. Se o patrocínio falhar, a operação é bloqueada sem
@@ -151,7 +157,8 @@ Ordem por feature: escrever teste de regra → implementar domínio → teste do
 
 - revisão de segurança e testes de integração da tela de envio;
 - expiração e identificador único opcional para pedidos de pagamento;
-- QuoteProvider Token Oficial/BRL com integridade e expiração;
+- integração auditada com banco/PSP, webhooks assinados e reconciliação;
+- conta de reserva segregada, prova de reservas e política de liquidez;
 - Gateway ERC-4337, factory e Paymaster implantados e auditados;
 - KMS/HSM, cotas, idempotência e observabilidade do patrocínio;
 - depósito/stake do Paymaster com alertas e orçamento operacional;

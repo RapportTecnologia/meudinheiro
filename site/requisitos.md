@@ -29,7 +29,9 @@ permalink: /requisitos/
         <li>Calculadora com operações básicas e parser restrito.</li>
         <li>Até duas EOAs proprietárias e suas Smart Accounts ERC-4337.</li>
         <li>Token Oficial ERC-20 fixado por configuração confiável.</li>
-        <li>Entrada em BRL convertida por cotação válida.</li>
+        <li>Paridade bruta de R$ 1,00 por Token Oficial em carga e resgate.</li>
+        <li>Mint somente após Pix liquidado; Burn somente após Pix de saída confirmado.</li>
+        <li>Taxa de resgate entre 0% e 1%, apresentada antes da autenticação.</li>
         <li>Leitura e geração de solicitações EIP-681.</li>
       </ul>
     </section>
@@ -57,7 +59,7 @@ permalink: /requisitos/
         <li>Nenhum segredo em Zustand, AsyncStorage, logs ou analytics.</li>
         <li>Autenticação vinculada a uma operação concreta e temporária.</li>
         <li>Valores on-chain representados por inteiros <code>bigint</code>.</li>
-        <li>Falha de RPC, cotação ou patrocínio produz bloqueio seguro.</li>
+        <li>Falha de RPC, Pix, reconciliação ou patrocínio produz bloqueio seguro.</li>
         <li>Não existe fallback silencioso para transação EOA paga pelo usuário.</li>
         <li>Produção depende de auditoria, threat model e pentest.</li>
       </ul>

@@ -73,7 +73,7 @@ permalink: /
       <h2>A calculadora prepara. Você revisa e autoriza.</h2>
       <p>
         O valor digitado se transforma em uma intenção de pagamento. Antes de
-        qualquer transferência, o aplicativo mostra destino, cotação, saldo do
+        qualquer transferência, o aplicativo mostra destino, paridade, saldo do
         Token Oficial e patrocínio do gás pela plataforma.
       </p>
       <ul class="brand-values">
@@ -102,8 +102,8 @@ permalink: /
       <article class="feature-card">
         <h3>Calcule em reais</h3>
         <p>
-          O valor em BRL é convertido para a quantidade adequada do Token
-          Oficial por uma cotação identificada e com validade.
+          Na carga, no pagamento e no resgate, R$ 1,00 corresponde a um Token
+          Oficial bruto, com reserva e reconciliação.
         </p>
       </article>
       <article class="feature-card">
@@ -116,7 +116,7 @@ permalink: /
       <article class="feature-card">
         <h3>Revise e autentique</h3>
         <p>
-          Destino, token, quantidade, cotação e UserOperation patrocinada são
+          Destino, token, quantidade, taxa e UserOperation patrocinada são
           revisados antes da biometria, PIN ou padrão do dispositivo.
         </p>
       </article>
@@ -137,7 +137,7 @@ permalink: /
     <div class="flow-grid">
       <article class="flow-card"><h3>Informe</h3><p>Digite o valor em BRL ou em unidades do Token Oficial.</p></article>
       <article class="flow-card"><h3>Resolva</h3><p>Selecione contato, leia QR ou cole uma solicitação EIP-681.</p></article>
-      <article class="flow-card"><h3>Confira</h3><p>Valide destino, cotação, saldo do token e custo de gás 0 POL.</p></article>
+      <article class="flow-card"><h3>Confira</h3><p>Valide destino, paridade, taxa, saldo do token e custo de gás 0 POL.</p></article>
       <article class="flow-card"><h3>Autorize</h3><p>Assine a UserOperation; o Paymaster paga o gás.</p></article>
     </div>
   </div>
@@ -185,7 +185,7 @@ permalink: /
       <a class="doc-card" href="{{ '/arquitetura/' | relative_url }}"><div><p class="section-kicker">Engenharia</p><h3>Arquitetura</h3><p>Camadas, domínio, infraestrutura, segurança e decisões técnicas.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/requisitos/' | relative_url }}"><div><p class="section-kicker">Especificação</p><h3>Requisitos</h3><p>Regras funcionais, não funcionais e critérios de aceite.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/casos-de-uso/' | relative_url }}"><div><p class="section-kicker">Experiência</p><h3>Casos de uso</h3><p>Abastecimento, compra, transferência, agenda e clipboard.</p></div><span>Explorar →</span></a>
-      <a class="doc-card" href="{{ '/modelo-economico/' | relative_url }}"><div><p class="section-kicker">Operação</p><h3>Token e gás</h3><p>Cotação em BRL, orçamento do Paymaster e sustentabilidade.</p></div><span>Explorar →</span></a>
+      <a class="doc-card" href="{{ '/modelo-economico/' | relative_url }}"><div><p class="section-kicker">Operação</p><h3>Token, reservas e gás</h3><p>Mint & Burn, resgate Pix, lastro, taxa e Paymaster.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/custo-zero/' | relative_url }}"><div><p class="section-kicker">ERC-4337</p><h3>Custo zero</h3><p>Smart Account, Bundler, Paymaster e validação defensiva.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/agenda/' | relative_url }}"><div><p class="section-kicker">Destinatários</p><h3>Agenda segura</h3><p>Contatos frequentes, conflitos, edição e solicitações compartilhadas.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="https://github.com/RapportTecnologia/meudinheiro"><div><p class="section-kicker">Código aberto</p><h3>Repositório</h3><p>React Native, Expo, ethers.js, testes e histórico de implementação.</p></div><span>Abrir GitHub ↗</span></a>

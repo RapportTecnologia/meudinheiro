@@ -1,10 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useAuthorizedSigner } from '../../application/hooks/useAuthorizedSigner';
+import { useSponsoredTransfer } from '../../application/hooks/useSponsoredTransfer';
 import { useWalletStore } from '../../application/hooks/useWalletStore';
 import { validateContactDraft } from '../../domain/contacts/contact';
-import { erc20, provider } from '../../infrastructure/blockchain/polygon';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 export function SendReviewScreen({
@@ -19,8 +18,11 @@ export function SendReviewScreen({
     contacts,
     addContact,
     recordContactUse,
+    accounts,
+    activeAccountId,
   } = useWalletStore();
-  const authorizeSigner = useAuthorizedSigner();
+  const sendSponsoredTransfer = useSponsoredTransfer();
+  const activeAccount = accounts.find(({ id }) => id === activeAccountId);
 
   if (!pendingPayment) {
     return <View style={styles.container}><Text>Nenhum pagamento aguardando revisão.</Text></View>;
@@ -57,38 +59,13 @@ export function SendReviewScreen({
 
     setBusy(true);
     try {
-      const wallet = await authorizeSigner(
-        `Autorizar pagamento de ${pendingPayment.amount} ${pendingPayment.asset.symbol}`,
-      );
-      const sender = await wallet.getAddress();
-      if (sender.toLowerCase() === pendingPayment.recipient.toLowerCase()) {
-        throw new Error('A conta de origem e o destinatário são iguais.');
+      const operation = await sendSponsoredTransfer(pendingPayment);
+      if (operation.status === 'reverted') {
+        throw new Error(`A UserOperation foi revertida: ${operation.reason}`);
       }
-      const units = BigInt(pendingPayment.amountInSmallestUnit);
-      let transaction;
-
-      if (pendingPayment.asset.kind === 'native') {
-        const request = { to: pendingPayment.recipient, value: units };
-        const [balance, gas, fee] = await Promise.all([
-          provider.getBalance(sender),
-          wallet.estimateGas(request),
-          provider.getFeeData(),
-        ]);
-        const gasPrice = fee.maxFeePerGas ?? fee.gasPrice;
-        if (!gasPrice) throw new Error('Não foi possível estimar a taxa da rede.');
-        if (balance < units + gas * gasPrice) throw new Error('Saldo de POL insuficiente para valor e gás.');
-        transaction = await wallet.sendTransaction(request);
-      } else {
-        const token = erc20(pendingPayment.asset.address, wallet);
-        const balance: bigint = await token.getFunction('balanceOf')(sender);
-        if (balance < units) throw new Error(`Saldo de ${pendingPayment.asset.symbol} insuficiente.`);
-        const transfer = token.getFunction('transfer');
-        await transfer.estimateGas(pendingPayment.recipient, units);
-        transaction = await transfer(pendingPayment.recipient, units);
+      if (operation.status !== 'included') {
+        throw new Error('A confirmação da UserOperation permanece pendente.');
       }
-
-      const receipt = await transaction.wait(1);
-      if (!receipt || receipt.status !== 1) throw new Error('A transação não foi confirmada.');
 
       let contactWarning = '';
       if (!knownContact && saveChoice === 'save') {
@@ -100,9 +77,13 @@ export function SendReviewScreen({
       }
       recordContactUse(pendingPayment.recipient);
       clearPendingPayment();
-      Alert.alert('Pagamento confirmado', `Hash: ${transaction.hash}${contactWarning}`, [
+      Alert.alert(
+        'Pagamento confirmado',
+        `Gás cobrado do usuário: 0 POL\nTransação: ${operation.transactionHash}\nUserOperation: ${operation.userOperationHash}${contactWarning}`,
+        [
         { text: 'OK', onPress: () => navigation.popToTop() },
-      ]);
+        ],
+      );
     } catch (error) {
       Alert.alert('Pagamento não realizado', (error as Error).message);
     } finally {
@@ -115,6 +96,8 @@ export function SendReviewScreen({
       <Text style={styles.title}>Confira antes de autorizar</Text>
       <View style={styles.card}>
         <Text>Rede: Polygon (137)</Text>
+        <Text>Origem: Smart Account ERC-4337</Text>
+        <Text selectable>{activeAccount?.smartAccountAddress ?? 'não ativada'}</Text>
         <Text>Ativo: {pendingPayment.asset.symbol}</Text>
         <Text style={styles.amount}>
           {pendingPayment.asset.kind === 'erc20'
@@ -127,6 +110,13 @@ export function SendReviewScreen({
         Confirme o valor e o endereço. A transação blockchain não pode ser desfeita
         pelo aplicativo após a confirmação.
       </Text>
+      <View style={styles.sponsorCard}>
+        <Text style={styles.sponsorTitle}>Custo de gás para você: 0 POL</Text>
+        <Text>
+          A plataforma patrocinará esta UserOperation por meio do Paymaster
+          ERC-4337. Se o patrocínio não for aprovado, nada será assinado nem cobrado.
+        </Text>
+      </View>
       {knownContact ? (
         <View style={styles.contactCard}>
           <Text style={styles.contactTitle}>Contato: {knownContact.name}</Text>
@@ -189,4 +179,6 @@ const styles = StyleSheet.create({
   contactActions: { flexDirection: 'row', gap: 12 },
   input: { borderWidth: 1, borderColor: '#93C5FD', borderRadius: 8, padding: 10, backgroundColor: '#fff' },
   hint: { color: '#374151', fontSize: 12 },
+  sponsorCard: { backgroundColor: '#DCFCE7', padding: 14, borderRadius: 10, gap: 6 },
+  sponsorTitle: { color: '#166534', fontSize: 17, fontWeight: '800' },
 });

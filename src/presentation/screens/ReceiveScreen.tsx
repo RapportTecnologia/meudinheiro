@@ -7,19 +7,23 @@ import { createPaymentRequestUri, type PaymentAsset } from '../../domain/payment
 export function ReceiveScreen() {
   const { accounts, activeAccountId, baseToken, homeAmount, selectedAsset } = useWalletStore();
   const account = accounts.find((item) => item.id === activeAccountId);
-  const asset: PaymentAsset | undefined = selectedAsset === 'POL'
-    ? { kind: 'native', symbol: 'POL', decimals: 18 }
-    : baseToken?.referenceCurrency === 'BRL'
-      ? {
-          kind: 'erc20',
-          address: baseToken.address,
-          symbol: baseToken.symbol,
-          decimals: baseToken.decimals,
-          referenceCurrency: baseToken.referenceCurrency,
-        }
-      : undefined;
-  const uri = account && asset
-    ? createPaymentRequestUri({ recipient: account.address, amount: homeAmount, asset })
+  const asset: PaymentAsset | undefined = baseToken
+    ? {
+        kind: 'erc20',
+        address: baseToken.address,
+        symbol: baseToken.symbol,
+        decimals: baseToken.decimals,
+        referenceCurrency: selectedAsset === 'BRL'
+          ? baseToken.referenceCurrency
+          : undefined,
+      }
+    : undefined;
+  const uri = account?.smartAccountAddress && asset
+    ? createPaymentRequestUri({
+        recipient: account.smartAccountAddress,
+        amount: homeAmount,
+        asset,
+      })
     : undefined;
   const copyRequest = async () => {
     if (!uri) return;
@@ -43,15 +47,20 @@ export function ReceiveScreen() {
           color="#6B7280"
           onPress={() => Clipboard.setStringAsync('')}
         />
-        <Text>Polygon • chainId 137</Text>
-        <Text selectable style={styles.address}>{account.address}</Text>
+        <Text>Polygon • Smart Account ERC-4337 • chainId 137</Text>
+        <Text selectable style={styles.address}>{account.smartAccountAddress}</Text>
         {selectedAsset === 'BRL' && (
           <Text style={styles.warning}>
             O pedido usa {asset.symbol} como Moeda Base em proporção nominal 1:1.
             O recebimento de dinheiro físico deve ser conferido pelo caixa.
           </Text>
         )}
-      </> : <Text>Cadastre uma conta e configure a Moeda Base quando usar BRL.</Text>}
+      </> : (
+        <Text>
+          Cadastre uma conta, configure a Moeda Base e ative a Smart Account
+          de custo zero nas Configurações.
+        </Text>
+      )}
     </View>
   );
 }

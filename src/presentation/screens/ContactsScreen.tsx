@@ -37,9 +37,14 @@ export function ContactsScreen({
         referenceCurrency: state.baseToken.referenceCurrency,
       }
     : undefined;
-  const selectedAsset: PaymentAsset | undefined = state.selectedAsset === 'POL'
-    ? { kind: 'native', symbol: 'POL', decimals: 18 }
-    : state.baseToken?.referenceCurrency === 'BRL' ? baseAsset : undefined;
+  const selectedAsset: PaymentAsset | undefined = baseAsset
+    ? {
+        ...baseAsset,
+        referenceCurrency: state.selectedAsset === 'BRL'
+          ? baseAsset.referenceCurrency
+          : undefined,
+      }
+    : undefined;
 
   const selectRecipient = (recipient: string) => {
     try {

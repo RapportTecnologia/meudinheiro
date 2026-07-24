@@ -8,7 +8,7 @@
   <img alt="Status do documento" src="https://img.shields.io/badge/status-evolutivo-111827?style=flat-square">
   <img alt="Visitantes dos requisitos" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-requirements&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
 </div>
 
 ## 1. Visão do produto
@@ -25,7 +25,10 @@ publicação nas lojas devem identificar claramente o aplicativo como carteira.
 
 - Aplicativo React Native com Expo, inicialmente voltado ao Android.
 - Interação EVM por ethers.js na Polygon PoS, `chainId` 137.
-- Até duas contas EOA importadas no mesmo dispositivo.
+- Até duas EOAs proprietárias importadas no mesmo dispositivo, cada uma
+  vinculada a uma Smart Account ERC-4337.
+- Gás patrocinado pelo Paymaster da plataforma, com custo `0 POL` para o
+  usuário final em transferências elegíveis.
 - Um Token Oficial Meu Dinheiro ERC-20 fixado por ambiente.
 - Cotação Token Oficial/BRL por provedor validado.
 - Calculadora, leitura e exibição de QR Code.
@@ -47,11 +50,15 @@ Não fazem parte da primeira base:
 | Ator | Responsabilidade |
 | --- | --- |
 | Usuário | Controlar as contas, revisar e autorizar operações |
-| Usuário comum | Enviar e receber o Token Oficial e manter POL para gás |
-| Comerciante | Distribuir o Token Oficial e POL, operar estoque e receber pagamentos |
-| Aplicativo | Calcular, validar, montar e transmitir transações |
+| Usuário comum | Enviar e receber o Token Oficial sem manter POL |
+| Comerciante | Distribuir o Token Oficial, operar estoque e receber pagamentos |
+| Aplicativo | Calcular, validar, assinar e acompanhar UserOperations |
 | Dispositivo | Proteger segredos e autenticar operações |
-| RPC Polygon | Consultar a rede e transmitir transações assinadas |
+| Gateway ERC-4337 | Aplicar política e integrar Bundler/Paymaster sem receber a chave |
+| Bundler | Simular e enviar UserOperations ao EntryPoint |
+| Paymaster | Patrocinar o gás elegível usando o depósito da plataforma |
+| EntryPoint v0.7 | Validar, executar e contabilizar UserOperations |
+| RPC Polygon | Consultar estado, código, hash e recibos |
 | Token Oficial ERC-20 | Único ativo de pagamento do aplicativo |
 | QuoteProvider | Cotar o Token Oficial em BRL com prazo de validade |
 | Roteador de swap | Converter estoque do comerciante entre Token Oficial e POL |
@@ -81,6 +88,12 @@ Não fazem parte da primeira base:
   seguro depois de confirmação explícita.
 - **RF-ACC-07:** importar uma conta deve validar a chave e derivar o endereço,
   sem registrar o segredo em logs.
+- **RF-ACC-08:** cada EOA deve poder ativar uma Smart Account determinística.
+- **RF-ACC-09:** a tela deve distinguir endereço proprietário e endereço
+  operacional.
+- **RF-ACC-10:** QR, saldo e recebimento devem usar a Smart Account.
+- **RF-ACC-11:** ativar a Smart Account nunca transmite chave ou seed.
+- **RF-ACC-12:** fundos da EOA não devem ser migrados automaticamente.
 
 ### 4.3 Token Oficial
 
@@ -92,13 +105,14 @@ Não fazem parte da primeira base:
   `symbol` e `decimals`.
 - **RF-TKN-04:** a identidade do token é o contrato, não o símbolo.
 - **RF-TKN-05:** POL não pode ser selecionado como ativo de pagamento.
-- **RF-TKN-06:** POL deve ser tratado exclusivamente como moeda de gás.
-- **RF-TKN-07:** a interface deve exibir saldo do Token Oficial e saldo de POL
-  separadamente.
+- **RF-TKN-06:** POL é pago pelo Paymaster em operações patrocinadas e não deve
+  ser exigido do usuário final.
+- **RF-TKN-07:** a interface deve exibir o saldo do Token Oficial na Smart
+  Account e o estado do patrocínio.
 
 ### 4.4 Saldos
 
-- **RF-BAL-01:** consultar saldo de POL e ERC-20 para a conta ativa.
+- **RF-BAL-01:** consultar saldo ERC-20 da Smart Account ativa.
 - **RF-BAL-02:** indicar horário/bloco da última atualização.
 - **RF-BAL-03:** tratar RPC indisponível sem substituir o saldo por zero.
 - **RF-BAL-04:** atualizar saldos após confirmação de transação.
@@ -108,7 +122,7 @@ Não fazem parte da primeira base:
 - **RF-QR-01:** solicitar permissão de câmera apenas ao abrir o scanner.
 - **RF-QR-02:** aceitar endereço EVM `0x...` e URI compatível com `ethereum:`.
 - **RF-QR-03:** rejeitar rede, formato ou checksum inválidos.
-- **RF-QR-04:** exibir o endereço da conta ativa como QR Code.
+- **RF-QR-04:** exibir o endereço da Smart Account ativa como QR Code.
 - **RF-QR-05:** mostrar também o endereço em texto selecionável para
   conferência.
 - **RF-QR-06:** um QR Code nunca deve disparar uma transação automaticamente.
@@ -127,19 +141,19 @@ Não fazem parte da primeira base:
 - **RF-SEND-01:** receber da Home o valor calculado como intenção inicial.
 - **RF-SEND-02:** o ativo transmitido deve ser sempre o Token Oficial.
 - **RF-SEND-03:** validar destinatário, saldo, decimais e valor.
-- **RF-SEND-04:** exibir tela de revisão com rede, conta, destinatário, ativo,
-  valor e estimativa de gás.
+- **RF-SEND-04:** exibir tela de revisão com rede, Smart Account, destinatário,
+  ativo, valor, patrocinador e custo de gás `0 POL` para o usuário.
 - **RF-SEND-05:** exigir autenticação do dispositivo depois da revisão.
-- **RF-SEND-06:** simular e estimar a transação antes de assinar.
+- **RF-SEND-06:** simular a UserOperation antes de assinar.
 - **RF-SEND-07:** impedir submissão duplicada enquanto uma tentativa estiver
   em andamento.
 - **RF-SEND-08:** acompanhar hash, recibo e estado final.
 - **RF-SEND-09:** bloquear transferência para a mesma conta de origem.
 - **RF-SEND-10:** validar saldo do Token Oficial para o pagamento.
-- **RF-SEND-11:** estimar a chamada ERC-20 `transfer` e verificar POL suficiente
-  para gás antes da autenticação.
-- **RF-SEND-12:** saldo POL insuficiente deve bloquear a transação e informar
-  saldo atual, necessidade estimada e opções de abastecimento.
+- **RF-SEND-11:** obter autorização de patrocínio do Paymaster antes de
+  transmitir.
+- **RF-SEND-12:** indisponibilidade ou recusa do patrocínio deve bloquear a
+  operação sem executar fallback pago pela EOA.
 
 ### 4.7 Pedido de pagamento e abastecimento
 
@@ -250,6 +264,49 @@ Não fazem parte da primeira base:
 - **RF-CLP-09:** agenda, QR, clipboard e endereço manual devem convergir para a
   mesma tela de revisão.
 
+### 4.12 Account Abstraction e patrocínio
+
+- **RF-AA-01:** pagamentos devem ser enviados como UserOperations ERC-4337 na
+  Polygon.
+- **RF-AA-02:** a integração deve usar o EntryPoint v0.7 permitido por
+  configuração.
+- **RF-AA-03:** o app deve resolver o endereço contrafactual da Smart Account
+  sem enviar a chave privada.
+- **RF-AA-04:** a primeira UserOperation pode implantar a Smart Account por
+  `initCode` de uma factory auditada.
+- **RF-AA-04A:** o app deve decodificar `initCode`, comparar a factory e
+  verificar que a EOA local será a proprietária da conta implantada.
+- **RF-AA-05:** o app deve solicitar uma operação patrocinada ao Gateway da
+  plataforma.
+- **RF-AA-06:** o Paymaster deve pagar o gás em POL e informar
+  `gasChargedToUser = 0`.
+- **RF-AA-07:** antes de assinar, o app deve decodificar `callData` e conferir
+  Smart Account, Token Oficial, função, destino, quantidade e valor nativo zero.
+- **RF-AA-08:** o app deve conferir EntryPoint, Paymaster, validade e limites
+  máximos de gás.
+- **RF-AA-09:** o app deve reproduzir `getUserOpHash` no EntryPoint e comparar
+  com o hash recebido.
+- **RF-AA-10:** somente após autenticação o signer efêmero deve assinar o
+  `userOperationHash`.
+- **RF-AA-11:** o Gateway deve receber assinatura, nunca chave privada ou seed.
+- **RF-AA-12:** a submissão deve ser idempotente por `requestId`.
+- **RF-AA-13:** o app deve acompanhar `userOpHash`, `transactionHash`, bloco e
+  estado final.
+- **RF-AA-14:** timeout local deve resultar em estado pendente conciliável, não
+  em reenvio automático.
+- **RF-AA-15:** patrocínio recusado, vencido ou indisponível deve bloquear o
+  envio sem cobrar POL da EOA.
+- **RF-AA-16:** o Gateway/Paymaster deve limitar operação, conta, dispositivo,
+  período, valor e gás.
+- **RF-AA-17:** o backend deve permitir somente a factory, Smart Account,
+  EntryPoint, token e seletores auditados.
+- **RF-AA-18:** credenciais de Bundler, Paymaster e RPC privado devem existir
+  somente no backend.
+- **RF-AA-19:** o Paymaster deve manter depósito/stake e telemetria de saldo,
+  custo, falha e abuso.
+- **RF-AA-20:** o app deve mostrar claramente que a plataforma é a patrocinadora
+  e que o custo de gás do usuário é zero.
+
 ## 5. Requisitos de segurança
 
 - **RS-01:** nenhuma chave, seed ou segredo pode entrar em AsyncStorage,
@@ -272,6 +329,19 @@ Não fazem parte da primeira base:
 - **RS-11:** a aplicação deve ter threat model, auditoria independente e
   pentest antes de operar com fundos reais.
 - **RS-12:** o aplicativo deve iniciar em modo seguro, com swap desabilitado.
+- **RS-13:** resposta do Gateway é dado não confiável e deve ser validada antes
+  da assinatura.
+- **RS-14:** o backend deve repetir todas as regras de patrocínio; controles no
+  APK não são barreira de segurança.
+- **RS-15:** a chave de assinatura do Paymaster deve usar KMS/HSM, rotação e
+  separação de funções.
+- **RS-16:** autorização de patrocínio deve possuir nonce, validade curta e uso
+  único para impedir replay.
+- **RS-17:** o Paymaster deve proteger o depósito contra spam, griefing,
+  operações revertidas e limites de gás inflados.
+- **RS-18:** a operação deve ser simulada pelo Bundler antes de inclusão.
+- **RS-19:** falha do Paymaster nunca autoriza fallback silencioso para
+  `eth_sendRawTransaction` pago pelo usuário.
 
 ## 6. Requisitos não funcionais
 
@@ -310,13 +380,18 @@ Não fazem parte da primeira base:
   após conferir a contraprestação externa.
 - **RN-12:** todo valor em BRL deve ser convertido pela cotação vigente para a
   quantidade adequada do Token Oficial.
-- **RN-13:** POL é reservado ao gás e não constitui ativo de pagamento.
-- **RN-14:** saldo do Token Oficial e POL suficiente são condições cumulativas
-  para transmitir.
+- **RN-13:** POL não constitui ativo de pagamento; nas UserOperations elegíveis
+  ele é pago pelo Paymaster da plataforma.
+- **RN-14:** saldo suficiente do Token Oficial e autorização válida do
+  Paymaster são condições cumulativas para transmitir.
 - **RN-15:** o usuário comum somente envia e recebe o Token Oficial; operações
   de estoque e swap pertencem ao modo comerciante.
 - **RN-16:** comerciantes são pontos regionais de distribuição do Token Oficial
-  e POL e devem possuir reservas compatíveis com suas operações.
+  e devem possuir estoque compatível com suas operações.
+- **RN-17:** custo zero para o usuário não significa custo zero para a
+  plataforma; todo gás patrocinado entra no orçamento e na contabilidade.
+- **RN-18:** o Paymaster pode aplicar limites transparentes, mas não pode gerar
+  cobrança silenciosa na EOA.
 
 ## 8. Critérios de aceite da base
 
@@ -333,7 +408,11 @@ Não fazem parte da primeira base:
 - Receber R$ 10 consulta a cotação e gera URI ERC-20 com a quantidade calculada
   do Token Oficial.
 - POL nunca aparece como opção de pagamento.
-- POL insuficiente bloqueia o envio e apresenta as alternativas previstas.
+- Usuário sem POL consegue enviar uma transferência elegível patrocinada.
+- Patrocínio indisponível bloqueia o envio sem fallback pago.
+- QR de recebimento usa o endereço da Smart Account.
+- Operação com destino, token, valor ou EntryPoint divergente é rejeitada antes
+  da assinatura.
 - Ler uma cobrança abre a revisão, sem transmitir automaticamente.
 - Confirmar um pagamento exige biometria, PIN ou padrão.
 - Endereço desconhecido exige a escolha **Salvar** ou **Agora não** antes da
@@ -355,9 +434,10 @@ Não fazem parte da primeira base:
 
 Casos obrigatórios incluem limite de contas, contrato oficial divergente,
 token sem bytecode, decimais extremos, QR inválido, chainId incorreto,
-autenticação cancelada, saldo insuficiente do token, POL insuficiente,
-cotação expirada, indisponibilidade do cotador, slippage do swap comercial,
-allowance, nonce e duplo toque.
+autenticação cancelada, saldo insuficiente do token, patrocínio recusado,
+Paymaster sem depósito, hash divergente, operação expirada, calldata adulterada,
+limite de gás abusivo, cotação expirada, indisponibilidade do cotador, slippage
+do swap comercial, allowance, nonce, replay e duplo toque.
 Também devem ser cobertos: nome duplicado com variação de espaços/caixa,
 endereço duplicado, edição preservando métricas e tentativa de edição usando
 nome ou endereço de outro contato.
@@ -367,10 +447,12 @@ nome ou endereço de outro contato.
 - Tela completa de envio e revisão implementada.
 - QuoteProvider e lista de contratos oficiais verificados.
 - Contrato do Token Oficial, WPOL e roteador comercial confirmados na Polygon.
-- Verificação de POL para gás implementada e testada.
+- Smart Account factory e Paymaster auditados e verificados na Polygon.
+- Gateway ERC-4337 com KMS/HSM, cotas, idempotência e observabilidade.
+- Depósito/stake do Paymaster com alertas e teto orçamentário.
 - Perfis de usuário comum e comerciante separados.
 - Cotação Token Oficial/BRL com fonte, integridade e expiração.
-- Slippage, deadline, aprovação, gás e simulação cobertos por testes.
+- Slippage, deadline, aprovação, patrocínio, gás e simulação cobertos por testes.
 - Política de backup e recuperação definida.
 - Threat model e auditoria independente concluídos.
 - Política de privacidade, termos e avisos revisados.

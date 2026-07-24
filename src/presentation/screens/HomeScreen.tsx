@@ -45,10 +45,10 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParam
           <Text style={styles.assetText}>R$ • {baseToken?.symbol ?? 'Moeda Base'}</Text>
         </Pressable>
         <Pressable
-          onPress={() => setSelectedAsset('POL')}
-          style={[styles.asset, selectedAsset === 'POL' && styles.assetActive]}
+          onPress={() => setSelectedAsset('TOKEN')}
+          style={[styles.asset, selectedAsset === 'TOKEN' && styles.assetActive]}
         >
-          <Text style={styles.assetText}>POL</Text>
+          <Text style={styles.assetText}>{baseToken?.symbol ?? 'Token Oficial'}</Text>
         </Pressable>
       </View>
       <View style={styles.display}><Text style={styles.expression}>{expression || '0'}</Text></View>
@@ -66,6 +66,9 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParam
         <ActionButton label="Swap" onPress={() => navigation.navigate('Swap')} />
         <ActionButton label="Configurações" onPress={() => navigation.navigate('Config')} />
       </View>
+      <Text style={styles.gasless}>
+        Gás patrocinado pela plataforma via ERC-4337 • custo de gás: 0 POL
+      </Text>
     </View>
   );
 }
@@ -82,4 +85,5 @@ const styles = StyleSheet.create({
   keys: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   key: { width: '23%', aspectRatio: 1.05, backgroundColor: '#1F2937', margin: '1%', borderRadius: 14, justifyContent: 'center' },
   keyText: { color: '#fff', fontSize: 24, textAlign: 'center' },
+  gasless: { color: '#86EFAC', textAlign: 'center', fontSize: 12, marginTop: 4 },
 });

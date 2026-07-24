@@ -96,5 +96,6 @@ O `baseurl` de produção é `/meudinheiro`.
 - o pipeline não recebe chaves privadas nem arquivos `.env`;
 - todas as actions de deployment pertencem ao GitHub;
 - páginas essenciais, sitemap e imagens são verificados antes do deploy;
+- a página `/custo-zero/` documenta Smart Account, Bundler e Paymaster;
 - apenas um workflow possui permissão para publicar no ambiente Pages;
 - o site novo, sua identidade visual e seus assets permanecem em `site/`.

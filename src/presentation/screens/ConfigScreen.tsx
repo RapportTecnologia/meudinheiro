@@ -33,7 +33,37 @@ export function ConfigScreen() {
     <View style={styles.container}>
       <Text style={styles.heading}>Contas ({state.accounts.length}/2)</Text>
       {state.accounts.map((account) => <View key={account.id} style={styles.card}>
-        <Text>{account.name}</Text><Text selectable>{account.address}</Text>
+        <Text style={styles.accountName}>{account.name}</Text>
+        <Text>Proprietário da conta (EOA):</Text>
+        <Text selectable>{account.address}</Text>
+        {account.smartAccountAddress ? (
+          <>
+            <Text>Endereço para receber e pagar (Smart Account):</Text>
+            <Text selectable>{account.smartAccountAddress}</Text>
+            <Text style={styles.gasless}>✓ Gás patrocinado via ERC-4337</Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.warning}>
+              Ative a Smart Account antes de receber fundos. O endereço será
+              calculado pelo gateway da plataforma, sem transmitir a chave privada.
+            </Text>
+            <Button
+              title="Ativar custo zero"
+              onPress={async () => {
+                try {
+                  await state.activateGaslessAccount(account.id);
+                  Alert.alert(
+                    'Smart Account ativada',
+                    'Use o novo endereço exibido para receber o Token Oficial.',
+                  );
+                } catch (error) {
+                  Alert.alert('Não foi possível ativar', (error as Error).message);
+                }
+              }}
+            />
+          </>
+        )}
         <Button title="Exportar chave" onPress={() => exportKey(account.secretRef)} />
         <Button title="Remover conta" color="#B91C1C" onPress={() => state.removeAccount(account.id)} />
       </View>)}
@@ -81,4 +111,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 8, padding: 10, backgroundColor: '#fff' },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   switchText: { flex: 1, fontSize: 12 },
+  accountName: { fontSize: 17, fontWeight: '700' },
+  gasless: { color: '#166534', fontWeight: '700' },
+  warning: { backgroundColor: '#FEF3C7', padding: 10, borderRadius: 8 },
 });

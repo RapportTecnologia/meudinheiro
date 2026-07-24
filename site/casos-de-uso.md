@@ -29,8 +29,8 @@ permalink: /casos-de-uso/
         <li>O cliente solicita um valor em reais.</li>
         <li>O app consulta a cotação Token Oficial/BRL.</li>
         <li>O cliente apresenta QR com endereço e quantidade.</li>
-        <li>O comerciante verifica contraprestação, estoque e POL.</li>
-        <li>Após autenticação, envia o Token Oficial.</li>
+        <li>O comerciante verifica contraprestação e estoque.</li>
+        <li>Após autenticação, envia o Token Oficial com gás patrocinado.</li>
       </ol>
     </section>
 
@@ -39,14 +39,14 @@ permalink: /casos-de-uso/
       <ol>
         <li>O caixa informa o preço em BRL e gera a cobrança.</li>
         <li>O cliente lê o QR e revisa cotação, tokens e destino.</li>
-        <li>O app verifica saldo do Token Oficial e POL para gás.</li>
-        <li>O cliente autentica e acompanha a confirmação.</li>
+        <li>O app verifica saldo do Token Oficial e elegibilidade do Paymaster.</li>
+        <li>O cliente autentica; a plataforma paga o gás; todos acompanham a confirmação.</li>
       </ol>
     </section>
 
     <section id="transferir" class="content-card">
       <h2>Transferir para um amigo</h2>
-      <p>O destinatário pode apresentar QR, copiar uma URI EIP-681 ou já estar na agenda. O emissor sempre chega à mesma revisão antes da autenticação.</p>
+      <p>O destinatário pode apresentar QR, copiar uma URI EIP-681 ou já estar na agenda. O emissor sempre chega à mesma revisão e vê custo de gás 0 POL antes da autenticação.</p>
     </section>
 
     <section id="compartilhar" class="content-card">
@@ -61,4 +61,3 @@ permalink: /casos-de-uso/
     </section>
   </article>
 </div>
-

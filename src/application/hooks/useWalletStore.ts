@@ -13,6 +13,7 @@ import {
 import { addAccountRule, normalizeAddress } from '../../domain/wallet/rules';
 import type { Address, BalanceMap, BaseToken, WalletAccount } from '../../domain/wallet/types';
 import type { PaymentRequest } from '../../domain/payment/paymentRequest';
+import { erc4337Gateway } from '../../infrastructure/accountAbstraction/erc4337Gateway';
 import { validateErc20 } from '../../infrastructure/blockchain/polygon';
 import { secureSecrets } from '../../infrastructure/storage/secureSecrets';
 
@@ -22,16 +23,17 @@ type WalletState = {
   baseToken?: BaseToken;
   balances: BalanceMap;
   homeAmount: string;
-  selectedAsset: 'BRL' | 'POL';
+  selectedAsset: 'BRL' | 'TOKEN';
   scannedAddress?: Address;
   pendingPayment?: PaymentRequest;
   contacts: Contact[];
   importAccount(name: string, privateKey: string): Promise<void>;
+  activateGaslessAccount(id: string): Promise<void>;
   removeAccount(id: string): Promise<void>;
   configureBaseToken(address: string, useAsBrl: boolean): Promise<void>;
   removeBaseToken(): void;
   setHomeAmount(value: string): void;
-  setSelectedAsset(value: 'BRL' | 'POL'): void;
+  setSelectedAsset(value: 'BRL' | 'TOKEN'): void;
   setScannedAddress(value: string): void;
   setPendingPayment(value: PaymentRequest): void;
   clearPendingPayment(): void;
@@ -61,6 +63,22 @@ export const useWalletStore = create<WalletState>()(
         const next = addAccountRule(get().accounts, account);
         await secureSecrets.save(secretRef, privateKey);
         set({ accounts: next, activeAccountId: get().activeAccountId ?? id });
+      },
+      async activateGaslessAccount(id) {
+        const account = get().accounts.find((item) => item.id === id);
+        if (!account) throw new Error('Conta não encontrada.');
+        const smartAccountAddress = await erc4337Gateway.resolveSmartAccountAddress(
+          account.address,
+        );
+        set({
+          accounts: get().accounts.map((item) => item.id === id
+            ? {
+                ...item,
+                smartAccountAddress,
+                accountAbstractionActivatedAt: new Date().toISOString(),
+              }
+            : item),
+        });
       },
       async removeAccount(id) {
         const found = get().accounts.find((account) => account.id === id);
@@ -118,6 +136,16 @@ export const useWalletStore = create<WalletState>()(
     {
       name: 'meu-dinheiro.public-state.v1',
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as Partial<WalletState> & {
+          selectedAsset?: 'BRL' | 'POL' | 'TOKEN';
+        };
+        return {
+          ...state,
+          selectedAsset: state.selectedAsset === 'BRL' ? 'BRL' : 'TOKEN',
+        } as WalletState;
+      },
       partialize: ({
         accounts, activeAccountId, baseToken, homeAmount, selectedAsset, contacts,
       }) => ({

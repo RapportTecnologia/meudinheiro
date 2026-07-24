@@ -52,9 +52,9 @@ completo nunca fazem parte da agenda.
 4. Escolhe **Agenda**, **Ler QR** ou **Colar solicitação**.
 5. Ao usar a agenda, seleciona o contato.
 6. O app monta a intenção com Token Oficial, valor e endereço.
-7. Verifica saldo do token e POL para gás.
-8. Mostra a revisão e solicita biometria, PIN ou padrão.
-9. Somente após autorização transmite a transferência.
+7. Verifica saldo do token e elegibilidade do patrocínio ERC-4337.
+8. Mostra custo de gás `0 POL`, revisão e solicita biometria, PIN ou padrão.
+9. Somente após autorização transmite a UserOperation patrocinada.
 
 ### Novo destinatário
 
@@ -130,8 +130,8 @@ preço, tokens e validade, mas somente a URI validada define a transferência.
 5. O destinatário escolhe onde compartilhar o texto.
 6. O pagador cola o código no Meu Dinheiro.
 7. O app valida e apresenta o destino e o valor proposto.
-8. O pagador confere saldo do Token Oficial e POL.
-9. O pagador autentica e transmite.
+8. O pagador confere saldo do Token Oficial e patrocínio do Paymaster.
+9. O pagador autentica e transmite a UserOperation.
 
 ## 5. Arquitetura sugerida
 
@@ -142,6 +142,7 @@ preço, tokens e validade, mas somente a URI validada define a transferência.
 - `ClipboardPaymentAdapter`: copia e lê somente sob ação explícita.
 - `SelectRecipientScreen`: agenda, QR, clipboard e endereço manual.
 - `SendReviewScreen`: única porta para autorizar e transmitir.
+- `SponsorshipPolicy`: valida localmente a UserOperation antes da assinatura.
 
 Metadados da agenda devem permanecer locais, com backup desabilitado ou
 protegido conforme a política do produto. Caso seja adotada sincronização, ela

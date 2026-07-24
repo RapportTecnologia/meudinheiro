@@ -21,9 +21,14 @@ export function ScannerScreen({ navigation }: any) {
         decimals: baseToken.decimals, referenceCurrency: baseToken.referenceCurrency,
       }
     : undefined;
-  const selectedPaymentAsset: PaymentAsset | undefined = selectedAsset === 'POL'
-    ? { kind: 'native', symbol: 'POL', decimals: 18 }
-    : baseToken?.referenceCurrency === 'BRL' ? basePaymentAsset : undefined;
+  const selectedPaymentAsset: PaymentAsset | undefined = basePaymentAsset
+    ? {
+        ...basePaymentAsset,
+        referenceCurrency: selectedAsset === 'BRL'
+          ? basePaymentAsset.referenceCurrency
+          : undefined,
+      }
+    : undefined;
 
   const processRequest = (data: string, source: 'QR' | 'Área de transferência') => {
     if (locked) return;

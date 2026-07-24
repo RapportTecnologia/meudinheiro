@@ -21,7 +21,8 @@
 
 Base arquitetural de uma carteira autocustodial Polygon, com calculadora como
 tela principal, Token Oficial ERC-20, cotação em BRL, pedidos EIP-681, agenda,
-QR Code, clipboard, duas contas e POL reservado ao gás.
+QR Code, clipboard, duas contas e custo de gás zero para o usuário final por
+Account Abstraction ERC-4337. A plataforma patrocina o gás com Paymaster.
 
 A agenda valida nomes e endereços únicos, permite edição protegida e oferece
 salvar destinatários desconhecidos somente após uma transferência confirmada.
@@ -32,6 +33,7 @@ salvar destinatários desconhecidos somente após uma transferência confirmada.
 - [Arquitetura e decisões técnicas](docs/ARCHITECTURE.md)
 - [Histórias e casos de uso](docs/USE_CASES.md)
 - [Modelo do Token Oficial, cotação e gás](docs/ECONOMIC_MODEL.md)
+- [Account Abstraction, Smart Account e Paymaster](docs/ACCOUNT_ABSTRACTION.md)
 - [Agenda e compartilhamento de solicitações](docs/CONTACTS_AND_SHARING.md)
 - [Site Jekyll e pipeline de publicação](docs/SITE.md)
 - [Identidade de marca](docs/BRAND.md)
@@ -88,9 +90,15 @@ docs/              arquitetura e requisitos
 - A chave é armazenada por referência no SecureStore.
 - Não use a chave exportada em dispositivo compartilhado.
 - RPC público é adequado para protótipo, não para SLA de produção.
+- A chave da EOA proprietária nunca é enviada ao Gateway ERC-4337.
+- Credenciais de Bundler/Paymaster e chave de patrocínio nunca entram no APK.
+- O app recusa fallback silencioso para transação EOA paga pelo usuário.
 - `swapEnabled` começa falso.
 
-## Próximo incremento
+## Estado da integração ERC-4337
 
-Implemente o contrato oficial fixo, `QuoteProvider` e `GasPolicy`; remova POL
-como ativo de pagamento. Use Amoy/fork antes da Polygon.
+O cliente móvel, as validações locais e o contrato HTTP do Gateway estão
+implementados. Para operação real ainda é necessário implantar e auditar a
+factory da Smart Account e o Paymaster, implementar o Gateway, configurar
+Bundler/KMS, financiar o depósito do Paymaster e testar em Amoy/fork antes da
+Polygon.

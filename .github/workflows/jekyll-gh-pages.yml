@@ -48,6 +48,8 @@ jobs:
           test -s _site/arquitetura/index.html
           test -s _site/requisitos/index.html
           test -s _site/casos-de-uso/index.html
+          test -s _site/custo-zero/index.html
+          test -s _site/modelo-economico/index.html
           test -s _site/assets/images/logo-meu-dinheiro.webp
           test -s _site/assets/images/hero-regiao.webp
           test -s _site/assets/images/ecossistema-local.webp

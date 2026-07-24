@@ -9,7 +9,7 @@ permalink: /arquitetura/
     <p class="section-kicker">Documento técnico</p>
     <h1>Arquitetura do Meu Dinheiro</h1>
     <p>Separação entre domínio, casos de uso, infraestrutura e apresentação para reduzir o acoplamento de regras financeiras à interface mobile.</p>
-    <div class="doc-meta"><span>React Native + Expo</span><span>TypeScript</span><span>ethers.js</span><span>Polygon 137</span></div>
+    <div class="doc-meta"><span>React Native + Expo</span><span>ERC-4337</span><span>Paymaster</span><span>Polygon 137</span></div>
   </div>
 </header>
 
@@ -26,9 +26,9 @@ permalink: /arquitetura/
     <section id="camadas" class="content-card highlight">
       <h2>Arquitetura em camadas</h2>
       <ul>
-        <li><strong>Domain:</strong> entidades e invariantes puras de contas, contatos, pagamentos e cotação.</li>
+        <li><strong>Domain:</strong> entidades e invariantes de contas, pagamentos, cotação e patrocínio.</li>
         <li><strong>Application:</strong> casos de uso, estado global e portas substituíveis.</li>
-        <li><strong>Infrastructure:</strong> RPC, contratos, SecureStore, autenticação e clipboard.</li>
+        <li><strong>Infrastructure:</strong> RPC, Gateway ERC-4337, contratos, SecureStore e autenticação.</li>
         <li><strong>Presentation:</strong> navegação, telas e componentes React Native.</li>
       </ul>
       <p>As dependências apontam para dentro: apresentação → aplicação → domínio. Adaptadores de infraestrutura implementam as portas definidas pela aplicação.</p>
@@ -40,9 +40,10 @@ permalink: /arquitetura/
         <li>A calculadora produz uma intenção em BRL ou Token Oficial.</li>
         <li>O cotador transforma BRL em quantidade inteira do token.</li>
         <li>Agenda, QR ou clipboard resolve o destinatário.</li>
-        <li>A revisão valida contrato, rede, saldo e gás.</li>
+        <li>A revisão valida contrato, rede, saldo e patrocínio.</li>
         <li>A autenticação libera apenas aquela operação.</li>
-        <li>Um signer efêmero assina, transmite e aguarda o recibo.</li>
+        <li>O app confere a UserOperation, reproduz o hash e assina localmente.</li>
+        <li>Bundler envia; EntryPoint executa; Paymaster paga o gás em POL.</li>
       </ol>
     </section>
 
@@ -64,10 +65,12 @@ permalink: /arquitetura/
         <li>Chaves privadas permanecem no armazenamento seguro.</li>
         <li>AsyncStorage contém somente estado público.</li>
         <li>Dados de RPC, QR, contrato e clipboard são não confiáveis.</li>
+        <li>A resposta do Gateway é decodificada e verificada antes da assinatura.</li>
+        <li>Credenciais de Bundler e Paymaster permanecem no backend.</li>
         <li>Swap e contratos de produção permanecem bloqueados até auditoria.</li>
       </ul>
       <a href="https://github.com/RapportTecnologia/meudinheiro/blob/main/docs/ARCHITECTURE.md">Consultar especificação completa no GitHub ↗</a>
+      <br><a href="{{ '/custo-zero/' | relative_url }}">Entender Account Abstraction e custo zero →</a>
     </section>
   </article>
 </div>
-

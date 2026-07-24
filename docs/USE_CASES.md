@@ -8,17 +8,17 @@
   <img alt="Formato BDD" src="https://img.shields.io/badge/formato-Histórias%20e%20fluxos-111827?style=flat-square">
   <img alt="Visitantes dos casos de uso" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-use-cases&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
 </div>
 
 ## Premissas comuns
 
 - A rede é Polygon PoS (`chainId` 137).
-- A pessoa que paga controla uma conta com saldo e POL suficiente para gás.
+- A pessoa que paga controla uma Smart Account com saldo do Token Oficial.
 - A pessoa que recebe possui uma conta ativa no Meu Dinheiro.
 - O Token Oficial Meu Dinheiro é o único ativo de pagamento.
 - BRL é uma unidade de entrada convertida pela cotação vigente do Token Oficial.
-- POL é usado exclusivamente para pagar gás.
+- O Paymaster da plataforma paga o gás; o usuário final paga `0 POL`.
 - O QR Code segue EIP-681 e contém rede, destinatário, contrato oficial e a
   quantidade calculada de tokens.
 - O QR nunca autoriza nem executa uma transação sozinho.
@@ -46,26 +46,27 @@ após o caixa conferir o dinheiro.
 6. O cliente aceita a cotação e toca em **Receber**.
 7. O app exibe uma solicitação contendo Polygon, contrato oficial, endereço da
    carteira e quantidade ERC-20 calculada.
-8. O caixa lê o QR Code e verifica estoque do token e POL para gás.
+8. O caixa lê o QR Code e verifica o estoque do token.
 9. O aplicativo do caixa mostra BRL, cotação, tokens, rede e destinatário.
 10. O caixa confirma e autentica com biometria, PIN ou padrão.
-11. A carteira do caixa transmite o Token Oficial.
-12. As partes conferem o hash e a confirmação na Polygon.
+11. O app valida e assina uma UserOperation; o Paymaster paga o gás.
+12. As partes conferem o `userOpHash`, a transação e a confirmação na Polygon.
 
 ### Exceções
 
 - Cotação indisponível ou vencida: não gerar cobrança em BRL.
 - Token diferente do configurado: rejeitar a solicitação.
 - Caixa não confirma o recebimento externo: não transferir.
-- Falta de saldo ou POL para gás: informar sem simular sucesso.
+- Falta de token: informar sem simular sucesso.
+- Patrocínio indisponível: bloquear sem cobrar POL da conta do caixa.
 - Autenticação cancelada: encerrar sem transmitir.
 
 ### Observação de negócio
 
 O app não assume paridade de R$ 1 por token. O QuoteProvider calcula quantos
 tokens correspondem aos R$ 10 e a cotação deve permanecer válida até a
-autorização. O comerciante é responsável por manter estoque do Token Oficial e
-POL suficiente para realizar a operação.
+autorização. O comerciante é responsável por manter estoque do Token Oficial;
+o custo de gás elegível é patrocinado pela plataforma.
 
 ## UC-02 — pagar uma compra no caixa
 
@@ -82,16 +83,19 @@ exato, para que o cliente revise e autorize o pagamento na própria carteira.
 4. O app gera um QR EIP-681 com destinatário, contrato oficial e tokens.
 5. O cliente toca em **Enviar** ou **Scan QR**.
 6. O app valida rede, destinatário, contrato, cotação e quantidade.
-7. A tela de revisão mostra BRL, cotação, tokens, gás e endereço.
-8. O app confere saldo do Token Oficial e POL.
+7. A tela de revisão mostra BRL, cotação, tokens, endereço, patrocinador e
+   custo `0 POL`.
+8. O app confere saldo do Token Oficial e elegibilidade do patrocínio.
 9. O cliente autentica com biometria, PIN ou padrão.
-10. O app transmite o Token Oficial e ambos conferem a confirmação.
+10. O app assina a UserOperation, o Paymaster paga o gás e ambos conferem a
+    confirmação.
 
 ### Exceções
 
 - QR adulterado ou malformado: rejeitar.
 - Rede diferente ou token desconhecido: rejeitar.
-- Token ou POL insuficiente: não assinar e orientar o abastecimento.
+- Token insuficiente: não assinar e orientar o abastecimento.
+- Paymaster recusou ou está indisponível: não assinar e não cobrar POL.
 - Duplo toque: manter somente uma tentativa em andamento.
 
 ## UC-03 — transferência entre amigos
@@ -108,10 +112,10 @@ transferência.
 2. Em BRL, o app consulta a cotação.
 3. O destinatário toca em **Receber** e apresenta o QR do Token Oficial.
 4. O emissor toca em **Enviar** ou **Scan QR** e faz a leitura.
-5. O emissor confere BRL, cotação, tokens, gás, rede e destinatário.
-6. O app verifica Token Oficial e POL suficientes.
+5. O emissor confere BRL, cotação, tokens, patrocinador, rede e destinatário.
+6. O app verifica Token Oficial e prepara o patrocínio.
 7. O emissor autoriza com biometria, PIN ou padrão.
-8. O app transmite e ambos conferem a confirmação.
+8. O app transmite a UserOperation patrocinada e ambos conferem a confirmação.
 
 ### Exceções
 
@@ -119,6 +123,7 @@ transferência.
 - Pedido sem valor: usar o valor digitado pelo emissor e exigir nova revisão.
 - Pedido expirado, quando esse campo for adotado: solicitar novo QR.
 - Falha ou cancelamento de autenticação: não transmitir.
+- Patrocínio recusado: bloquear sem usar uma transação EOA paga pelo emissor.
 
 ## UC-04 — enviar para um contato frequente
 
@@ -135,9 +140,10 @@ precisar ler o QR ou digitar o endereço em cada transferência.
    frequência.
 4. O remetente seleciona um contato e confere o endereço.
 5. O app obtém a cotação, quando necessária, e monta a intenção.
-6. Verifica saldo do Token Oficial e POL para gás.
-7. A tela de revisão mostra contato, endereço, tokens, BRL, cotação e gás.
-8. O remetente autentica e transmite.
+6. Verifica saldo do Token Oficial e elegibilidade do Paymaster.
+7. A tela de revisão mostra contato, endereço, tokens, BRL, cotação e custo de
+   gás `0 POL`.
+8. O remetente autentica e transmite a UserOperation patrocinada.
 
 ## UC-05 — solicitar transferência pelo clipboard
 
@@ -155,7 +161,7 @@ para enviá-lo ao pagador por um canal escolhido.
 5. O destinatário compartilha o texto pelo canal de sua escolha.
 6. O pagador abre o app e toca em **Colar solicitação**.
 7. O app lê somente após o toque, valida o conteúdo e abre a revisão.
-8. O pagador confere Token Oficial e POL, autentica e transmite.
+8. O pagador confere Token Oficial e patrocínio, autentica e transmite.
 
 ## UC-06 — salvar novo destinatário após transferência
 
@@ -194,6 +200,31 @@ para poder identificá-lo por um nome e reutilizá-lo com segurança.
 5. O domínio verifica conflitos, excluindo o próprio registro.
 6. A agenda salva os novos dados preservando favorito e métricas.
 
+## UC-08 — ativar uma Smart Account de custo zero
+
+### História
+
+Como usuário, quero ativar uma Smart Account controlada pela minha chave local,
+para enviar o Token Oficial sem precisar comprar ou manter POL.
+
+### Fluxo principal
+
+1. O usuário importa uma EOA ou escolhe uma conta existente.
+2. Em **Configurações**, toca em **Ativar custo zero**.
+3. O app envia somente o endereço público ao Gateway ERC-4337.
+4. O Gateway calcula o endereço contrafactual usando a factory auditada.
+5. O app confere Polygon, EntryPoint e proprietário.
+6. A tela separa o endereço proprietário da Smart Account operacional.
+7. Receber, QR Code e saldo passam a usar a Smart Account.
+8. Na primeira transferência, o Paymaster também patrocina a implantação.
+
+### Exceções
+
+- Gateway indisponível: manter a EOA cadastrada e não exibir endereço
+  operacional não verificado.
+- EntryPoint ou proprietário divergente: rejeitar a ativação.
+- Fundos existentes na EOA: não migrar automaticamente.
+
 ## Critérios de aceite dos casos
 
 - O botão **Receber** utiliza o resultado atual da calculadora.
@@ -205,7 +236,12 @@ para poder identificá-lo por um nome e reutilizá-lo com segurança.
 - Cobrança com valor prevalece sobre o valor local do pagador.
 - O app exibe revisão antes de acessar a chave.
 - A chave é acessada somente após autenticação bem-sucedida.
-- Saldo do Token Oficial e POL para gás são verificados antes da transmissão.
+- Saldo do Token Oficial e autorização do Paymaster são verificados antes da
+  transmissão.
+- O usuário final paga `0 POL` numa operação patrocinada.
+- Falha do patrocínio não gera fallback silencioso pago pela EOA.
+- O QR de recebimento usa a Smart Account.
+- O app confere `callData` e reproduz `getUserOpHash` antes da assinatura.
 - A interface bloqueia novas submissões enquanto a transação estiver em curso.
 - Agenda, QR e clipboard convergem para a mesma revisão.
 - O app não lê o clipboard em segundo plano.

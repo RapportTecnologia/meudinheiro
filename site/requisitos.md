@@ -27,7 +27,7 @@ permalink: /requisitos/
       <h2>Capacidades funcionais</h2>
       <ul>
         <li>Calculadora com operações básicas e parser restrito.</li>
-        <li>Até duas contas EOA por dispositivo.</li>
+        <li>Até duas EOAs proprietárias e suas Smart Accounts ERC-4337.</li>
         <li>Token Oficial ERC-20 fixado por configuração confiável.</li>
         <li>Entrada em BRL convertida por cotação válida.</li>
         <li>Leitura e geração de solicitações EIP-681.</li>
@@ -38,9 +38,9 @@ permalink: /requisitos/
       <h2>Transações</h2>
       <ul>
         <li>O ativo de pagamento é sempre o Token Oficial.</li>
-        <li>POL é usado exclusivamente para gás.</li>
-        <li>Saldo do token e POL suficiente são condições cumulativas.</li>
-        <li>Toda operação exibe revisão, estimativa e destino.</li>
+        <li>O Paymaster paga POL em operações elegíveis.</li>
+        <li>O usuário final paga 0 POL pelo gás patrocinado.</li>
+        <li>Toda operação exibe revisão, patrocinador e destino.</li>
         <li>Biometria, PIN ou padrão são obrigatórios para movimentar fundos.</li>
       </ul>
     </section>
@@ -57,16 +57,16 @@ permalink: /requisitos/
         <li>Nenhum segredo em Zustand, AsyncStorage, logs ou analytics.</li>
         <li>Autenticação vinculada a uma operação concreta e temporária.</li>
         <li>Valores on-chain representados por inteiros <code>bigint</code>.</li>
-        <li>Falha de RPC, cotação ou estimativa produz bloqueio seguro.</li>
+        <li>Falha de RPC, cotação ou patrocínio produz bloqueio seguro.</li>
+        <li>Não existe fallback silencioso para transação EOA paga pelo usuário.</li>
         <li>Produção depende de auditoria, threat model e pentest.</li>
       </ul>
     </section>
 
     <section id="aceite" class="content-card">
       <h2>Critérios essenciais</h2>
-      <p>A terceira conta é rejeitada; QR inválido não altera destino; autenticação precede acesso à chave; POL insuficiente bloqueia o envio; nome ou endereço duplicado bloqueia o salvamento do contato.</p>
+      <p>A terceira conta é rejeitada; QR inválido não altera destino; autenticação precede acesso à chave; patrocínio recusado não cobra POL; calldata adulterada é rejeitada; nome ou endereço duplicado bloqueia o contato.</p>
       <a href="https://github.com/RapportTecnologia/meudinheiro/blob/main/docs/REQUIREMENTS.md">Consultar requisitos completos no GitHub ↗</a>
     </section>
   </article>
 </div>
-

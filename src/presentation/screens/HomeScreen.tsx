@@ -81,6 +81,14 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParam
         }} />
       </View>
       <View style={styles.actions}>
+        <ActionButton label="Off-line" onPress={() => {
+          try {
+            prepareAmount();
+            navigation.navigate('OfflineWallet');
+          } catch (error) {
+            Alert.alert('Valor inválido', (error as Error).message);
+          }
+        }} />
         <ActionButton label="Swap" onPress={() => navigation.navigate('Swap')} />
         <ActionButton label="Configurações" onPress={() => navigation.navigate('Config')} />
       </View>

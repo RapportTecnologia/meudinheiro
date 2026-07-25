@@ -8,6 +8,7 @@ import {
   parsePaymentRequestUri,
   type PaymentAsset,
 } from '../../domain/payment/paymentRequest';
+import { parseOfflinePaymentUri } from '../../domain/offline/offlinePayment';
 
 export function ScannerScreen({ navigation }: any) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -34,6 +35,11 @@ export function ScannerScreen({ navigation }: any) {
     if (locked) return;
     setLocked(true);
     try {
+      const offline = parseOfflinePaymentUri(data.trim());
+      if (offline) {
+        navigation.replace('OfflineWallet', { incomingUri: data.trim() });
+        return;
+      }
       if (!selectedPaymentAsset) throw new Error('Configure a Moeda Base antes de pagar em BRL.');
       let request = parsePaymentRequestUri(data.trim(), basePaymentAsset);
       if (!request) throw new Error('Solicitação vazia.');

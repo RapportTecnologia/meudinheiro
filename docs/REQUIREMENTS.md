@@ -534,3 +534,29 @@ Critérios de aceite detalhados: [Incentivo Local](LOCAL_INCENTIVES.md).
 - **RN-REG-04:** toda intenção transacional permanece sujeita a PIN, biometria ou credencial do dispositivo.
 
 Detalhamento: [Parcerias regulatórias, bancos e moeda social](REGULATORY_PARTNERSHIPS.md).
+
+
+## 15. Layer 3 off-line/off-chain
+
+- **RF-L3-001:** carregar notas somente contra reserva pré-financiada do Token Oficial.
+- **RF-L3-002:** vincular a reserva da Smart Account a um EOA assinador autorizado.
+- **RF-L3-003:** guardar segredos e pacotes exclusivamente no SecureStore fragmentado.
+- **RF-L3-004:** criar e ler QR `meudinheiro-offline:v1` sem internet.
+- **RF-L3-005:** validar emissor, pagador, destinatário, região, reserva, valor, limite e prazo antes da aceitação.
+- **RF-L3-006:** marcar recebimento como pendente até sincronização e confirmação on-chain.
+- **RF-L3-007:** exigir biometria, PIN ou padrão em emissão, pagamento, aceitação e sincronização.
+- **RF-L3-008:** bloquear localmente notas apresentadas e nunca restaurá-las automaticamente.
+- **RF-L3-009:** sincronizar pacotes recebidos sem apagar dados quando a rede falhar.
+- **RF-L3-010:** exibir de forma inequívoca o risco de gasto duplo enquanto desconectado.
+
+### Critérios de aceite
+
+- pacote adulterado, expirado, de outra região ou outro destinatário é rejeitado;
+- assinatura falsa do emissor ou pagador é rejeitada;
+- valor acima do limite regional é rejeitado;
+- segredo não aparece no estado Zustand, AsyncStorage público, log ou telemetria;
+- o mesmo pacote não é importado duas vezes;
+- falha de rede conserva o recebimento pendente;
+- testes de domínio cobrem URI, assinaturas, destinatário e expiração.
+
+Consulte [OFFLINE_LAYER3.md](OFFLINE_LAYER3.md).

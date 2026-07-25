@@ -195,6 +195,7 @@ permalink: /
       <a class="doc-card" href="{{ '/modelo-economico/' | relative_url }}"><div><p class="section-kicker">Operação</p><h3>Token, reservas e gás</h3><p>Mint & Burn, resgate Pix, lastro, taxa e Paymaster.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/custo-zero/' | relative_url }}"><div><p class="section-kicker">ERC-4337</p><h3>Custo zero</h3><p>Smart Account, Bundler, Paymaster e validação defensiva.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/incentivos-locais/' | relative_url }}"><div><p class="section-kicker">Economia local</p><h3>Cashback e descontos</h3><p>Benefícios pré-financiados, limites transparentes e liquidação atômica.</p></div><span>Explorar →</span></a>
+      <a class="doc-card" href="{{ '/offline/' | relative_url }}"><div><p class="section-kicker">Resiliência</p><h3>Pagamentos off-line</h3><p>Notas pré-financiadas, QR local, sincronização e liquidação posterior na Polygon.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/agenda/' | relative_url }}"><div><p class="section-kicker">Destinatários</p><h3>Agenda segura</h3><p>Contatos frequentes, conflitos, edição e solicitações compartilhadas.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="https://github.com/RapportTecnologia/meudinheiro"><div><p class="section-kicker">Código aberto</p><h3>Repositório</h3><p>React Native, Expo, ethers.js, testes e histórico de implementação.</p></div><span>Abrir GitHub ↗</span></a>
     </div>

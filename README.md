@@ -19,6 +19,8 @@
   <a href="docs/ACCOUNT_ABSTRACTION.md">Custo zero</a>
   ·
   <a href="docs/LOCAL_INCENTIVES.md">Incentivos locais</a>
+  ·
+  <a href="docs/OFFLINE_LAYER3.md">Layer 3 off-line</a>
   <br><br>
 
   <a href="https://github.com/RapportTecnologia/meudinheiro/stargazers"><img alt="Estrelas" src="https://img.shields.io/github/stars/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
@@ -87,6 +89,7 @@ A calculadora prepara o valor. O QR Code ou a agenda resolve o destinatário. A 
 - **Custo zero para o usuário:** o Paymaster paga o gás elegível em POL por Account Abstraction.
 - **Incentivo local:** descontos e cashback determinísticos, pagos por campanhas pré-financiadas sem criar tokens sem lastro.
 - **Modo comerciante:** fluxo separado para administração de estoque e conversão Token Oficial ↔ POL.
+- **Layer 3 off-line:** notas pré-financiadas por reserva regional circulam por QR e são liquidadas na Polygon ao reconectar; o recebimento permanece pendente até a sincronização.
 
 ## Casos de uso regionais
 
@@ -148,6 +151,19 @@ via ERC-4337.
 
 Detalhes: [incentivos locais, invariantes e critérios de aceite](docs/LOCAL_INCENTIVES.md).
 
+## Pagamentos off-line com Layer 3
+
+A Smart Account bloqueia previamente Token Oficial no Diamond regional. A API
+emite notas assinadas até esse saldo; os dispositivos trocam o valor por QR sem
+internet; e o recebedor sincroniza para o backend rejeitar gasto duplo e liquidar
+o lote na Polygon.
+
+Sem conexão, o pagamento é **pendente**, pois o recebedor não consulta a lista
+global de notas gastas. O fluxo usa limites baixos, prazo curto, armazenamento
+seguro e autenticação em emissão, envio, aceitação e sincronização.
+
+O desenho foi inspirado conceitualmente no [Minibits Wallet](https://github.com/minibits-cash/minibits_wallet) e no protocolo Cashu, sem copiar código nem declarar compatibilidade. [Leia o modelo, riscos e limites](docs/OFFLINE_LAYER3.md).
+
 ## Arquitetura
 
 O código segue **DDD pragmático** e separa regras de negócio, casos de uso, integrações e interface:
@@ -185,7 +201,7 @@ A infraestrutura implementa as portas definidas pela aplicação. Regras finance
 | Estado | Zustand + AsyncStorage somente para dados públicos |
 | Segredos | Expo SecureStore |
 | Autenticação | Expo Local Authentication |
-| QR Code | Expo Camera + EIP-681 + react-native-qrcode-svg |
+| QR Code | Expo Camera + EIP-681 + pacote Layer 3 + react-native-qrcode-svg |
 | Navegação | React Navigation |
 | Testes | Jest, jest-expo e Testing Library |
 | Site | Jekyll + GitHub Pages |
@@ -241,6 +257,7 @@ npx expo run:android
 | `EXPO_PUBLIC_ERC4337_ENTRY_POINT` | endereço esperado do EntryPoint v0.7 |
 | `EXPO_PUBLIC_ERC4337_SIMPLE_ACCOUNT_FACTORY` | factory auditada da Smart Account |
 | `EXPO_PUBLIC_FIAT_GATEWAY_URL` | Gateway de carga, resgate e conciliação Pix |
+| `EXPO_PUBLIC_OFFLINE_GATEWAY_URL` | API regional de emissão e sincronização da Layer 3 |
 
 > [!CAUTION]
 > Variáveis `EXPO_PUBLIC_*` fazem parte do aplicativo distribuído. Nunca coloque nelas chave privada, seed, credencial de Bundler, chave do sponsor, token administrativo ou segredo RPC.
@@ -272,6 +289,7 @@ Leia a [arquitetura de segurança](docs/ARCHITECTURE.md) e a [política ERC-4337
 | [Account Abstraction](docs/ACCOUNT_ABSTRACTION.md) | Smart Account, Gateway, Bundler e Paymaster |
 | [Agenda e compartilhamento](docs/CONTACTS_AND_SHARING.md) | contatos, conflitos, QR e clipboard |
 | [Identidade de marca](docs/BRAND.md) | posicionamento, símbolo, paleta e tom de voz |
+| [Layer 3 off-line](docs/OFFLINE_LAYER3.md) | notas pré-financiadas, QR, sincronização, riscos e inspiração Minibits |
 | [Site e publicação](docs/SITE.md) | Jekyll, GitHub Pages e workflow oficial |
 
 A documentação também está disponível no site público:

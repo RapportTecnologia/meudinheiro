@@ -9,6 +9,7 @@ import { ScannerScreen } from '../screens/ScannerScreen';
 import { SendReviewScreen } from '../screens/SendReviewScreen';
 import { SwapScreen } from '../screens/SwapScreen';
 import { CashOperationsScreen } from '../screens/CashOperationsScreen';
+import { OfflineWalletScreen } from '../screens/OfflineWalletScreen';
 
 export type RootStackParamList = {
   Home: undefined; Scanner: undefined; Receive: undefined; SendReview: undefined;
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   CashOperations: undefined;
   RegulatoryPartners: undefined;
   Incentives: undefined;
+  OfflineWallet: { incomingUri?: string } | undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -30,6 +32,7 @@ export function AppNavigator() {
       <Stack.Screen name="Swap" component={SwapScreen} options={{ title: 'Trocar ativos' }} />
       <Stack.Screen name="CashOperations" component={CashOperationsScreen} options={{ title: 'Pix: carga e resgate' }} />
       <Stack.Screen name="Incentives" component={IncentivesScreen} options={{ title: 'Benefícios locais' }} />
+      <Stack.Screen name="OfflineWallet" component={OfflineWalletScreen} options={{ title: 'Pagamentos off-line' }} />
       <Stack.Screen name="RegulatoryPartners" component={RegulatoryPartnersScreen} options={{ title: 'Parceiros regulados' }} />
       <Stack.Screen name="Config" component={ConfigScreen} options={{ title: 'Configurações' }} />
     </Stack.Navigator>

@@ -197,3 +197,24 @@ App -> Compliance Gateway -> manifesto assinado/versionado
 ```
 
 O Diamond armazena apenas hashes do ente regional, dos parceiros e da versão da política, além de validade e flags operacionais. CNPJ, contratos e dados pessoais ficam off-chain. O registro on-chain é uma âncora de integridade, não uma licença. Consulte [REGULATORY_PARTNERSHIPS.md](REGULATORY_PARTNERSHIPS.md).
+
+
+## 16. Layer 3 regional
+
+A camada `domain/offline` define mensagens canônicas, compromissos, pacote QR e
+validação local. `infrastructure/offline/offlineVault` separa metadados públicos
+dos segredos fragmentados no SecureStore. `offlineGateway` expõe somente os
+três endpoints regionais de informações, emissão e resgate.
+
+O smart contract conserva o saldo pré-financiado; o backend é a autoridade de
+gasto único quando a conectividade retorna. A UI nunca apresenta finalidade no
+modo desconectado. Estados principais:
+
+```text
+nota:       available -> transferred_pending
+recebido:   received_pending -> settlement_pending -> on-chain
+```
+
+Não existe transição automática de `transferred_pending` para `available`.
+Recuperação exige consulta ao backend e política auditada. Veja
+[OFFLINE_LAYER3.md](OFFLINE_LAYER3.md).

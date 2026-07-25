@@ -171,6 +171,9 @@ export function verifyOfflinePayment(input: {
 }): bigint {
   const { envelope, mintInfo } = input;
   const now = input.now ?? new Date();
+  if (input.tokenDecimals < 2 || input.tokenDecimals > 18) {
+    throw new Error('Token regional incompatível com valores em centavos.');
+  }
   if (
     envelope.version !== 1
     || envelope.regionId !== mintInfo.regionId

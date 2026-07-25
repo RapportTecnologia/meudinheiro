@@ -112,4 +112,15 @@ describe('pagamento Layer 3 off-line', () => {
       now: new Date(now.getTime() + 7_200_000),
     })).toThrow('expirado');
   });
+
+  it('rejeita token sem precisão de centavos', async () => {
+    const { envelope, mintInfo } = await fixture();
+    expect(() => verifyOfflinePayment({
+      envelope,
+      mintInfo,
+      expectedRecipient: envelope.recipientAddress,
+      tokenDecimals: 1,
+      now,
+    })).toThrow('centavos');
+  });
 });

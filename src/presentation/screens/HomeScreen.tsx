@@ -71,6 +71,16 @@ export function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParam
             Alert.alert('Valor inválido', (error as Error).message);
           }
         }} />
+        <ActionButton label="Benefícios" onPress={() => {
+          try {
+            prepareAmount();
+            navigation.navigate('Incentives');
+          } catch (error) {
+            Alert.alert('Valor inválido', (error as Error).message);
+          }
+        }} />
+      </View>
+      <View style={styles.actions}>
         <ActionButton label="Swap" onPress={() => navigation.navigate('Swap')} />
         <ActionButton label="Configurações" onPress={() => navigation.navigate('Config')} />
       </View>

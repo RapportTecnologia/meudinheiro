@@ -8,7 +8,7 @@
   <img alt="Status do documento" src="https://img.shields.io/badge/status-evolutivo-111827?style=flat-square">
   <img alt="Visitantes dos requisitos" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-requirements&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a> · <a href="LOCAL_INCENTIVES.md">Incentivos locais</a></p>
 </div>
 
 ## 1. Visão do produto
@@ -490,3 +490,32 @@ nome ou endereço de outro contato.
 - Política de privacidade, termos e avisos revisados.
 - Testes com valores reduzidos em ambiente controlado aprovados.
 - Processo de build, assinatura, atualização e resposta a incidentes definido.
+
+
+## 11. Incentivo local — cashback e descontos
+
+- RF-INC-01: listar campanhas compatíveis com o Token Oficial e a Smart Account.
+- RF-INC-02: calcular compra bruta, desconto, valor líquido e cashback usando
+  aritmética inteira.
+- RF-INC-03: exibir todas as parcelas antes da autenticação.
+- RF-INC-04: preparar uma UserOperation para `payWithIncentive` e conferir
+  campanha, operação, comerciante, valores, EntryPoint, Smart Account e hash.
+- RF-INC-05: exigir biometria, PIN ou padrão antes de acessar a chave e assinar.
+- RN-INC-01: cashback somente pode sair de orçamento pré-financiado com Tokens
+  Oficiais já emitidos e lastreados.
+- RN-INC-02: desconto reduz o valor comercial; nenhum incentivo chama Mint.
+- RN-INC-03: percentuais máximos são 30% de desconto, 10% de cashback e 40%
+  combinados.
+- RN-INC-04: campanha define período, compra mínima, teto por compra, teto por
+  cliente e orçamento restante.
+- RN-INC-05: parâmetros econômicos são imutáveis; mudança exige desativar e criar
+  uma nova campanha.
+- RN-INC-06: pagamento ao comerciante e cashback ao cliente são atômicos.
+- RN-INC-07: cada compra usa identificador único e repetição é rejeitada.
+- RN-INC-08: não usar sorteio, aposta, roleta, caixa-surpresa ou aleatoriedade
+  para determinar benefício financeiro.
+- RN-INC-09: termos, limites e patrocinador devem ser informados antes da compra.
+- RN-INC-10: operação elegível pode ter gás patrocinado, sem fallback silencioso
+  para cobrar POL do usuário.
+
+Critérios de aceite detalhados: [Incentivo Local](LOCAL_INCENTIVES.md).

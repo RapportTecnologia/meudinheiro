@@ -8,7 +8,7 @@
   <img alt="Formato BDD" src="https://img.shields.io/badge/formato-Histórias%20e%20fluxos-111827?style=flat-square">
   <img alt="Visitantes dos casos de uso" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-use-cases&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a> · <a href="LOCAL_INCENTIVES.md">Incentivos locais</a></p>
 </div>
 
 ## Premissas comuns
@@ -277,6 +277,39 @@ conhecendo antecipadamente a taxa e o valor líquido.
 - Taxa acima de 1% ou diferente da revisão: rejeitar.
 - Patrocínio indisponível: bloquear sem cobrar POL do usuário.
 
+## UC-11 — comprar no comércio local com desconto e cashback
+
+### História
+
+Como cliente, quero conhecer e receber um pequeno benefício ao comprar no
+comércio da região, para economizar e fortalecer a circulação local.
+
+### Fluxo principal
+
+1. O cliente digita o valor bruto na calculadora e abre **Benefícios**.
+2. O app consulta campanhas ativas do Token Oficial regional.
+3. A tela mostra preço bruto, desconto, valor a pagar, cashback, validade e
+   patrocinador.
+4. O cliente escolhe a campanha e revisa a operação.
+5. O app confirma saldo suficiente para o valor líquido e recomputa a oferta.
+6. O cliente autoriza com biometria, PIN ou padrão.
+7. O Gateway prepara uma UserOperation de `payWithIncentive`; o app confere os
+   campos e reproduz o hash.
+8. O Paymaster patrocina o gás elegível.
+9. O Diamond transfere atomicamente o valor líquido ao comerciante e o cashback
+   pré-financiado ao cliente.
+10. O recibo apresenta pagamento, benefício e custo de gás de 0 POL.
+
+### Exceções
+
+- Campanha expirada, inativa ou abaixo da compra mínima: não aplicar benefício.
+- Orçamento insuficiente: não prometer cashback nem assinar a operação.
+- Limite do cliente atingido: aplicar somente o valor permitido pela regra.
+- Saldo insuficiente para o pagamento líquido: bloquear.
+- Oferta do gateway divergente da revisão: bloquear antes da assinatura.
+- Operação repetida: rejeitar on-chain.
+- Patrocínio recusado: bloquear sem cobrar POL do cliente.
+
 ## Critérios de aceite dos casos
 
 - O botão **Receber** utiliza o resultado atual da calculadora.
@@ -305,3 +338,9 @@ conhecendo antecipadamente a taxa e o valor líquido.
 - Mint exige Pix liquidado e identificadores não reutilizados.
 - Resgate informa bruto, taxa e líquido antes da autenticação.
 - Burn só ocorre depois da confirmação bancária; falha produz estorno integral.
+
+
+- Compra incentivada informa preço bruto, desconto, pagamento e cashback.
+- Cashback sai somente de orçamento pré-financiado e não gera Mint.
+- Pagamento e cashback confirmam ou revertem juntos.
+- Benefício não depende de sorteio, aposta ou aleatoriedade.

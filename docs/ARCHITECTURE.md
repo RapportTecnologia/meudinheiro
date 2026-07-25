@@ -8,7 +8,7 @@
   <img alt="Branch principal" src="https://img.shields.io/badge/branch-main-111827?style=flat-square&logo=git">
   <img alt="Visitantes da arquitetura" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-architecture&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a> · <a href="LOCAL_INCENTIVES.md">Incentivos locais</a></p>
 </div>
 
 ## 1. Escopo
@@ -149,11 +149,24 @@ O adaptador `UniswapV3SwapGateway` é reservado ao modo comerciante para gestão
 de estoque Token Oficial ↔ POL. O fluxo normaliza POL/WPOL, valida pools,
 liquidez, fee tier, slippage e contratos. A interface comum não oferece swap.
 
-## 7. TDD
+## 7. Contexto de Incentivos Locais
+
+O bounded context `incentives` contém campanha, cotação e regras puras em
+`domain/incentives`. O adaptador `incentiveGateway` consulta o estado confirmado
+e prepara a operação patrocinada. O hook `useLocalIncentivePayment` verifica
+saldo, exige autenticação, recupera a chave do SecureStore e assina somente após
+comparar a oferta com a UserOperation.
+
+No Diamond regional, `LocalIncentiveFacet` transfere o valor líquido do cliente ao
+comerciante e o cashback do escrow ao cliente na mesma transação. O escrow recebe
+somente Tokens Oficiais existentes. A invariável de cobertura soma orçamento de
+cashback e resgates Pix bloqueados. A operação nunca chama Mint ou Burn.
+
+## 8. TDD
 
 Ordem por feature: escrever teste de regra → implementar domínio → teste do caso de uso com portas falsas → infraestrutura em testnet → teste de componente → E2E. Critérios mínimos: limite de duas contas, imutabilidade do token, parser, QR inválido, slippage, cotação expirada, chainId incorreto, autenticação cancelada e envio duplicado.
 
-## 8. Pendências antes de produção
+## 9. Pendências antes de produção
 
 - revisão de segurança e testes de integração da tela de envio;
 - expiração e identificador único opcional para pedidos de pagamento;

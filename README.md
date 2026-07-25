@@ -17,6 +17,8 @@
   <a href="docs/USE_CASES.md">Casos de uso</a>
   ·
   <a href="docs/ACCOUNT_ABSTRACTION.md">Custo zero</a>
+  ·
+  <a href="docs/LOCAL_INCENTIVES.md">Incentivos locais</a>
   <br><br>
 
   <a href="https://github.com/RapportTecnologia/meudinheiro/stargazers"><img alt="Estrelas" src="https://img.shields.io/github/stars/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
@@ -83,6 +85,7 @@ A calculadora prepara o valor. O QR Code ou a agenda resolve o destinatário. A 
 - **Clipboard:** compartilhamento de destino e valor proposto sem autorizar automaticamente a transferência.
 - **Autenticação obrigatória:** biometria, PIN ou padrão para toda operação sensível.
 - **Custo zero para o usuário:** o Paymaster paga o gás elegível em POL por Account Abstraction.
+- **Incentivo local:** descontos e cashback determinísticos, pagos por campanhas pré-financiadas sem criar tokens sem lastro.
 - **Modo comerciante:** fluxo separado para administração de estoque e conversão Token Oficial ↔ POL.
 
 ## Casos de uso regionais
@@ -96,6 +99,7 @@ A calculadora prepara o valor. O QR Code ou a agenda resolve o destinatário. A 
 | **Reutilizar contatos** | Destinatários frequentes ficam na agenda após confirmação e validação de conflitos |
 | **Carregar via Pix** | Um depósito liquidado emite exatamente o mesmo valor bruto em tokens |
 | **Resgatar para Pix** | Tokens são bloqueados; Pix confirmado gera Burn e falha gera estorno |
+| **Comprar com benefício local** | O app mostra desconto e cashback; uma operação atômica paga o comerciante e entrega o benefício |
 
 Em todos os fluxos, QR Code, clipboard e agenda são apenas fontes de dados não confiáveis. Eles nunca acessam a chave nem autorizam sozinhos uma movimentação.
 
@@ -129,6 +133,20 @@ flowchart LR
 O aplicativo confere localmente Smart Account, EntryPoint, Paymaster, token, destinatário, quantidade, validade, hash e limites de gás antes de assinar. Se o patrocínio falhar, a operação é bloqueada; não existe fallback silencioso para cobrar POL do usuário.
 
 Detalhes: [Account Abstraction, Smart Account e Paymaster](docs/ACCOUNT_ABSTRACTION.md).
+
+## Incentivo local: cashback e descontos
+
+Campanhas regionais podem oferecer desconto e cashback com regras transparentes.
+O desconto reduz o valor enviado ao comerciante. O cashback sai de um orçamento
+pré-financiado com Tokens Oficiais já emitidos e lastreados; a compra não executa
+Mint ou Burn e não altera o fornecimento total.
+
+A oferta possui período, compra mínima, teto por compra, teto acumulado por cliente
+e orçamento on-chain. O benefício não usa sorteio, aposta ou aleatoriedade. A
+liquidação é atômica, exige biometria, PIN ou padrão e pode ter gás patrocinado
+via ERC-4337.
+
+Detalhes: [incentivos locais, invariantes e critérios de aceite](docs/LOCAL_INCENTIVES.md).
 
 ## Arquitetura
 

@@ -21,6 +21,7 @@ permalink: /casos-de-uso/
     <a href="#transferir">Transferir</a>
     <a href="#compartilhar">Compartilhar</a>
     <a href="#novo-contato">Novo contato</a>
+    <a href="#incentivo">Incentivo local</a>
   </aside>
   <article class="doc-content">
     <section id="abastecer" class="content-card highlight">
@@ -57,6 +58,11 @@ permalink: /casos-de-uso/
     <section class="content-card">
       <h2>Resgate para Pix</h2>
       <p>Os tokens são bloqueados antes do pagamento bancário. A tela mostra bruto, taxa de 0,5% a 1% e líquido. Após o Pix confirmado ocorre o Burn; em falha, o valor integral é estornado.</p>
+    </section>
+
+    <section id="incentivo" class="content-card">
+      <h2>Comprar com benefício local</h2>
+      <p>O cliente escolhe uma campanha e vê preço bruto, desconto, pagamento e cashback. Após autenticação, uma UserOperation patrocinada paga o comerciante e entrega o cashback pré-financiado na mesma transação.</p>
     </section>
 
     <section id="compartilhar" class="content-card">

@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ConfigScreen } from '../screens/ConfigScreen';
 import { ContactsScreen } from '../screens/ContactsScreen';
 import { HomeScreen } from '../screens/HomeScreen';
+import { IncentivesScreen } from '../screens/IncentivesScreen';
 import { ReceiveScreen } from '../screens/ReceiveScreen';
 import { ScannerScreen } from '../screens/ScannerScreen';
 import { SendReviewScreen } from '../screens/SendReviewScreen';
@@ -12,6 +13,7 @@ export type RootStackParamList = {
   Home: undefined; Scanner: undefined; Receive: undefined; SendReview: undefined;
   Contacts: undefined; Swap: undefined; Config: undefined;
   CashOperations: undefined;
+  Incentives: undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,6 +27,7 @@ export function AppNavigator() {
       <Stack.Screen name="SendReview" component={SendReviewScreen} options={{ title: 'Revisar pagamento' }} />
       <Stack.Screen name="Swap" component={SwapScreen} options={{ title: 'Trocar ativos' }} />
       <Stack.Screen name="CashOperations" component={CashOperationsScreen} options={{ title: 'Pix: carga e resgate' }} />
+      <Stack.Screen name="Incentives" component={IncentivesScreen} options={{ title: 'Benefícios locais' }} />
       <Stack.Screen name="Config" component={ConfigScreen} options={{ title: 'Configurações' }} />
     </Stack.Navigator>
   );

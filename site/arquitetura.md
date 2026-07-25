@@ -20,6 +20,7 @@ permalink: /arquitetura/
     <a href="#fluxo">Fluxo transacional</a>
     <a href="#pagamentos">Pedidos de pagamento</a>
     <a href="#agenda">Agenda e clipboard</a>
+    <a href="#incentivos">Incentivos</a>
     <a href="#seguranca">Segurança</a>
   </aside>
   <article class="doc-content">
@@ -58,6 +59,12 @@ permalink: /arquitetura/
       <h2>Agenda e clipboard</h2>
       <p><code>validateContactDraft</code> centraliza nomes e endereços únicos. Um destinatário novo só é salvo após confirmação on-chain; falha de persistência nunca altera o resultado financeiro confirmado.</p>
       <p>O mesmo parser valida QR e clipboard, sempre encaminhando o conteúdo para a tela de revisão.</p>
+    </section>
+
+    <section id="incentivos" class="content-card">
+      <h2>Incentivos locais</h2>
+      <p>O domínio calcula benefícios em inteiros. O gateway prepara a UserOperation e o app valida a oferta antes de assinar. No Diamond, pagamento líquido e cashback pré-financiado são liquidados atomicamente sem Mint.</p>
+      <a href="{{ '/incentivos-locais/' | relative_url }}">Entender cashback e descontos →</a>
     </section>
 
     <section id="seguranca" class="content-card">

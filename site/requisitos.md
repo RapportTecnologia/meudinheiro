@@ -19,6 +19,7 @@ permalink: /requisitos/
     <a href="#funcionais">Funcionais</a>
     <a href="#transacoes">Transações</a>
     <a href="#contatos">Contatos</a>
+    <a href="#incentivos">Incentivos</a>
     <a href="#seguranca">Segurança</a>
     <a href="#aceite">Aceite</a>
   </aside>
@@ -51,6 +52,17 @@ permalink: /requisitos/
       <h2>Agenda</h2>
       <p>Destinatários são ordenados por favorito, frequência e recência. Nomes normalizados e endereços EVM devem ser únicos.</p>
       <div class="callout">Ao enviar para endereço desconhecido, o usuário escolhe salvar ou não. O contato só é criado depois da confirmação da transferência.</div>
+    </section>
+
+    <section id="incentivos" class="content-card">
+      <h2>Incentivos locais</h2>
+      <ul>
+        <li>Desconto reduz o valor enviado ao comerciante.</li>
+        <li>Cashback usa somente Token Oficial pré-financiado e lastreado.</li>
+        <li>Campanhas possuem período, orçamento e limites por compra e cliente.</li>
+        <li>Pagamento e cashback são atômicos e exigem autenticação.</li>
+        <li>Não há sorteio, aposta ou aleatoriedade no benefício financeiro.</li>
+      </ul>
     </section>
 
     <section id="seguranca" class="content-card">

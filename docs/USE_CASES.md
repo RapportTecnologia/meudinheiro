@@ -344,3 +344,19 @@ comércio da região, para economizar e fortalecer a circulação local.
 - Cashback sai somente de orçamento pré-financiado e não gera Mint.
 - Pagamento e cashback confirmam ou revertem juntos.
 - Benefício não depende de sorteio, aposta ou aleatoriedade.
+
+
+## UC-REG-01 — Habilitar uma região com parceiros regulados
+
+1. A governança regional cadastra o ente operador e os contratos com banco/IP e, se aplicável, SPSAV.
+2. Compliance verifica autorização, escopo, responsabilidades, termos e validade.
+3. O gateway publica manifesto versionado e assinado; o hash é ancorado no Diamond regional.
+4. O app exibe os prestadores reais e habilita apenas os fluxos cobertos.
+5. Na expiração, revogação ou ausência de papel obrigatório, a operação regulada falha de forma fechada.
+
+## UC-REG-02 — Carga ou resgate sem parceria válida
+
+1. O usuário abre a operação Pix.
+2. O app consulta o manifesto e detecta ausência/expiração de Pix, reserva ou KYC/PLD.
+3. Carga e resgate permanecem desabilitados; nenhuma autenticação ou transação é solicitada.
+4. O usuário vê a responsabilidade ausente e pode consultar novamente.

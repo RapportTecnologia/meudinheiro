@@ -60,3 +60,8 @@ permalink: /modelo-economico/
     </section>
   </article>
 </div>
+
+
+## Parcerias e reserva
+
+A reserva 1:1 e o Pix são operados por instituições identificadas e autorizadas, com segregação, conciliação e auditoria. [Veja as responsabilidades regulatórias]({{ '/parcerias-regulatorias/' | relative_url }}).

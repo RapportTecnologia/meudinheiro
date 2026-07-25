@@ -177,3 +177,10 @@ e [Parecer CVM 40](https://www.gov.br/cvm/pt-br/assuntos/noticias/2022/cvm-divul
 
 Este documento é uma especificação técnica, não um parecer jurídico nem uma
 oferta pública.
+
+
+## Parceiros financeiros e reserva
+
+A reserva em BRL, sua eventual rentabilidade e a liquidação Pix devem ficar sob arranjo contratual com instituição autorizada e controles de segregação, conciliação e auditoria. Rentabilidade não pode reduzir a cobertura nominal dos tokens nem ser prometida ao usuário como rendimento, salvo enquadramento jurídico específico. Taxas de resgate devem ser mostradas antes da autenticação.
+
+O operador comunitário coordena a rede e os incentivos, mas não substitui banco, instituição de pagamento, custodiante ou prestador de ativos virtuais. Consulte [Parcerias regulatórias](REGULATORY_PARTNERSHIPS.md).

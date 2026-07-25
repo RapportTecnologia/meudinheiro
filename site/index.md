@@ -222,3 +222,10 @@ permalink: /
     </div>
   </div>
 </section>
+
+
+<section class="feature-card">
+  <h2>Parcerias regulatórias transparentes</h2>
+  <p>O app identifica quem presta Pix, custodia a reserva, executa KYC/PLD e, quando aplicável, serviços de ativos virtuais. Sem parceiro vigente, a operação regulada fica bloqueada.</p>
+  <a href="{{ '/parcerias-regulatorias/' | relative_url }}">Entenda o modelo de parceria</a>
+</section>

@@ -183,3 +183,17 @@ Ordem por feature: escrever teste de regra → implementar domínio → teste do
 - PIN interno com derivação forte, se realmente necessário;
 - auditoria independente, threat model, pentest e publicação com política de privacidade;
 - testes com valores pequenos em Amoy e depois Polygon.
+
+
+## Contexto de parcerias reguladas
+
+O bounded context **Compliance** fica entre a UI e os gateways Fiat/Web3. Antes de iniciar carga ou resgate, o app obtém o manifesto regional, valida vigência e cobertura de responsabilidades e aplica fail-closed. O gateway é responsável por verificar a fonte oficial e publicar manifesto versionado; o app não considera uma declaração como prova autônoma de autorização.
+
+```text
+App -> Compliance Gateway -> manifesto assinado/versionado
+ |          |
+ |          +-> verificação de parceiros no BCB
+ +-> bloqueia Fiat Gateway sem PIX + RESERVE_CUSTODY + KYC_AML
+```
+
+O Diamond armazena apenas hashes do ente regional, dos parceiros e da versão da política, além de validade e flags operacionais. CNPJ, contratos e dados pessoais ficam off-chain. O registro on-chain é uma âncora de integridade, não uma licença. Consulte [REGULATORY_PARTNERSHIPS.md](REGULATORY_PARTNERSHIPS.md).

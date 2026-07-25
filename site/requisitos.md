@@ -84,3 +84,8 @@ permalink: /requisitos/
     </section>
   </article>
 </div>
+
+
+## Parcerias reguladas
+
+O app exibe os prestadores reais e bloqueia carga/resgate sem parceiros vigentes para Pix, reserva e KYC/PLD. [Detalhes regulatórios]({{ '/parcerias-regulatorias/' | relative_url }}).

@@ -1,11 +1,15 @@
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
 import { Alert, Button, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { useWalletStore } from '../../application/hooks/useWalletStore';
 import { requireDeviceAuth } from '../../infrastructure/security/deviceAuth';
 import { secureSecrets } from '../../infrastructure/storage/secureSecrets';
+import type { RootStackParamList } from '../navigation/AppNavigator';
 
-export function ConfigScreen() {
+export function ConfigScreen({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, 'Config'>) {
   const state = useWalletStore();
   const [name, setName] = useState('');
   const [privateKey, setPrivateKey] = useState('');
@@ -73,6 +77,10 @@ export function ConfigScreen() {
         <Button title="Importar conta" onPress={importAccount} />
       </View>}
       <Text style={styles.heading}>Moeda Base</Text>
+      <Button
+        title="Parceiros e regulamentação"
+        onPress={() => navigation.navigate('RegulatoryPartners')}
+      />
       {state.baseToken ? <View style={styles.card}>
         <Text>{state.baseToken.name} ({state.baseToken.symbol})</Text><Text selectable>{state.baseToken.address}</Text>
         <Text>

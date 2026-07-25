@@ -309,3 +309,13 @@ Sugestões, relatórios de erro e propostas de melhoria são bem-vindos em [GitH
   <p>Um projeto da <a href="https://rapport.tec.br">Rapport Tecnologia e Inovação</a>.</p>
   <sub>Documento do projeto · versão 0.1.0 · atualizado em julho de 2026</sub>
 </div>
+
+
+## Parcerias regulatórias e moeda social
+
+O Meu Dinheiro é a camada tecnológica e comunitária, **não um banco por autodeclaração**. Pix, conta, reserva em BRL, KYC/PLD e serviços de ativos virtuais só podem ser habilitados quando o manifesto regional identificar parceiros vigentes e autorizados para cada responsabilidade. O app agora exibe essas instituições e bloqueia carga/resgate se faltarem os papéis obrigatórios.
+
+A classificação depende da função econômica do token. Projetos legislativos sobre bancos comunitários continuam sendo monitorados e não são tratados como autorização vigente.
+
+- [Política de parcerias regulatórias](docs/REGULATORY_PARTNERSHIPS.md)
+- [Página do site: parcerias regulatórias](site/parcerias-regulatorias.md)

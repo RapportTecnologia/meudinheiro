@@ -82,3 +82,8 @@ permalink: /arquitetura/
     </section>
   </article>
 </div>
+
+
+## Contexto Compliance
+
+Um gateway versionado fornece o manifesto regional. O app aplica fail-closed e o Diamond ancora somente hashes e validade, sem dados pessoais. [Entenda o desenho]({{ '/parcerias-regulatorias/' | relative_url }}).

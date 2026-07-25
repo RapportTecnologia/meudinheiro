@@ -519,3 +519,18 @@ nome ou endereço de outro contato.
   para cobrar POL do usuário.
 
 Critérios de aceite detalhados: [Incentivo Local](LOCAL_INCENTIVES.md).
+
+
+## Parcerias com bancos, moeda social e meio de pagamento
+
+- **RF-REG-01:** consultar e exibir o manifesto regional de parceiros regulados.
+- **RF-REG-02:** informar razão social, CNPJ, autoridade, referência de autorização, situação, vigência e responsabilidades.
+- **RF-REG-03:** bloquear operações Pix se não houver cobertura vigente para Pix, custódia da reserva e KYC/PLD.
+- **RF-REG-04:** rejeitar operador comunitário como substituto de instituição autorizada em papel regulado.
+- **RF-REG-05:** vincular Termos e Política de Privacidade e revalidar o manifesto ao expirar ou mudar o Token Oficial.
+- **RN-REG-01:** a marca Meu Dinheiro não deve induzir o usuário a acreditar que a plataforma é banco ou instituição autorizada quando o serviço é prestado por parceiro.
+- **RN-REG-02:** a classificação do Token Oficial é definida por suas funções e deve ter parecer jurídico por modelo/região.
+- **RN-REG-03:** PL 4.476/2023 e PL 52/2025 são itens de acompanhamento, não fundamento para operação sem autorização.
+- **RN-REG-04:** toda intenção transacional permanece sujeita a PIN, biometria ou credencial do dispositivo.
+
+Detalhamento: [Parcerias regulatórias, bancos e moeda social](REGULATORY_PARTNERSHIPS.md).

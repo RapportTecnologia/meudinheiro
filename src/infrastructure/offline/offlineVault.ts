@@ -143,10 +143,10 @@ export const offlineVault = {
 
   async saveIncoming(envelope: OfflinePaymentEnvelope) {
     const index = await readIndex();
-    if (index.incoming.some((entry) => entry.ref.endsWith(envelope.paymentId))) {
+    const ref = `meudinheiro.offline.incoming.${envelope.paymentId}`;
+    if (index.incoming.some((entry) => entry.ref === ref)) {
       throw new Error('Este pacote já foi importado.');
     }
-    const ref = `meudinheiro.offline.incoming.${envelope.paymentId}`;
     index.incoming.push({
       ref,
       chunks: await putSecret(ref, envelope),

@@ -47,6 +47,20 @@ export function OfflineWalletScreen({ route }: Props) {
       : undefined,
     [route.params?.incomingUri],
   );
+  const incomingAmount = useMemo(() => {
+    if (!incoming || !baseToken) return undefined;
+    try {
+      return `${formatUnits(
+        incoming.notes.reduce(
+          (sum, note) => sum + BigInt(note.amountSmallest),
+          0n,
+        ),
+        baseToken.decimals,
+      )} ${baseToken.symbol}`;
+    } catch {
+      return 'valor inválido';
+    }
+  }, [baseToken, incoming]);
   const refreshSummary = useCallback(async () => {
     setSummary(await offlineVault.summary());
     setMintInfo(await offlineVault.getMintInfo());
@@ -162,8 +176,12 @@ export function OfflineWalletScreen({ route }: Props) {
           offlinePaymentMessage(unsigned),
         ),
       };
+      const paymentUri = createOfflinePaymentUri(envelope);
+      if (paymentUri.length > 2_500) {
+        throw new Error('Pacote grande demais para QR estático. Carregue uma nota de valor exato.');
+      }
       await offlineVault.markTransferred(selected.map(({ entry }) => entry.ref));
-      setQrValue(createOfflinePaymentUri(envelope));
+      setQrValue(paymentUri);
       await refreshSummary();
     } catch (error) {
       Alert.alert('Pagamento não preparado', (error as Error).message);
@@ -237,6 +255,7 @@ export function OfflineWalletScreen({ route }: Props) {
       {incoming && (
         <View style={styles.card}>
           <Text style={styles.subtitle}>Revisar recebimento off-line</Text>
+          <Text style={styles.amount}>Valor proposto: {incomingAmount}</Text>
           <Text>Pagador: {incoming.senderAddress}</Text>
           <Text>Notas: {incoming.notes.length}</Text>
           <Text>Expira: {new Date(incoming.expiresAt).toLocaleString()}</Text>
@@ -294,6 +313,7 @@ const styles = StyleSheet.create({
   container: { padding: 20, gap: 14, backgroundColor: '#F9FAFB' },
   title: { fontSize: 26, fontWeight: '800', color: '#111827' },
   subtitle: { fontSize: 18, fontWeight: '700' },
+  amount: { fontSize: 20, fontWeight: '800', color: '#C2410C' },
   warning: { backgroundColor: '#FEF3C7', padding: 12, borderRadius: 10, color: '#92400E' },
   card: { backgroundColor: '#fff', padding: 14, borderRadius: 12, gap: 10 },
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 8, padding: 12 },

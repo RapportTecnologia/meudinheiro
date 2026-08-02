@@ -61,15 +61,19 @@ Por isso:
 O índice público contém somente referência, estado, valor e prazo. Segredos,
 notas e pacotes são divididos em blocos e gravados pelo Expo SecureStore.
 
-## Formato v1
+## Autorização geográfica off-line
+
+Antes de sair da cobertura, o app pode obter uma decisão geográfica curta e de uso único. O identificador dessa decisão integra a mensagem assinada do pagamento v2 e é consumido pelo backend ao sincronizar. A expiração ou ausência da autorização bloqueia o pagamento; coordenadas exatas não entram no QR.
+
+## Formato v2
 
 - `commitment = SHA-256(secret)`;
 - assinatura EIP-191 do emissor sobre região, reserva, compromisso, valor e prazo;
 - assinatura EIP-191 do pagador sobre todo o pacote;
-- URI `meudinheiro-offline:v1?payload=...`;
+- URI `meudinheiro-offline:v2?payload=...`, incluindo `geofenceDecisionId`;
 - `notesRoot = keccak256(commitments ordenados)` na liquidação.
 
-O v1 é um protocolo próprio e linkável pelo emissor. Ele **não usa assinaturas
+O v2 é um protocolo próprio e linkável pelo emissor. Ele **não usa assinaturas
 cegas, não implementa Cashu e não declara interoperabilidade Cashu**.
 
 ## Inspiração e atribuição

@@ -33,13 +33,13 @@ permalink: /offline/
     <ul>
       <li>biometria, PIN ou padrão em emissão, envio, aceitação e sincronização;</li>
       <li>segredos no SecureStore, fora de Zustand, logs e telemetria;</li>
-      <li>região, Token Oficial, emissor, valor, destinatário e prazo assinados;</li>
+      <li>região, Token Oficial, emissor, valor, destinatário, prazo e decisão geográfica assinados;</li>
       <li>gasto único transacional no PostgreSQL e replay bloqueado no Diamond;</li>
       <li>saldo não usado só retorna após a janela de sincronização.</li>
     </ul>
 
     <h2>Inspiração responsável</h2>
-    <p>O recurso foi inspirado conceitualmente no <a href="https://github.com/minibits-cash/minibits_wallet">Minibits Wallet</a> e no <a href="https://docs.cashu.space/protocol">protocolo Cashu</a>. O protocolo Meu Dinheiro v1 é independente: não copia código, não usa assinaturas cegas e não declara interoperabilidade Cashu.</p>
+    <p>O recurso foi inspirado conceitualmente no <a href="https://github.com/minibits-cash/minibits_wallet">Minibits Wallet</a> e no <a href="https://docs.cashu.space/protocol">protocolo Cashu</a>. O protocolo Meu Dinheiro v2 é independente: não copia código, não usa assinaturas cegas e não declara interoperabilidade Cashu.</p>
     <p>É uma base experimental. Fundos reais exigem auditoria independente, piloto limitado e validações jurídica, regulatória, contábil e de privacidade.</p>
     <p><a class="button primary" href="https://github.com/RapportTecnologia/meudinheiro/blob/main/docs/OFFLINE_LAYER3.md">Ler a especificação técnica</a></p>
   </div>

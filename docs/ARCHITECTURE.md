@@ -8,7 +8,7 @@
   <img alt="Branch principal" src="https://img.shields.io/badge/branch-main-111827?style=flat-square&logo=git">
   <img alt="Visitantes da arquitetura" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-architecture&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
+  <p><a href="../README.md">Início</a> · <a href="REQUIREMENTS.md">Requisitos</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a> · <a href="LOCAL_INCENTIVES.md">Incentivos locais</a></p>
 </div>
 
 ## 1. Escopo
@@ -33,8 +33,8 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 - RF06: enviar exclusivamente o Token Oficial; o Paymaster paga o gás em POL;
 - RF07: ler endereço `0x...` ou URI `ethereum:` por QR;
 - RF08: exibir QR interoperável EIP-681;
-- RF09: cotar Token Oficial/BRL e reservar swap Token Oficial ↔ POL ao
-  comerciante;
+- RF09: manter paridade bruta 1 Token Oficial = R$ 1,00 em carga/resgate e
+  reservar swap Token Oficial ↔ POL ao comerciante;
 - RF10: autenticar cada assinatura, aprovação, swap, envio e exportação;
 - RF11: manter o swap bloqueado até que configuração e cotação tenham sido validadas;
 - RF12: validar e assinar `UserOperation` localmente após autenticação;
@@ -56,11 +56,11 @@ O produto deve ser apresentado de forma transparente como carteira. A calculador
 
 ## 4. Camadas (DDD pragmático)
 
-- `domain`: entidades e invariantes puras (contas, cálculo, pagamento e cotação).
+- `domain`: entidades e invariantes puras (contas, cálculo, pagamento, taxa e reserva).
+- `domain/fiat`: centavos BRL, cotação de resgate e cobertura da reserva.
 - `domain/payment`: criação e interpretação de pedidos EIP-681.
 - `domain/contacts`: contatos, invariantes e ranking de frequentes.
 - `domain/accountAbstraction`: tipos e política defensiva de patrocínio.
-- `domain/geofencing`: decisão, validade e mensagens de bloqueio.
 - `application`: casos de uso/hooks e portas.
 - `infrastructure`: RPC, Gateway ERC-4337, contratos, armazenamento e autenticação.
 - `presentation`: telas, navegação e componentes.
@@ -70,7 +70,7 @@ Dependências apontam para dentro: UI → application → domain. Infrastructure
 ## 5. Fluxo de transação
 
 1. Home calcula e seleciona a unidade de entrada: BRL ou Token Oficial.
-2. Em BRL, QuoteProvider calcula a quantidade final do Token Oficial.
+2. Em BRL, a paridade bruta converte centavos na quantidade equivalente.
 3. Receber gera um QR/clipboard EIP-681 com contrato, destinatário e tokens.
 4. Scanner, agenda ou clipboard resolvem o destinatário sem executar ações.
 5. SendReview valida rede, contrato, endereço, cotação, tokens, Smart Account e
@@ -122,14 +122,19 @@ autenticação, mas a persistência ocorre somente depois do recibo confirmado.
 Erros posteriores de armazenamento são tratados separadamente do resultado
 on-chain para impedir um falso estado de falha financeira.
 
-### Cotação e patrocínio de gás
+### Carga, resgate e patrocínio de gás
 
-`QuoteProvider` converte BRL para Token Oficial e retorna preço, quantidade
-inteira, fonte, horário, expiração e evidência de integridade. Uma cotação
-inválida bloqueia o fluxo em BRL.
+`fiatOperations` calcula em `bigint` a paridade e a taxa de 0% a 1%.
+`fiatGateway` coordena o PSP sem receber chaves. O Mint depende de webhook
+liquidado e idempotente. O resgate bloqueia tokens no Diamond; o reconciliador
+ordena o Pix e somente após a confirmação autoriza o Burn. Em falha, estorna.
 
-`SponsorshipPolicy` aceita apenas `execute` com valor nativo zero e
-`transfer(address,uint256)` do Token Oficial. O app rejeita divergências de
+PII e payload Pix permanecem off-chain. O contrato recebe apenas `operationId`
+e hashes opacos. A reserva deve cobrir tokens em circulação mais resgates
+bloqueados ainda não pagos.
+
+`SponsorshipPolicy` aceita `execute` com valor nativo zero para
+`transfer(address,uint256)` e para `requestRedemption` do Diamond regional. O app rejeita divergências de
 conta, token, destino, quantidade, EntryPoint, validade, hash ou limites de gás.
 O backend repete a política, simula a UserOperation, aplica cotas e obtém a
 autorização do Paymaster. Se o patrocínio falhar, a operação é bloqueada sem
@@ -144,15 +149,29 @@ O adaptador `UniswapV3SwapGateway` é reservado ao modo comerciante para gestão
 de estoque Token Oficial ↔ POL. O fluxo normaliza POL/WPOL, valida pools,
 liquidez, fee tier, slippage e contratos. A interface comum não oferece swap.
 
-## 7. TDD
+## 7. Contexto de Incentivos Locais
+
+O bounded context `incentives` contém campanha, cotação e regras puras em
+`domain/incentives`. O adaptador `incentiveGateway` consulta o estado confirmado
+e prepara a operação patrocinada. O hook `useLocalIncentivePayment` verifica
+saldo, exige autenticação, recupera a chave do SecureStore e assina somente após
+comparar a oferta com a UserOperation.
+
+No Diamond regional, `LocalIncentiveFacet` transfere o valor líquido do cliente ao
+comerciante e o cashback do escrow ao cliente na mesma transação. O escrow recebe
+somente Tokens Oficiais existentes. A invariável de cobertura soma orçamento de
+cashback e resgates Pix bloqueados. A operação nunca chama Mint ou Burn.
+
+## 8. TDD
 
 Ordem por feature: escrever teste de regra → implementar domínio → teste do caso de uso com portas falsas → infraestrutura em testnet → teste de componente → E2E. Critérios mínimos: limite de duas contas, imutabilidade do token, parser, QR inválido, slippage, cotação expirada, chainId incorreto, autenticação cancelada e envio duplicado.
 
-## 8. Pendências antes de produção
+## 9. Pendências antes de produção
 
 - revisão de segurança e testes de integração da tela de envio;
 - expiração e identificador único opcional para pedidos de pagamento;
-- QuoteProvider Token Oficial/BRL com integridade e expiração;
+- integração auditada com banco/PSP, webhooks assinados e reconciliação;
+- conta de reserva segregada, prova de reservas e política de liquidez;
 - Gateway ERC-4337, factory e Paymaster implantados e auditados;
 - KMS/HSM, cotas, idempotência e observabilidade do patrocínio;
 - depósito/stake do Paymaster com alertas e orçamento operacional;
@@ -165,13 +184,50 @@ Ordem por feature: escrever teste de regra → implementar domínio → teste do
 - auditoria independente, threat model, pentest e publicação com política de privacidade;
 - testes com valores pequenos em Amoy e depois Polygon.
 
-## 9. Geofencing regional
 
-`GeofencingGateway` adapta `expo-location` e a API regional. A UI não decide se
-uma coordenada é permitida; o backend é a autoridade. A decisão curta segue
-para o executor financeiro e é consumida de forma idempotente. O pacote Layer
-3 v2 inclui o identificador na assinatura para verificação posterior.
+## Contexto de parcerias reguladas
 
-O dashboard administrativo é separado do app e usa BFF para impedir que chaves
-administrativas sejam incorporadas ao bundle web. Veja
-[GEOFENCING.md](GEOFENCING.md).
+O bounded context **Compliance** fica entre a UI e os gateways Fiat/Web3. Antes de iniciar carga ou resgate, o app obtém o manifesto regional, valida vigência e cobertura de responsabilidades e aplica fail-closed. O gateway é responsável por verificar a fonte oficial e publicar manifesto versionado; o app não considera uma declaração como prova autônoma de autorização.
+
+```text
+App -> Compliance Gateway -> manifesto assinado/versionado
+ |          |
+ |          +-> verificação de parceiros no BCB
+ +-> bloqueia Fiat Gateway sem PIX + RESERVE_CUSTODY + KYC_AML
+```
+
+O Diamond armazena apenas hashes do ente regional, dos parceiros e da versão da política, além de validade e flags operacionais. CNPJ, contratos e dados pessoais ficam off-chain. O registro on-chain é uma âncora de integridade, não uma licença. Consulte [REGULATORY_PARTNERSHIPS.md](REGULATORY_PARTNERSHIPS.md).
+
+
+## 16. Layer 3 regional
+
+A camada `domain/offline` define mensagens canônicas, compromissos, pacote QR e
+validação local. `infrastructure/offline/offlineVault` separa metadados públicos
+dos segredos fragmentados no SecureStore. `offlineGateway` expõe somente os
+três endpoints regionais de informações, emissão e resgate.
+
+O smart contract conserva o saldo pré-financiado; o backend é a autoridade de
+gasto único quando a conectividade retorna. A UI nunca apresenta finalidade no
+modo desconectado. Estados principais:
+
+```text
+nota:       available -> transferred_pending
+recebido:   received_pending -> settlement_pending -> on-chain
+```
+
+Não existe transição automática de `transferred_pending` para `available`.
+Recuperação exige consulta ao backend e política auditada. Veja
+[OFFLINE_LAYER3.md](OFFLINE_LAYER3.md).
+
+## 17. Geofencing regional
+
+`infrastructure/geofencing` obtém a localização em primeiro plano e consulta
+`POST /v1/geofencing/evaluate`. O domínio aceita somente decisões UUID,
+permitidas, não expiradas e com validade curta. O identificador segue na
+intenção ERC-4337 ou no comando financeiro; o backend o consome de modo
+idempotente antes do efeito financeiro.
+
+A política é *fail closed*: **DENY** prevalece, ao menos uma área **ALLOW** deve
+corresponder e precisão insuficiente bloqueia. Coordenadas exatas não entram em
+Zustand, QR, telemetria ou histórico; o backend guarda somente HMAC para
+auditoria. Consulte [GEOFENCING.md](GEOFENCING.md).

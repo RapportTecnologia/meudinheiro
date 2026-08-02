@@ -10,7 +10,14 @@
   url: /modelo-economico/
 - title: Custo zero
   url: /custo-zero/
-- title: Agenda
-  url: /agenda/
+- title: Off-line
+  url: /offline/
 - title: Geofencing
   url: /geofencing/
+- title: Agenda
+  url: /agenda/
+- title: Incentivos
+  url: /incentivos-locais/
+
+- title: Parcerias regulatórias
+  url: /parcerias-regulatorias/

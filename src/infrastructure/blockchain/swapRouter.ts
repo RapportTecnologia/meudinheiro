@@ -1,6 +1,8 @@
 import { Contract, MaxUint256, type Signer } from 'ethers';
 import type { Address } from '../../domain/wallet/types';
 import type { SwapQuote } from '../../domain/swap/types';
+import { geofencingGateway } from '../geofencing/geofencingGateway';
+import { requireDeviceAuth } from '../security/deviceAuth';
 import { erc20 } from './polygon';
 
 const SWAP_ROUTER_ABI = [
@@ -12,7 +14,13 @@ export class UniswapV3SwapGateway {
 
   async execute(quote: SwapQuote, signer: Signer) {
     if (Date.now() / 1000 > quote.deadline) throw new Error('Cotação expirada.');
-    const owner = await signer.getAddress();
+    const owner = await signer.getAddress() as Address;
+
+    // Defesa adicional: mesmo uma chamada direta ao gateway não pode iniciar
+    // approve/swap sem decisão regional válida e autenticação do dispositivo.
+    await geofencingGateway.authorize({ operation: 'SWAP', walletAddress: owner });
+    await requireDeviceAuth('Autorizar swap na região selecionada');
+
     const token = erc20(quote.tokenIn, signer);
     const allowance: bigint = await token.getFunction('allowance')(owner, this.routerAddress);
     if (allowance < quote.amountIn) {

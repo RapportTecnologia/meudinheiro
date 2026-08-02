@@ -1,4 +1,16 @@
-Warning: truncated output (original token count: 78)
-Total output lines: 16
-
-- title: Início…70 tokens truncated…l: /geofencing/
+- title: Início
+  url: /
+- title: Arquitetura
+  url: /arquitetura/
+- title: Requisitos
+  url: /requisitos/
+- title: Casos de uso
+  url: /casos-de-uso/
+- title: Token e gás
+  url: /modelo-economico/
+- title: Custo zero
+  url: /custo-zero/
+- title: Agenda
+  url: /agenda/
+- title: Geofencing
+  url: /geofencing/

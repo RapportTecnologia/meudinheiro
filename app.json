@@ -1,6 +1,30 @@
-Warning: truncated output (original token count: 242)
-Total output lines: 30
-
 {
-  …240 tokens truncated…}
+  "expo": {
+    "name": "Meu Dinheiro",
+    "slug": "meu-dinheiro",
+    "scheme": "meudinheiro",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "android": {
+      "package": "br.com.rapport.meudinheiro",
+      "permissions": [
+        "CAMERA",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "plugins": [
+      ["expo-camera", { "cameraPermission": "Permitir que Meu Dinheiro leia QR Codes de carteiras." }],
+      ["expo-local-authentication", { "faceIDPermission": "Autorizar transações e acesso às chaves." }],
+      ["expo-location", { "locationWhenInUsePermission": "Permitir que Meu Dinheiro valide se a transação está dentro da região autorizada." }],
+      ["expo-secure-store", { "configureAndroidBackup": true }]
+    ],
+    "extra": {
+      "polygonRpcUrl": "https://polygon-rpc.com",
+      "chainId": 137,
+      "swapEnabled": false
+    }
+  }
 }

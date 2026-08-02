@@ -1,4 +1,37 @@
-Warning: truncated output (original token count: 216)
-Total output lines: 37
+title: Meu Dinheiro
+tagline: Fortalece minha região
+description: >-
+  Documentação pública do Meu Dinheiro, uma carteira autocustodial para a
+  Polygon que conecta pagamentos digitais à economia local, com calculadora,
+  Token Oficial, QR Code, Account Abstraction ERC-4337, gás patrocinado e
+  autenticação por transação e geofencing regional.
+url: https://rapporttecnologia.github.io
+baseurl: /meudinheiro
+repository: RapportTecnologia/meudinheiro
+logo: /assets/images/logo-meu-dinheiro.webp
+lang: pt-BR
+timezone: America/Fortaleza
+encoding: utf-8
+markdown: kramdown
+permalink: pretty
 
-title: Meu Dinheir…207 tokens truncated…style: compressed
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+      image: /assets/images/social-card.jpg
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - scripts
+
+sass:
+  style: compressed

@@ -1,6 +1,86 @@
-Warning: truncated output (original token count: 590)
-Total output lines: 86
+import { getAddress } from 'ethers';
+import type { Address } from '../../domain/wallet/types';
 
-import { getAddress } from 'ethe…574 tokens truncated…ut.geofenceDecisionId);
+export type PixDeposit = {
+  operationId: string;
+  pixCopyAndPaste: string;
+  grossBrlCents: string;
+  tokenAmountSmallest: string;
+  status: 'awaiting_pix' | 'settled' | 'minted' | 'expired';
+  expiresAt: string;
+};
+
+export type RedemptionPreparation = {
+  operationId: string;
+  grossBrlCents: string;
+  feeBps: number;
+  feeBrlCents: string;
+  netPixBrlCents: string;
+  status: 'awaiting_onchain_lock';
+};
+
+const REQUEST_TIMEOUT_MS = 15_000;
+
+function gatewayUrl() {
+  const value = process.env.EXPO_PUBLIC_FIAT_GATEWAY_URL?.trim();
+  if (!value) throw new Error('Gateway Pix não configurado.');
+  return value.replace(/\/+$/, '');
+}
+
+async function requestJson<T>(
+  path: string,
+  body: unknown,
+  geofenceDecisionId: string,
+): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${gatewayUrl()}${path}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Geofence-Decision-Id': geofenceDecisionId,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(
+        typeof result?.message === 'string'
+          ? result.message
+          : `Gateway Pix respondeu HTTP ${response.status}.`,
+      );
+    }
+    return result as T;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export const fiatGateway = {
+  createDeposit(input: {
+    walletAddress: Address;
+    grossBrlCents: string;
+    geofenceDecisionId: string;
+  }) {
+    return requestJson<PixDeposit>('/v1/fiat/deposits', {
+      chainId: 137,
+      walletAddress: getAddress(input.walletAddress),
+      grossBrlCents: input.grossBrlCents,
+    }, input.geofenceDecisionId);
+  },
+
+  prepareRedemption(input: {
+    smartAccountAddress: Address;
+    grossBrlCents: string;
+    geofenceDecisionId: string;
+  }) {
+    return requestJson<RedemptionPreparation>('/v1/fiat/redemptions/prepare', {
+      chainId: 137,
+      smartAccountAddress: getAddress(input.smartAccountAddress),
+      grossBrlCents: input.grossBrlCents,
+    }, input.geofenceDecisionId);
   },
 };

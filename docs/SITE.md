@@ -16,6 +16,7 @@
 - `site/_layouts/`: estrutura HTML compartilhada;
 - `site/_data/`: dados de navegação;
 - `site/assets/`: estilos, JavaScript e imagens;
+- `site/cuscuz-token.md`: apresentação do Cuscuz Token como subprojeto do ecossistema;
 - `.github/workflows/jekyll-gh-pages.yml`: único workflow do site;
 - `_site/`: resultado temporário gerado durante o job de build;
 - artefato `github-pages`: pacote entregue ao job oficial de deployment.
@@ -96,6 +97,8 @@ O `baseurl` de produção é `/meudinheiro`.
 - o pipeline não recebe chaves privadas nem arquivos `.env`;
 - todas as actions de deployment pertencem ao GitHub;
 - páginas essenciais, sitemap e imagens são verificados antes do deploy;
+- a página `/cuscuz-token/` diferencia Token Oficial, app CusCuZ, CCZ e PNS `.dindin`;
+- o conteúdo do CCZ referencia `RapportTecnologia/cuscuz_token` como fonte oficial;
 - a página `/custo-zero/` documenta Smart Account, Bundler e Paymaster;
 - apenas um workflow possui permissão para publicar no ambiente Pages;
 - o site novo, sua identidade visual e seus assets permanecem em `site/`.

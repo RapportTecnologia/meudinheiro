@@ -1,26 +1,5 @@
 <div align="center">
-  <img src="site/assets/images/logo-meu-dinheiro.webp" width="160" alt="Símbolo do Meu Dinheiro">
-
-  <h1>Meu Dinheiro</h1>
-  <p><strong>Fortalece minha região</strong></p>
-  <p>
-    Carteira Web3 Android para pagamentos locais na Polygon,<br>
-    com a simplicidade de uma calculadora e segurança por padrão.
-  </p>
-
-  <a href="https://rapporttecnologia.github.io/meudinheiro/"><strong>Conhecer o projeto</strong></a>
-  ·
-  <a href="docs/REQUIREMENTS.md">Requisitos</a>
-  ·
-  <a href="docs/ARCHITECTURE.md">Arquitetura</a>
-  ·
-  <a href="docs/USE_CASES.md">Casos de uso</a>
-  ·
-  <a href="docs/ACCOUNT_ABSTRACTION.md">Custo zero</a>
-  ·
-  <a href="docs/LOCAL_INCENTIVES.md">Incentivos locais</a>
-  ·
-  <a href="docs/OFFLINE_LAYER3.md">Layer 3 off-line</a>
+  <img src="docs/assets/readme-header.svg" width="100%" alt="Meu Dinheiro — Fortalece minha região">
   <br><br>
 
   <a href="https://github.com/RapportTecnologia/meudinheiro/stargazers"><img alt="Estrelas" src="https://img.shields.io/github/stars/RapportTecnologia/meudinheiro?style=flat-square&color=f97316"></a>
@@ -32,321 +11,116 @@
   <img alt="Visitantes do README" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-readme&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
   <br>
   <img alt="Status do projeto" src="https://img.shields.io/badge/status-em%20desenvolvimento-f97316?style=flat-square">
-  <img alt="Android" src="https://img.shields.io/badge/plataforma-Android-3DDC84?style=flat-square&logo=android&logoColor=white">
-  <img alt="Polygon PoS" src="https://img.shields.io/badge/Polygon%20PoS-chainId%20137-8247E5?style=flat-square&logo=polygon">
+  <img alt="Rede Polygon" src="https://img.shields.io/badge/rede-Polygon-8247E5?style=flat-square&logo=polygon">
   <img alt="Expo" src="https://img.shields.io/badge/Expo-57-000020?style=flat-square&logo=expo">
   <img alt="React Native" src="https://img.shields.io/badge/React%20Native-0.86-61DAFB?style=flat-square&logo=react">
-  <img alt="ERC-4337" src="https://img.shields.io/badge/Account%20Abstraction-ERC--4337-111827?style=flat-square">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white">
+  <img alt="ethers.js" src="https://img.shields.io/badge/ethers.js-6.15-2535A0?style=flat-square">
+  <img alt="ERC-4337" src="https://img.shields.io/badge/ERC--4337-Account%20Abstraction-22c55e?style=flat-square">
   <a href="https://github.com/RapportTecnologia/meudinheiro/actions/workflows/jekyll-gh-pages.yml"><img alt="Site Jekyll" src="https://img.shields.io/github/actions/workflow/status/RapportTecnologia/meudinheiro/jekyll-gh-pages.yml?branch=main&style=flat-square&label=pages"></a>
 </div>
 
-<br>
+Base arquitetural de uma carteira autocustodial Polygon, com calculadora como
+tela principal, Token Oficial ERC-20, cotação em BRL, pedidos EIP-681, agenda,
+QR Code, clipboard, duas contas e custo de gás zero para o usuário final por
+Account Abstraction ERC-4337. A plataforma patrocina o gás com Paymaster.
 
-<img src="site/assets/images/hero-regiao.webp" width="100%" alt="Pessoas e pequenos comércios conectados pelo Meu Dinheiro em uma economia regional">
+As operações financeiras também consultam o geofencing regional antes da
+autenticação. O backend decide com base em áreas permitidas/bloqueadas
+cadastradas pelo dashboard administrativo.
 
-> [!IMPORTANT]
-> O **Meu Dinheiro** é uma base de engenharia em desenvolvimento. Ainda não está pronto para custodiar ou movimentar fundos reais. Produção exige contratos e serviços implantados, auditoria independente, testes de integração, threat model, política de privacidade e homologação completa na Polygon.
+A agenda valida nomes e endereços únicos, permite edição protegida e oferece
+salvar destinatários desconhecidos somente após uma transferência confirmada.
 
-## Visão do produto
+## Passo 0 — arquitetura e requisitos
 
-O **Meu Dinheiro** aproxima pessoas, pequenos negócios e serviços da mesma região por meio de uma experiência familiar: a tela principal funciona como uma calculadora. O valor digitado ou calculado torna-se uma **intenção de pagamento**, nunca uma transferência automática.
+- [Especificação de requisitos](docs/REQUIREMENTS.md)
+- [Arquitetura e decisões técnicas](docs/ARCHITECTURE.md)
+- [Histórias e casos de uso](docs/USE_CASES.md)
+- [Modelo do Token Oficial, cotação e gás](docs/ECONOMIC_MODEL.md)
+- [Account Abstraction, Smart Account e Paymaster](docs/ACCOUNT_ABSTRACTION.md)
+- [Agenda e compartilhamento de solicitações](docs/CONTACTS_AND_SHARING.md)
+- [Site Jekyll e pipeline de publicação](docs/SITE.md)
+- [Identidade de marca](docs/BRAND.md)
+- [Geofencing regional e privacidade](docs/GEOFENCING.md)
 
-Antes de qualquer movimentação, o aplicativo apresenta token, paridade ou cotação, quantidade, taxa aplicável, endereço completo, rede e patrocinador do gás. O usuário revisa esses dados e autoriza a operação com biometria, PIN ou padrão do dispositivo.
+Site público: [rapport.tec.br/meudinheiro](https://rapport.tec.br/meudinheiro/)
 
-O produto combina quatro princípios:
+A base é intencionalmente **não pronta para fundos reais**: swap e envio
+exigem revisão, configuração oficial, testes de integração e auditoria.
 
-| Princípio | Como aparece no aplicativo |
-| --- | --- |
-| **Simples para usar** | Calculadora funcional, QR Code, agenda e compartilhamento pelo clipboard |
-| **Local por propósito** | Pagamentos entre moradores, comerciantes e serviços da mesma região |
-| **Autocustodial** | A chave permanece protegida no dispositivo; o backend nunca a recebe |
-| **Seguro por padrão** | Revisão explícita, autenticação local e validação defensiva da operação |
+## Passo 1 — setup
 
-## A experiência em quatro passos
-
-```text
-1. CALCULE          2. ESCOLHA          3. CONFIRA          4. AUTORIZE
-Valor em BRL    ->  QR, agenda ou   ->  token, destino, ->  biometria, PIN
-ou no Token         solicitação         taxa e gás          ou padrão
-Oficial              copiada             patrocinado
-```
-
-A calculadora prepara o valor. O QR Code ou a agenda resolve o destinatário. A tela de revisão valida todos os dados. Somente depois disso a autenticação local libera a assinatura da `UserOperation`.
-
-## Principais recursos
-
-- **Calculadora funcional:** soma, subtração, multiplicação e divisão por parser restrito.
-- **Até duas contas:** duas EOAs proprietárias, cada uma vinculada à sua Smart Account ERC-4337.
-- **Token Oficial:** único ERC-20 usado nos pagamentos comuns do aplicativo.
-- **Paridade bruta:** R$ 1,00 corresponde a 1 Token Oficial em carga e resgate.
-- **Carga via Pix:** o Mint ocorre somente após liquidação na reserva segregada.
-- **Resgate para Pix:** tokens são bloqueados, o Pix líquido é pago e só então ocorre o Burn.
-- **Taxa transparente:** de 0% a 1% sobre o resgate, exibida antes da autenticação.
-- **Enviar e receber:** solicitações interoperáveis por QR Code no padrão EIP-681.
-- **Agenda segura:** favoritos, frequência, recência e proteção contra nomes ou endereços duplicados.
-- **Clipboard:** compartilhamento de destino e valor proposto sem autorizar automaticamente a transferência.
-- **Autenticação obrigatória:** biometria, PIN ou padrão para toda operação sensível.
-- **Custo zero para o usuário:** o Paymaster paga o gás elegível em POL por Account Abstraction.
-- **Incentivo local:** descontos e cashback determinísticos, pagos por campanhas pré-financiadas sem criar tokens sem lastro.
-- **Modo comerciante:** fluxo separado para administração de estoque e conversão Token Oficial ↔ POL.
-- **Layer 3 off-line:** notas pré-financiadas por reserva regional circulam por QR e são liquidadas na Polygon ao reconectar; o recebimento permanece pendente até a sincronização.
-
-## Casos de uso regionais
-
-| Situação | Jornada resumida |
-| --- | --- |
-| **Abastecer a carteira** | O usuário informa o valor, exibe seu QR e recebe o Token Oficial de um comerciante |
-| **Pagar uma compra** | O caixa gera uma cobrança com valor; o usuário lê, revisa e autoriza |
-| **Transferir para um amigo** | O emissor calcula o valor e lê o QR ou a solicitação compartilhada pelo destinatário |
-| **Solicitar um pagamento** | O recebedor compartilha endereço e valor proposto por QR ou área de transferência |
-| **Reutilizar contatos** | Destinatários frequentes ficam na agenda após confirmação e validação de conflitos |
-| **Carregar via Pix** | Um depósito liquidado emite exatamente o mesmo valor bruto em tokens |
-| **Resgatar para Pix** | Tokens são bloqueados; Pix confirmado gera Burn e falha gera estorno |
-| **Comprar com benefício local** | O app mostra desconto e cashback; uma operação atômica paga o comerciante e entrega o benefício |
-
-Em todos os fluxos, QR Code, clipboard e agenda são apenas fontes de dados não confiáveis. Eles nunca acessam a chave nem autorizam sozinhos uma movimentação.
-
-## Token Oficial e valores em reais
-
-Toda transferência comum acontece no **Token Oficial Meu Dinheiro** da região. Em carga e resgate, a referência é bruta: **1 Token Oficial = R$ 1,00**.
-
-Um Pix de entrada só gera Mint depois de liquidado na conta segregada de reserva. No resgate, os tokens são primeiro bloqueados; o Burn ocorre apenas após o Pix líquido confirmado. A taxa de saque fica entre 0,5% e 1%, limitada on-chain a 1% e exibida antes da autenticação. Se o Pix falhar, os tokens são estornados integralmente.
-
-A reserva deve cobrir tokens em circulação mais resgates bloqueados ainda não pagos. Eventual rendimento da reserva não pode reduzir o lastro nem ser prometido ao portador. Produção exige banco/PSP regulado, KYC/KYB, AML/CFT, conciliação, auditoria e parecer jurídico.
-
-Detalhes: [modelo econômico, reservas, Mint & Burn e gás](docs/ECONOMIC_MODEL.md).
-
-## Custo zero com Account Abstraction
-
-“Custo zero” significa que **nenhum POL é debitado do usuário em uma transferência patrocinada**. A Polygon continua cobrando gás, mas o custo é pago pelo depósito da plataforma no EntryPoint por meio do Paymaster.
-
-```mermaid
-flowchart LR
-    A[Calculadora, QR ou agenda] --> B[Revisão da intenção]
-    B --> C[Biometria, PIN ou padrão]
-    C --> D[Assinatura local da UserOperation]
-    D --> G[Gateway ERC-4337]
-    G --> BU[Bundler]
-    BU --> EP[EntryPoint v0.7]
-    PM[Paymaster da plataforma] -. patrocina o gás .-> EP
-    EP --> SA[Smart Account]
-    SA --> T[Token Oficial na Polygon]
-```
-
-O aplicativo confere localmente Smart Account, EntryPoint, Paymaster, token, destinatário, quantidade, validade, hash e limites de gás antes de assinar. Se o patrocínio falhar, a operação é bloqueada; não existe fallback silencioso para cobrar POL do usuário.
-
-Detalhes: [Account Abstraction, Smart Account e Paymaster](docs/ACCOUNT_ABSTRACTION.md).
-
-## Incentivo local: cashback e descontos
-
-Campanhas regionais podem oferecer desconto e cashback com regras transparentes.
-O desconto reduz o valor enviado ao comerciante. O cashback sai de um orçamento
-pré-financiado com Tokens Oficiais já emitidos e lastreados; a compra não executa
-Mint ou Burn e não altera o fornecimento total.
-
-A oferta possui período, compra mínima, teto por compra, teto acumulado por cliente
-e orçamento on-chain. O benefício não usa sorteio, aposta ou aleatoriedade. A
-liquidação é atômica, exige biometria, PIN ou padrão e pode ter gás patrocinado
-via ERC-4337.
-
-Detalhes: [incentivos locais, invariantes e critérios de aceite](docs/LOCAL_INCENTIVES.md).
-
-## Pagamentos off-line com Layer 3
-
-A Smart Account bloqueia previamente Token Oficial no Diamond regional. A API
-emite notas assinadas até esse saldo; os dispositivos trocam o valor por QR sem
-internet; e o recebedor sincroniza para o backend rejeitar gasto duplo e liquidar
-o lote na Polygon.
-
-Sem conexão, o pagamento é **pendente**, pois o recebedor não consulta a lista
-global de notas gastas. O fluxo usa limites baixos, prazo curto, armazenamento
-seguro e autenticação em emissão, envio, aceitação e sincronização.
-
-O desenho foi inspirado conceitualmente no [Minibits Wallet](https://github.com/minibits-cash/minibits_wallet) e no protocolo Cashu, sem copiar código nem declarar compatibilidade. [Leia o modelo, riscos e limites](docs/OFFLINE_LAYER3.md).
-
-## Arquitetura
-
-O código segue **DDD pragmático** e separa regras de negócio, casos de uso, integrações e interface:
-
-```text
-src/
-├── domain/           entidades, value objects e invariantes puras
-├── application/      casos de uso, hooks e portas
-├── infrastructure/   RPC, Gateway ERC-4337, contratos, storage e autenticação
-└── presentation/     componentes, navegação e telas
-
-__tests__/             testes de domínio e aplicação
-docs/                  requisitos, arquitetura e regras operacionais
-site/                  site institucional Jekyll e ativos da marca
-```
-
-A direção das dependências é:
-
-```text
-presentation -> application -> domain
-                      ^
-                      |
-               infrastructure
-```
-
-A infraestrutura implementa as portas definidas pela aplicação. Regras financeiras e de segurança permanecem testáveis sem câmera, RPC ou blockchain.
-
-## Tecnologias
-
-| Área | Tecnologia |
-| --- | --- |
-| Aplicativo | React Native 0.86 + Expo 57 + TypeScript |
-| Blockchain | Polygon PoS, ethers.js 6 e ERC-20 |
-| Conta operacional | ERC-4337, Smart Account e EntryPoint v0.7 |
-| Estado | Zustand + AsyncStorage somente para dados públicos |
-| Segredos | Expo SecureStore |
-| Autenticação | Expo Local Authentication |
-| QR Code | Expo Camera + EIP-681 + pacote Layer 3 + react-native-qrcode-svg |
-| Navegação | React Navigation |
-| Testes | Jest, jest-expo e Testing Library |
-| Site | Jekyll + GitHub Pages |
-
-## Estado da implementação
-
-| Área | Estado atual |
-| --- | --- |
-| Calculadora e organização DDD | Base implementada |
-| Contas, armazenamento seguro e autenticação | Base implementada; exige teste em development build |
-| Scanner, QR EIP-681, agenda e clipboard | Domínio e fluxos preparados |
-| Cliente do Gateway ERC-4337 | Contrato HTTP e validações locais implementados |
-| Smart Account Factory e Paymaster | Contratos e operação precisam ser implantados e auditados |
-| Gateway, Bundler e signer em KMS/HSM | Backend ainda necessário para operação real |
-| Gateway Pix, PSP e reconciliador | Integração de produção pendente; contratos e app têm a base do fluxo |
-| Swap comercial | Desabilitado por padrão com `swapEnabled: false` |
-| Polygon mainnet | Não homologada para fundos reais |
-
-## Começando
-
-### Pré-requisitos
-
-- Node.js LTS compatível com Expo 57;
-- npm;
-- Android Studio, SDK Android e dispositivo/emulador para development build;
-- endpoint RPC Polygon para desenvolvimento.
-
-### Instalação
+Para criar do zero:
 
 ```bash
-git clone https://github.com/RapportTecnologia/meudinheiro.git
-cd meudinheiro
-npm ci
+npx create-expo-app@latest meu-dinheiro --template blank-typescript
+cd meu-dinheiro
+npx expo install expo-camera expo-location expo-secure-store expo-local-authentication expo-clipboard expo-crypto react-native-svg react-native-safe-area-context react-native-screens
+npm install ethers zustand @react-native-async-storage/async-storage @react-navigation/native @react-navigation/native-stack react-native-qrcode-svg react-native-get-random-values
+npm install -D jest jest-expo @testing-library/react-native @types/jest
+```
+
+Nesta entrega, instale as versões declaradas:
+
+```bash
+npm install
 cp .env.example .env
 npm test
 npm run typecheck
 npx expo start
 ```
 
-Para testar SecureStore, câmera e autenticação com comportamento Android completo:
+Biometria com comportamento nativo completo deve ser testada em development build:
 
 ```bash
 npx expo prebuild
 npx expo run:android
 ```
 
-### Variáveis de ambiente
+## Estrutura
 
-| Variável | Finalidade |
-| --- | --- |
-| `EXPO_PUBLIC_POLYGON_RPC_URL` | RPC da Polygon PoS |
-| `EXPO_PUBLIC_ERC4337_GATEWAY_URL` | endpoint público do Gateway da plataforma |
-| `EXPO_PUBLIC_ERC4337_ENTRY_POINT` | endereço esperado do EntryPoint v0.7 |
-| `EXPO_PUBLIC_ERC4337_SIMPLE_ACCOUNT_FACTORY` | factory auditada da Smart Account |
-| `EXPO_PUBLIC_FIAT_GATEWAY_URL` | Gateway de carga, resgate e conciliação Pix |
-| `EXPO_PUBLIC_OFFLINE_GATEWAY_URL` | API regional de emissão e sincronização da Layer 3 |
-
-> [!CAUTION]
-> Variáveis `EXPO_PUBLIC_*` fazem parte do aplicativo distribuído. Nunca coloque nelas chave privada, seed, credencial de Bundler, chave do sponsor, token administrativo ou segredo RPC.
+```text
+src/
+  domain/          regras puras e tipos
+  application/     estado e casos de uso
+  infrastructure/ RPC, contratos, segredo e autenticação
+  presentation/    componentes, navegação e telas
+__tests__/         testes de domínio
+docs/              arquitetura e requisitos
+```
 
 ## Segurança
 
-- Chaves privadas nunca entram em AsyncStorage, Zustand, logs, telemetria ou commits.
-- A chave é armazenada por referência no SecureStore e usada apenas após autenticação.
-- O Gateway recebe assinatura, nunca seed ou chave privada.
-- Valores on-chain usam `bigint` e `parseUnits`; nunca `number`.
-- Rede, contrato, código, destinatário, paridade, taxa e hash são conferidos antes da assinatura.
-- Mint exige Pix liquidado e identificadores idempotentes; Burn exige Pix de saída confirmado.
-- A reserva segregada deve cobrir circulação e resgates bloqueados ainda não pagos.
-- QR Code e clipboard são tratados como entrada externa não confiável.
-- Toque duplo, replay, cotação expirada e operação divergente devem ser bloqueados.
-- Credenciais de Bundler/Paymaster e chave de patrocínio pertencem ao backend/KMS.
-- Envio e swap permanecem bloqueados quando a configuração oficial não pode ser validada.
+- Não coloque seed/private key em `.env`, AsyncStorage, Zustand ou commits.
+- A chave é armazenada por referência no SecureStore.
+- Não use a chave exportada em dispositivo compartilhado.
+- RPC público é adequado para protótipo, não para SLA de produção.
+- A chave da EOA proprietária nunca é enviada ao Gateway ERC-4337.
+- Credenciais de Bundler/Paymaster e chave de patrocínio nunca entram no APK.
+- O app recusa fallback silencioso para transação EOA paga pelo usuário.
+- Localização é solicitada em primeiro plano e não é mantida no estado público.
+- Sem decisão geográfica válida, a operação falha antes da assinatura.
+- `swapEnabled` começa falso.
 
-Leia a [arquitetura de segurança](docs/ARCHITECTURE.md) e a [política ERC-4337](docs/ACCOUNT_ABSTRACTION.md) antes de implementar integrações financeiras.
+## Estado da integração ERC-4337
 
-## Documentação
+O cliente móvel, as validações locais e o contrato HTTP do Gateway estão
+implementados. Para operação real ainda é necessário implantar e auditar a
+factory da Smart Account e o Paymaster, implementar o Gateway, configurar
+Bundler/KMS, financiar o depósito do Paymaster e testar em Amoy/fork antes da
+Polygon.
 
-| Documento | Conteúdo |
-| --- | --- |
-| [Requisitos](docs/REQUIREMENTS.md) | regras funcionais, não funcionais e critérios de aceite |
-| [Arquitetura](docs/ARCHITECTURE.md) | camadas, fluxos, decisões técnicas e pendências |
-| [Casos de uso](docs/USE_CASES.md) | abastecimento, compra, cobrança e transferência |
-| [Modelo econômico](docs/ECONOMIC_MODEL.md) | Token Oficial, reservas, Mint & Burn, taxa e gás |
-| [Account Abstraction](docs/ACCOUNT_ABSTRACTION.md) | Smart Account, Gateway, Bundler e Paymaster |
-| [Agenda e compartilhamento](docs/CONTACTS_AND_SHARING.md) | contatos, conflitos, QR e clipboard |
-| [Identidade de marca](docs/BRAND.md) | posicionamento, símbolo, paleta e tom de voz |
-| [Layer 3 off-line](docs/OFFLINE_LAYER3.md) | notas pré-financiadas, QR, sincronização, riscos e inspiração Minibits |
-| [Site e publicação](docs/SITE.md) | Jekyll, GitHub Pages e workflow oficial |
+## Ecossistema relacionado
 
-A documentação também está disponível no site público:
-
-**[rapporttecnologia.github.io/meudinheiro](https://rapporttecnologia.github.io/meudinheiro/)**
-
-## Desenvolvimento orientado a testes
-
-A sequência recomendada por feature é:
-
-1. escrever o teste da regra de domínio;
-2. implementar a menor solução que satisfaz a regra;
-3. testar o caso de uso com portas falsas;
-4. integrar infraestrutura em Amoy ou fork;
-5. testar o componente React Native;
-6. validar o fluxo E2E em development build.
-
-Casos mínimos incluem limite de duas contas, parser de pagamento, conflito de contatos, QR inválido, chainId incorreto, autenticação cancelada, taxa inválida, reserva insuficiente, operação Pix repetida, hash divergente e envio duplicado.
-
-## Como contribuir
-
-1. consulte os [requisitos](docs/REQUIREMENTS.md) e a [arquitetura](docs/ARCHITECTURE.md);
-2. abra uma issue descrevendo problema, risco e critério de aceite;
-3. mantenha regras no domínio e integrações atrás de portas;
-4. inclua testes para toda mudança de comportamento;
-5. nunca envie segredos, endereços administrativos não aprovados ou dados pessoais.
-
-Sugestões, relatórios de erro e propostas de melhoria são bem-vindos em [GitHub Issues](https://github.com/RapportTecnologia/meudinheiro/issues).
+- [CusCuZ — subprojeto de fidelidade local](https://github.com/RapportTecnologia/cuscuz)
+- [Aplicativo Android CusCuZ](https://github.com/RapportTecnologia/cuscuz_app_android)
+- [Backend regional](https://github.com/RapportTecnologia/meudinheiro_backend)
+- [Dashboard administrativo](https://github.com/RapportTecnologia/meudinheiro_dashboard)
+- [Smart contracts regionais](https://github.com/RapportTecnologia/meudinheiro_smartcontracts)
 
 ---
 
 <div align="center">
-  <img src="site/assets/images/logo-meu-dinheiro.webp" width="72" alt="">
-  <p><strong>Meu Dinheiro — Fortalece minha região</strong></p>
-  <p>Um projeto da <a href="https://rapport.tec.br">Rapport Tecnologia e Inovação</a>.</p>
-  <sub>Documento do projeto · versão 0.1.0 · atualizado em julho de 2026</sub>
+  <img src="docs/assets/readme-footer.svg" width="100%" alt="Rapport Tecnologia e Inovação">
 </div>
-
-
-## Parcerias regulatórias e moeda social
-
-O Meu Dinheiro é a camada tecnológica e comunitária, **não um banco por autodeclaração**. Pix, conta, reserva em BRL, KYC/PLD e serviços de ativos virtuais só podem ser habilitados quando o manifesto regional identificar parceiros vigentes e autorizados para cada responsabilidade. O app agora exibe essas instituições e bloqueia carga/resgate se faltarem os papéis obrigatórios.
-
-A classificação depende da função econômica do token. Projetos legislativos sobre bancos comunitários continuam sendo monitorados e não são tratados como autorização vigente.
-
-- [Política de parcerias regulatórias](docs/REGULATORY_PARTNERSHIPS.md)
-- [Página do site: parcerias regulatórias](site/parcerias-regulatorias.md)
-
-## Geofencing transacional
-
-Antes de emitir, transferir, pagar, trocar ou resgatar valor, o app solicita a
-localização somente durante o uso e consulta a política da região no backend.
-Regras **DENY** prevalecem; quando o recurso está habilitado, ausência de área
-**ALLOW**, baixa precisão, decisão expirada ou indisponibilidade bloqueiam a
-operação. A decisão é curta, vinculada à carteira e consumida uma única vez.
-
-No modo Layer 3, o usuário pode obter on-line uma autorização geográfica curta
-antes de ficar sem conexão. O identificador integra o pacote assinado v2 e é
-validado durante a sincronização. Consulte
-[Geofencing transacional](docs/GEOFENCING.md).

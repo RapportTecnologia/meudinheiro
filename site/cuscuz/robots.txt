@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rapport.tec.br/meudinheiro/cuscuz/sitemap.xml
-
+Sitemap: https://rapport.tec.br/cuscuz/sitemap.xml

@@ -21,8 +21,8 @@ permalink: /cuscuz-token/
         <span>Polygon em avaliação</span>
       </div>
       <div class="hero-actions">
-        <a class="button cuscuz-button" href="{{ '/cuscuz/' | relative_url }}">Visitar o site CusCuZ →</a>
-        <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz_token" rel="noopener noreferrer">Ver código do CCZ ↗</a>
+        <a class="button cuscuz-button" href="https://rapport.tec.br/cuscuz/" rel="noopener noreferrer">Visitar o site CusCuZ ↗</a>
+        <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz" rel="noopener noreferrer">Ver código do CCZ ↗</a>
         <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz_app_android" rel="noopener noreferrer">Conhecer o app ↗</a>
       </div>
     </div>
@@ -194,7 +194,7 @@ permalink: /cuscuz-token/
       <li><span>Etapa 4</span><strong>Expansão consciente</strong><p>Publicar especificações e ampliar somente com evidências do piloto.</p></li>
     </ol>
     <div class="button-row">
-      <a class="button cuscuz-button" href="https://github.com/RapportTecnologia/cuscuz_token" rel="noopener noreferrer">Acompanhar o Cuscuz Token ↗</a>
+      <a class="button cuscuz-button" href="https://github.com/RapportTecnologia/cuscuz" rel="noopener noreferrer">Acompanhar o Cuscuz Token ↗</a>
       <a class="button secondary" href="{{ '/' | relative_url }}">Voltar ao Meu Dinheiro</a>
     </div>
   </div>

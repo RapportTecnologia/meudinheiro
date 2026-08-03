@@ -259,18 +259,6 @@ permalink: /
   </div>
 </section>
 
-<section class="feature-card">
-  <h2>Parcerias regulatórias transparentes</h2>
-  <p>O app identifica quem presta Pix, custodia a reserva, executa KYC/PLD e, quando aplicável, serviços de ativos virtuais. Sem parceiro vigente, a operação regulada fica bloqueada.</p>
-  <a href="{{ '/parcerias-regulatorias/' | relative_url }}">Entenda o modelo de parceria</a>
-</section>
-
-<section class="feature-card">
-  <h2>Transações dentro da região autorizada</h2>
-  <p>O app consulta áreas permitidas e bloqueadas antes de movimentar valor. A decisão tem validade curta, uso único e não registra a coordenada exata no histórico.</p>
-  <a href="{{ '/geofencing/' | relative_url }}">Conheça o geofencing regional</a>
-</section>
-
 <section class="section">
   <div class="shell safety-panel">
     <div>
@@ -291,4 +279,17 @@ permalink: /
       <div><strong>Protótipo responsável</strong><span>Fundos reais exigem auditoria, testes de integração e threat model.</span></div>
     </div>
   </div>
+</section>
+
+
+<section class="feature-card">
+  <h2>Parcerias regulatórias transparentes</h2>
+  <p>O app identifica quem presta Pix, custodia a reserva, executa KYC/PLD e, quando aplicável, serviços de ativos virtuais. Sem parceiro vigente, a operação regulada fica bloqueada.</p>
+  <a href="{{ '/parcerias-regulatorias/' | relative_url }}">Entenda o modelo de parceria</a>
+</section>
+
+<section class="feature-card">
+  <h2>Transações dentro da região autorizada</h2>
+  <p>O app consulta áreas permitidas e bloqueadas antes de movimentar valor. A decisão tem validade curta, uso único e não registra a coordenada exata no histórico.</p>
+  <a href="{{ '/geofencing/' | relative_url }}">Conheça o geofencing regional</a>
 </section>

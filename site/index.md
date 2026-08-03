@@ -219,6 +219,7 @@ permalink: /
         </ul>
         <div class="button-row">
           <a class="button cuscuz-button" href="{{ '/cuscuz-token/' | relative_url }}">Conhecer o subprojeto</a>
+          <a class="button secondary" href="{{ '/cuscuz/' | relative_url }}">Visitar o site CusCuZ</a>
           <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz_token" rel="noopener noreferrer">Repositório CCZ ↗</a>
         </div>
       </article>

@@ -37,8 +37,7 @@
     - title: Cuscuz Token
       url: /cuscuz-token/
     - title: Site CusCuZ
-      url: https://rapporttecnologia.github.io/cuscuz_token/
-      external: true
+      url: /cuscuz/
     - title: App CusCuZ
       url: https://github.com/RapportTecnologia/cuscuz_app_android
       external: true

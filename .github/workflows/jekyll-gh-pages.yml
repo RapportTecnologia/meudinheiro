@@ -51,12 +51,20 @@ jobs:
           test -s _site/custo-zero/index.html
           test -s _site/modelo-economico/index.html
           test -s _site/cuscuz-token/index.html
+          test -s _site/cuscuz/index.html
+          test -s _site/cuscuz/sitemap.xml
+          test -s _site/cuscuz/assets/css/styles.css
+          test -s _site/cuscuz/assets/js/main.js
+          test -s _site/cuscuz/assets/images/cuscuz-hero.webp
+          test -s _site/cuscuz/assets/images/cuscuz-comunidade.webp
+          test -s _site/cuscuz/assets/images/ecossistema-cuscuz.webp
           test -s _site/assets/images/logo-meu-dinheiro.webp
           test -s _site/assets/images/cuscuz-token-mark.svg
           test -s _site/assets/images/hero-regiao.webp
           test -s _site/assets/images/ecossistema-local.webp
           test -s _site/assets/images/documentacao-meu-dinheiro.webp
           test -s _site/sitemap.xml
+          grep -q 'subprojeto do ecossistema Meu Dinheiro' _site/cuscuz/index.html
 
           for page in \
             agenda arquitetura casos-de-uso custo-zero geofencing \

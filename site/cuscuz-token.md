@@ -21,7 +21,7 @@ permalink: /cuscuz-token/
         <span>Polygon em avaliação</span>
       </div>
       <div class="hero-actions">
-        <a class="button cuscuz-button" href="https://rapporttecnologia.github.io/cuscuz_token/" rel="noopener noreferrer">Visitar o site CusCuZ ↗</a>
+        <a class="button cuscuz-button" href="{{ '/cuscuz/' | relative_url }}">Visitar o site CusCuZ →</a>
         <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz_token" rel="noopener noreferrer">Ver código do CCZ ↗</a>
         <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz_app_android" rel="noopener noreferrer">Conhecer o app ↗</a>
       </div>

@@ -18,6 +18,7 @@
 - `site/assets/`: estilos, JavaScript e imagens;
 - `site/assets/images/documentacao-meu-dinheiro.webp`: imagem editorial compartilhada pelas páginas documentais;
 - `site/cuscuz-token.md`: apresentação do Cuscuz Token como subprojeto do ecossistema;
+- `site/cuscuz/`: espelho público sincronizado da landing page do CusCuZ, cujo repositório de origem permanece privado;
 - `.github/workflows/jekyll-gh-pages.yml`: único workflow do site;
 - `_site/`: resultado temporário gerado durante o job de build;
 - artefato `github-pages`: pacote entregue ao job oficial de deployment.
@@ -101,6 +102,7 @@ O `baseurl` de produção é `/meudinheiro`.
 - a navegação principal agrupa Produto, Economia, Engenharia e Ecossistema em submenus acessíveis;
 - todas as páginas documentais possuem imagem editorial e proteções responsivas contra conteúdo truncado;
 - a página `/cuscuz-token/` diferencia Token Oficial, app CusCuZ, CCZ e PNS `.dindin`;
+- a landing page `/cuscuz/` permanece pública sem exigir a abertura do repositório privado `cuscuz_token`;
 - o conteúdo do CCZ referencia `RapportTecnologia/cuscuz_token` como fonte oficial;
 - a página `/custo-zero/` documenta Smart Account, Bundler e Paymaster;
 - apenas um workflow possui permissão para publicar no ambiente Pages;

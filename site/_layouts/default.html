@@ -41,11 +41,42 @@
 
         <nav id="main-navigation" class="main-navigation" aria-label="Navegação principal">
           {% for item in site.data.navigation %}
-            {% assign target = item.url | relative_url %}
-            <a
-              href="{{ target }}"
-              {% if page.url == item.url %}class="active" aria-current="page"{% endif %}
-            >{{ item.title }}</a>
+            {% if item.children %}
+              {% assign group_active = false %}
+              {% for child in item.children %}
+                {% if page.url == child.url %}{% assign group_active = true %}{% endif %}
+              {% endfor %}
+              <div class="nav-group{% if group_active %} active{% endif %}">
+                <button
+                  class="nav-group-toggle"
+                  type="button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                >
+                  {{ item.title }} <span aria-hidden="true">⌄</span>
+                </button>
+                <div class="nav-submenu">
+                  {% for child in item.children %}
+                    {% if child.external %}
+                      {% assign child_target = child.url %}
+                    {% else %}
+                      {% assign child_target = child.url | relative_url %}
+                    {% endif %}
+                    <a
+                      href="{{ child_target }}"
+                      {% if page.url == child.url %}class="active" aria-current="page"{% endif %}
+                      {% if child.external %}rel="noopener noreferrer"{% endif %}
+                    >{{ child.title }}{% if child.external %} <span aria-hidden="true">↗</span>{% endif %}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% else %}
+              {% assign target = item.url | relative_url %}
+              <a
+                href="{{ target }}"
+                {% if page.url == item.url %}class="active" aria-current="page"{% endif %}
+              >{{ item.title }}</a>
+            {% endif %}
           {% endfor %}
           <a
             class="nav-github"
@@ -57,6 +88,17 @@
     </header>
 
     <main id="conteudo">
+      {% unless page.url == '/' or page.url == '/cuscuz-token/' %}
+        <figure class="page-editorial shell">
+          <img
+            src="{{ '/assets/images/documentacao-meu-dinheiro.webp' | relative_url }}"
+            width="1983"
+            height="793"
+            alt="Carteira digital em forma de calculadora conectando pagamentos por QR Code a moradores e pequenos comércios da região"
+          >
+          <figcaption>Produto, economia e engenharia reunidos para fortalecer transações locais.</figcaption>
+        </figure>
+      {% endunless %}
       {{ content }}
     </main>
 
@@ -90,6 +132,7 @@
           <strong>Projeto</strong>
           <a href="https://github.com/RapportTecnologia/meudinheiro">Código-fonte</a>
           <a href="{{ '/cuscuz-token/' | relative_url }}">Cuscuz Token</a>
+          <a href="https://rapporttecnologia.github.io/cuscuz_token/">Site CusCuZ</a>
           <a href="https://github.com/RapportTecnologia/cuscuz_token">Repositório CCZ</a>
           <a href="https://github.com/RapportTecnologia/meudinheiro/issues">Issues</a>
           <a href="https://rapport.tec.br">Rapport Tecnologia</a>

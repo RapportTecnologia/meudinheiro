@@ -1,20 +1,44 @@
 - title: Início
   url: /
-- title: Arquitetura
-  url: /arquitetura/
-- title: Requisitos
-  url: /requisitos/
-- title: Casos de uso
-  url: /casos-de-uso/
-- title: Token e gás
-  url: /modelo-economico/
-- title: Política monetária
-  url: /politica-monetaria/
-- title: Custo zero
-  url: /custo-zero/
-- title: Agenda
-  url: /agenda/
-- title: Geofencing
-  url: /geofencing/
-- title: Cuscuz Token
-  url: /cuscuz-token/
+
+- title: Produto
+  children:
+    - title: Casos de uso
+      url: /casos-de-uso/
+    - title: Agenda e contatos
+      url: /agenda/
+    - title: Custo zero
+      url: /custo-zero/
+    - title: Modo off-line
+      url: /offline/
+
+- title: Economia
+  children:
+    - title: Token, reservas e gás
+      url: /modelo-economico/
+    - title: Política monetária
+      url: /politica-monetaria/
+    - title: Incentivos locais
+      url: /incentivos-locais/
+    - title: Parcerias e regulação
+      url: /parcerias-regulatorias/
+
+- title: Engenharia
+  children:
+    - title: Arquitetura
+      url: /arquitetura/
+    - title: Requisitos
+      url: /requisitos/
+    - title: Geofencing
+      url: /geofencing/
+
+- title: Ecossistema
+  children:
+    - title: Cuscuz Token
+      url: /cuscuz-token/
+    - title: Site CusCuZ
+      url: https://rapporttecnologia.github.io/cuscuz_token/
+      external: true
+    - title: App CusCuZ
+      url: https://github.com/RapportTecnologia/cuscuz_app_android
+      external: true

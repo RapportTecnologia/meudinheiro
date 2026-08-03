@@ -55,7 +55,16 @@ jobs:
           test -s _site/assets/images/cuscuz-token-mark.svg
           test -s _site/assets/images/hero-regiao.webp
           test -s _site/assets/images/ecossistema-local.webp
+          test -s _site/assets/images/documentacao-meu-dinheiro.webp
           test -s _site/sitemap.xml
+
+          for page in \
+            agenda arquitetura casos-de-uso custo-zero geofencing \
+            incentivos-locais modelo-economico offline \
+            parcerias-regulatorias politica-monetaria requisitos; do
+            test -s "_site/${page}/index.html"
+            grep -q "documentacao-meu-dinheiro.webp" "_site/${page}/index.html"
+          done
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5

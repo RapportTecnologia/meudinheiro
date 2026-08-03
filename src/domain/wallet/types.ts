@@ -18,7 +18,12 @@ export type BaseToken = {
   name: string;
   decimals: number;
   chainId: 137;
-  referenceCurrency?: 'BRL';
+  referenceCurrency: string;
+  monetaryMode: 'fiat_pegged' | 'independent';
+  policyManager: Address;
+  policyChangedAt: string;
+  activeAssessmentId?: string;
+  pricingSigner?: Address;
   configuredAt: string;
 };
 

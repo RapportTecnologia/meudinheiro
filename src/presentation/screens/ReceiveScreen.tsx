@@ -7,18 +7,20 @@ import { createPaymentRequestUri, type PaymentAsset } from '../../domain/payment
 export function ReceiveScreen() {
   const { accounts, activeAccountId, baseToken, homeAmount, selectedAsset } = useWalletStore();
   const account = accounts.find((item) => item.id === activeAccountId);
+  const requiresIndependentQuote = selectedAsset === 'BRL'
+    && baseToken?.monetaryMode === 'independent';
   const asset: PaymentAsset | undefined = baseToken
     ? {
         kind: 'erc20',
         address: baseToken.address,
         symbol: baseToken.symbol,
         decimals: baseToken.decimals,
-        referenceCurrency: selectedAsset === 'BRL'
+        referenceCurrency: selectedAsset === 'BRL' && !requiresIndependentQuote
           ? baseToken.referenceCurrency
           : undefined,
       }
     : undefined;
-  const uri = account?.smartAccountAddress && asset
+  const uri = account?.smartAccountAddress && asset && !requiresIndependentQuote
     ? createPaymentRequestUri({
         recipient: account.smartAccountAddress,
         amount: homeAmount,
@@ -35,7 +37,13 @@ export function ReceiveScreen() {
   };
   return (
     <View style={styles.container}>
-      {account && uri && asset ? <>
+      {requiresIndependentQuote ? (
+        <Text style={styles.warning}>
+          Esta região opera de forma independente. Consulte e confirme uma
+          cotação válida antes de criar uma cobrança em moeda fiduciária, ou
+          selecione TOKEN para informar diretamente a quantidade do Token Oficial.
+        </Text>
+      ) : account && uri && asset ? <>
         <Text style={styles.title}>Solicitação de pagamento</Text>
         <Text style={styles.amount}>
           {selectedAsset === 'BRL' ? 'R$ ' : ''}{homeAmount} {asset.symbol}
@@ -51,7 +59,8 @@ export function ReceiveScreen() {
         <Text selectable style={styles.address}>{account.smartAccountAddress}</Text>
         {selectedAsset === 'BRL' && (
           <Text style={styles.warning}>
-            O pedido usa {asset.symbol} como Moeda Base em proporção nominal 1:1.
+            O pedido usa {asset.symbol} em paridade nominal 1:1 com{' '}
+            {baseToken?.referenceCurrency} porque a região está lastreada.
             O recebimento de dinheiro físico deve ser conferido pelo caixa.
           </Text>
         )}

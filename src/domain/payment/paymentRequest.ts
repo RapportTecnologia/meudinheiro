@@ -3,7 +3,7 @@ import type { Address } from '../wallet/types';
 
 export type PaymentAsset =
   | { kind: 'native'; symbol: 'POL'; decimals: 18 }
-  | { kind: 'erc20'; address: Address; symbol: string; decimals: number; referenceCurrency?: 'BRL' };
+  | { kind: 'erc20'; address: Address; symbol: string; decimals: number; referenceCurrency?: string };
 
 export type PaymentRequest = {
   chainId: 137;

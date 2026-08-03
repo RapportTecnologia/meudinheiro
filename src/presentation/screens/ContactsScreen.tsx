@@ -37,7 +37,7 @@ export function ContactsScreen({
         referenceCurrency: state.baseToken.referenceCurrency,
       }
     : undefined;
-  const selectedAsset: PaymentAsset | undefined = baseAsset
+  const selectedAsset: PaymentAsset | undefined = baseAsset?.kind === 'erc20'
     ? {
         ...baseAsset,
         referenceCurrency: state.selectedAsset === 'BRL'
@@ -48,6 +48,9 @@ export function ContactsScreen({
 
   const selectRecipient = (recipient: string) => {
     try {
+      if (state.selectedAsset === 'BRL' && state.baseToken?.monetaryMode === 'independent') {
+        throw new Error('A região independente exige cotação válida antes do envio em moeda fiduciária.');
+      }
       if (!selectedAsset) throw new Error('Configure a Moeda Base antes de pagar em BRL.');
       const uri = createPaymentRequestUri({
         recipient,

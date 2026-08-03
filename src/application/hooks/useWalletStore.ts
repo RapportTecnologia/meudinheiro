@@ -16,6 +16,7 @@ import type { PaymentRequest } from '../../domain/payment/paymentRequest';
 import { erc4337Gateway } from '../../infrastructure/accountAbstraction/erc4337Gateway';
 import { validateErc20 } from '../../infrastructure/blockchain/polygon';
 import { secureSecrets } from '../../infrastructure/storage/secureSecrets';
+import { monetaryPolicyGateway } from '../../infrastructure/monetaryPolicy/monetaryPolicyGateway';
 
 type WalletState = {
   accounts: WalletAccount[];
@@ -30,7 +31,7 @@ type WalletState = {
   importAccount(name: string, privateKey: string): Promise<void>;
   activateGaslessAccount(id: string): Promise<void>;
   removeAccount(id: string): Promise<void>;
-  configureBaseToken(address: string, useAsBrl: boolean): Promise<void>;
+  configureBaseToken(address: string): Promise<void>;
   removeBaseToken(): void;
   setHomeAmount(value: string): void;
   setSelectedAsset(value: 'BRL' | 'TOKEN'): void;
@@ -86,16 +87,29 @@ export const useWalletStore = create<WalletState>()(
         const accounts = get().accounts.filter((account) => account.id !== id);
         set({ accounts, activeAccountId: accounts[0]?.id });
       },
-      async configureBaseToken(rawAddress, useAsBrl) {
+      async configureBaseToken(rawAddress) {
         if (get().baseToken) throw new Error('Remova a Moeda Base antes de cadastrar outra.');
         const address = normalizeAddress(rawAddress);
         const metadata = await validateErc20(address);
+        const policy = await monetaryPolicyGateway.getPolicy();
+        if (policy.tokenAddress !== address) {
+          throw new Error('O contrato informado não é o Token Oficial desta região.');
+        }
         set({
           baseToken: {
             address,
             ...metadata,
             chainId: 137,
-            referenceCurrency: useAsBrl ? 'BRL' : undefined,
+            referenceCurrency: policy.referenceCurrency,
+            monetaryMode: policy.mode,
+            policyManager: policy.manager,
+            policyChangedAt: policy.changedAt,
+            ...(policy.activeAssessmentId
+              ? { activeAssessmentId: policy.activeAssessmentId }
+              : {}),
+            ...(policy.pricingSigner
+              ? { pricingSigner: policy.pricingSigner }
+              : {}),
             configuredAt: new Date().toISOString(),
           },
         });
@@ -136,13 +150,19 @@ export const useWalletStore = create<WalletState>()(
     {
       name: 'meu-dinheiro.public-state.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 2,
+      version: 3,
       migrate: (persistedState) => {
         const state = persistedState as Partial<WalletState> & {
           selectedAsset?: 'BRL' | 'POL' | 'TOKEN';
         };
+        const baseToken = state.baseToken?.monetaryMode
+          ? state.baseToken
+          : undefined;
         return {
           ...state,
+          // Configurações antigas eram baseadas em um toggle local 1:1 e devem
+          // ser revalidadas contra o gestor monetário regional.
+          baseToken,
           selectedAsset: state.selectedAsset === 'BRL' ? 'BRL' : 'TOKEN',
         } as WalletState;
       },

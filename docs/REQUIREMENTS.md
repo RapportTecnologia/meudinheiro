@@ -8,10 +8,19 @@
   <img alt="Status do documento" src="https://img.shields.io/badge/status-evolutivo-111827?style=flat-square">
   <img alt="Visitantes dos requisitos" src="https://api.visitorbadge.io/api/VisitorHit?user=RapportTecnologia&repo=meudinheiro-requirements&label=VISITANTES&labelColor=%23111827&countColor=%23F97316">
 
-  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a> · <a href="LOCAL_INCENTIVES.md">Incentivos locais</a></p>
+  <p><a href="../README.md">Início</a> · <a href="ARCHITECTURE.md">Arquitetura</a> · <a href="USE_CASES.md">Casos de uso</a> · <a href="ECONOMIC_MODEL.md">Modelo econômico</a> · <a href="ACCOUNT_ABSTRACTION.md">ERC-4337</a> · <a href="CONTACTS_AND_SHARING.md">Agenda</a></p>
 </div>
 
 ## 1. Visão do produto
+
+### Regime monetário regional
+
+- Toda região nasce lastreada na moeda fiduciária soberana informada pelo backend.
+- A decisão de independência pertence exclusivamente ao gestor global on-chain.
+- O app não permite ao usuário escolher ou forçar a paridade.
+- No modo independente, QR e envio em valor fiduciário exigem cotação válida;
+  sem cotação, somente quantidade explícita do Token Oficial pode ser usada.
+- O app deve rejeitar Token Oficial divergente do endereço regional.
 
 O Meu Dinheiro é um aplicativo Android de carteira autocustodial para a rede
 Polygon. A tela principal oferece uma calculadora funcional, cujo resultado
@@ -30,8 +39,7 @@ publicação nas lojas devem identificar claramente o aplicativo como carteira.
 - Gás patrocinado pelo Paymaster da plataforma, com custo `0 POL` para o
   usuário final em transferências elegíveis.
 - Um Token Oficial Meu Dinheiro ERC-20 fixado por ambiente.
-- Paridade bruta de emissão e resgate: 1 Token Oficial = R$ 1,00.
-- Carga Pix com Mint somente após liquidação e resgate com bloqueio, Pix e Burn.
+- Cotação Token Oficial/BRL por provedor validado.
 - Calculadora, leitura e exibição de QR Code.
 - Preparação dos fluxos de envio e swap.
 - Autenticação do dispositivo para qualquer operação sensível.
@@ -39,12 +47,12 @@ publicação nas lojas devem identificar claramente o aplicativo como carteira.
 Não fazem parte da primeira base:
 
 - custódia de chaves em servidor;
-- execução bancária direta pelo smart contract;
+- compra de cripto com moeda fiduciária;
 - bridge entre blockchains;
 - recuperação social;
 - suporte a redes diferentes da Polygon;
 - execução de swap ou envio sem tela de revisão;
-- promessa de rentabilidade ao portador ou uso do lastro como capital operacional.
+- promessa de rentabilidade, cotação ou liquidez.
 
 ## 3. Atores
 
@@ -61,9 +69,7 @@ Não fazem parte da primeira base:
 | EntryPoint v0.7 | Validar, executar e contabilizar UserOperations |
 | RPC Polygon | Consultar estado, código, hash e recibos |
 | Token Oficial ERC-20 | Único ativo de pagamento do aplicativo |
-| Banco/PSP | Liquidar Pix e emitir confirmação autenticada |
-| Gateway fiduciário | Orquestrar carga, resgate e reconciliação sem custodiar chaves |
-| Reconciliador | Conferir banco, base operacional e eventos on-chain |
+| QuoteProvider | Cotar o Token Oficial em BRL com prazo de validade |
 | Roteador de swap | Converter estoque do comerciante entre Token Oficial e POL |
 
 ## 4. Requisitos funcionais
@@ -374,16 +380,15 @@ Não fazem parte da primeira base:
 - **RN-04:** QR Code é dado de entrada; nunca confirmação.
 - **RN-05:** nenhuma transação ocorre sem revisão e autenticação.
 - **RN-06:** símbolos iguais não significam tokens iguais.
-- **RN-07:** uma cotação de swap expirada não pode ser executada.
+- **RN-07:** cotação expirada não pode ser executada.
 - **RN-08:** falha ou cancelamento de autenticação encerra a operação.
-- **RN-09:** a paridade bruta de R$ 1 exige reserva integral; o app não promete
-  rentabilidade, prazo ilimitado nem liquidez fora das condições publicadas.
+- **RN-09:** o app não garante preço, liquidez, conclusão nem rentabilidade.
 - **RN-10:** gerar ou mostrar um QR não movimenta fundos e não exige assinatura;
   o dispositivo pagador autentica cada transação.
 - **RN-11:** para abastecimento em estabelecimento, o caixa só deve transferir
   após conferir a contraprestação externa.
-- **RN-12:** para pagamentos, carga e resgate, cada centavo bruto corresponde à
-  unidade equivalente do Token Oficial; swap segue cotação própria.
+- **RN-12:** todo valor em BRL deve ser convertido pela cotação vigente para a
+  quantidade adequada do Token Oficial.
 - **RN-13:** POL não constitui ativo de pagamento; nas UserOperations elegíveis
   ele é pago pelo Paymaster da plataforma.
 - **RN-14:** saldo suficiente do Token Oficial e autorização válida do
@@ -396,31 +401,6 @@ Não fazem parte da primeira base:
   plataforma; todo gás patrocinado entra no orçamento e na contabilidade.
 - **RN-18:** o Paymaster pode aplicar limites transparentes, mas não pode gerar
   cobrança silenciosa na EOA.
-- **RN-19:** cada Mint exige Pix liquidado e `operationId`/referência únicos.
-- **RN-20:** oferta inicial regional é zero; não existe emissão administrativa
-  sem evidência do depósito.
-- **RN-21:** resgate bloqueia tokens antes do Pix e só os queima após confirmação.
-- **RN-22:** falha do Pix estorna integralmente os tokens bloqueados.
-- **RN-23:** taxa de resgate deve ficar entre 0% e 1%, ser exibida antes da
-  autenticação e incidir somente sobre a conversão para Pix.
-- **RN-24:** a reserva segregada deve cobrir circulação mais resgates bloqueados
-  e ainda não pagos.
-- **RN-25:** rendimento da reserva não pode reduzir o lastro nem ser prometido
-  ao titular do token.
-- **RN-26:** dados pessoais/Pix não devem ser publicados on-chain; somente hashes
-  opacos e não reversíveis.
-
-### 7.1 Carga e resgate fiduciário
-
-- **RF-FIAT-01:** gerar cobrança Pix vinculada a carteira, valor e operação únicos.
-- **RF-FIAT-02:** emitir exatamente o valor bruto em tokens apenas após liquidação.
-- **RF-FIAT-03:** rejeitar referência Pix ou operação já processada.
-- **RF-FIAT-04:** apresentar valor bruto, taxa em basis points e Pix líquido.
-- **RF-FIAT-05:** submeter o bloqueio por Smart Account/ERC-4337 após autenticação.
-- **RF-FIAT-06:** finalizar Burn somente depois da confirmação do Pix de saída.
-- **RF-FIAT-07:** permitir estorno pelo operador e pelo usuário após timeout.
-- **RF-FIAT-08:** conciliar reserva, supply, bloqueios, Mint, Burn e Pix.
-- **RF-FIAT-09:** pausar automaticamente novas operações em divergência.
 
 ## 8. Critérios de aceite da base
 
@@ -434,11 +414,8 @@ Não fazem parte da primeira base:
 - A chave não aparece no estado persistido.
 - Exportação chama a autenticação antes de acessar o segredo.
 - O swap não aparece para o usuário comum.
-- Receber R$ 10 gera URI ERC-20 para 10 tokens na paridade bruta.
-- Depositar R$ 100 via Pix emite 100 tokens somente após liquidação.
-- Resgatar 100 tokens a 0,5% mostra R$ 0,50 de taxa e R$ 99,50 líquidos.
-- Pix de resgate falho devolve os 100 tokens e não reconhece taxa.
-- Reprocessar `operationId` ou referência Pix não altera a oferta.
+- Receber R$ 10 consulta a cotação e gera URI ERC-20 com a quantidade calculada
+  do Token Oficial.
 - POL nunca aparece como opção de pagamento.
 - Usuário sem POL consegue enviar uma transferência elegível patrocinada.
 - Patrocínio indisponível bloqueia o envio sem fallback pago.
@@ -491,92 +468,21 @@ nome ou endereço de outro contato.
 - Testes com valores reduzidos em ambiente controlado aprovados.
 - Processo de build, assinatura, atualização e resposta a incidentes definido.
 
+## 11. Geofencing regional
 
-## 11. Incentivo local — cashback e descontos
-
-- RF-INC-01: listar campanhas compatíveis com o Token Oficial e a Smart Account.
-- RF-INC-02: calcular compra bruta, desconto, valor líquido e cashback usando
-  aritmética inteira.
-- RF-INC-03: exibir todas as parcelas antes da autenticação.
-- RF-INC-04: preparar uma UserOperation para `payWithIncentive` e conferir
-  campanha, operação, comerciante, valores, EntryPoint, Smart Account e hash.
-- RF-INC-05: exigir biometria, PIN ou padrão antes de acessar a chave e assinar.
-- RN-INC-01: cashback somente pode sair de orçamento pré-financiado com Tokens
-  Oficiais já emitidos e lastreados.
-- RN-INC-02: desconto reduz o valor comercial; nenhum incentivo chama Mint.
-- RN-INC-03: percentuais máximos são 30% de desconto, 10% de cashback e 40%
-  combinados.
-- RN-INC-04: campanha define período, compra mínima, teto por compra, teto por
-  cliente e orçamento restante.
-- RN-INC-05: parâmetros econômicos são imutáveis; mudança exige desativar e criar
-  uma nova campanha.
-- RN-INC-06: pagamento ao comerciante e cashback ao cliente são atômicos.
-- RN-INC-07: cada compra usa identificador único e repetição é rejeitada.
-- RN-INC-08: não usar sorteio, aposta, roleta, caixa-surpresa ou aleatoriedade
-  para determinar benefício financeiro.
-- RN-INC-09: termos, limites e patrocinador devem ser informados antes da compra.
-- RN-INC-10: operação elegível pode ter gás patrocinado, sem fallback silencioso
-  para cobrar POL do usuário.
-
-Critérios de aceite detalhados: [Incentivo Local](LOCAL_INCENTIVES.md).
-
-
-## Parcerias com bancos, moeda social e meio de pagamento
-
-- **RF-REG-01:** consultar e exibir o manifesto regional de parceiros regulados.
-- **RF-REG-02:** informar razão social, CNPJ, autoridade, referência de autorização, situação, vigência e responsabilidades.
-- **RF-REG-03:** bloquear operações Pix se não houver cobertura vigente para Pix, custódia da reserva e KYC/PLD.
-- **RF-REG-04:** rejeitar operador comunitário como substituto de instituição autorizada em papel regulado.
-- **RF-REG-05:** vincular Termos e Política de Privacidade e revalidar o manifesto ao expirar ou mudar o Token Oficial.
-- **RN-REG-01:** a marca Meu Dinheiro não deve induzir o usuário a acreditar que a plataforma é banco ou instituição autorizada quando o serviço é prestado por parceiro.
-- **RN-REG-02:** a classificação do Token Oficial é definida por suas funções e deve ter parecer jurídico por modelo/região.
-- **RN-REG-03:** PL 4.476/2023 e PL 52/2025 são itens de acompanhamento, não fundamento para operação sem autorização.
-- **RN-REG-04:** toda intenção transacional permanece sujeita a PIN, biometria ou credencial do dispositivo.
-
-Detalhamento: [Parcerias regulatórias, bancos e moeda social](REGULATORY_PARTNERSHIPS.md).
-
-
-## 15. Layer 3 off-line/off-chain
-
-- **RF-L3-001:** carregar notas somente contra reserva pré-financiada do Token Oficial.
-- **RF-L3-002:** vincular a reserva da Smart Account a um EOA assinador autorizado.
-- **RF-L3-003:** guardar segredos e pacotes exclusivamente no SecureStore fragmentado.
-- **RF-L3-004:** criar e ler QR `meudinheiro-offline:v2` sem internet.
-- **RF-L3-005:** validar emissor, pagador, destinatário, região, reserva, valor, limite e prazo antes da aceitação.
-- **RF-L3-006:** marcar recebimento como pendente até sincronização e confirmação on-chain.
-- **RF-L3-007:** exigir biometria, PIN ou padrão em emissão, pagamento, aceitação e sincronização.
-- **RF-L3-008:** bloquear localmente notas apresentadas e nunca restaurá-las automaticamente.
-- **RF-L3-009:** sincronizar pacotes recebidos sem apagar dados quando a rede falhar.
-- **RF-L3-010:** exibir de forma inequívoca o risco de gasto duplo enquanto desconectado.
-
-### Critérios de aceite
-
-- pacote adulterado, expirado, de outra região ou outro destinatário é rejeitado;
-- assinatura falsa do emissor ou pagador é rejeitada;
-- valor acima do limite regional é rejeitado;
-- segredo não aparece no estado Zustand, AsyncStorage público, log ou telemetria;
-- o mesmo pacote não é importado duas vezes;
-- falha de rede conserva o recebimento pendente;
-- testes de domínio cobrem URI, assinaturas, destinatário e expiração.
-
-Consulte [OFFLINE_LAYER3.md](OFFLINE_LAYER3.md).
-
-## 16. Geofencing regional
-
-- **RF-GEO-001:** consultar a política regional antes de toda transação financeira.
-- **RF-GEO-002:** suportar áreas circulares e poligonais, regras ALLOW/DENY e vigência.
-- **RF-GEO-003:** fazer DENY prevalecer e exigir ao menos uma correspondência ALLOW.
-- **RF-GEO-004:** bloquear por ausência de localização, baixa precisão, decisão expirada ou backend indisponível quando habilitado.
-- **RF-GEO-005:** vincular a decisão à região, carteira, operação e referência idempotente.
-- **RF-GEO-006:** consumir cada decisão uma única vez no backend antes do efeito financeiro.
-- **RF-GEO-007:** não persistir coordenadas exatas; guardar apenas digest HMAC para auditoria.
-- **RF-GEO-008:** permitir autorização off-line curta, de uso único, assinada no pacote Layer 3 v2.
-- **RF-GEO-009:** solicitar biometria, PIN ou padrão depois da aprovação geográfica e antes da assinatura.
-- **RF-GEO-010:** permitir administração somente pelo dashboard autenticado e pelo BFF, sem expor chaves regionais ao navegador.
-
-### Critérios de aceite
-
-- ponto fora de ALLOW, dentro de DENY ou com precisão insuficiente é rejeitado;
-- decisão expirada, reutilizada ou vinculada a outra operação é rejeitada;
-- dashboard cria nova versão e desativa áreas preservando auditoria;
-- testes cobrem círculo, polígono, precedência DENY, validade e uso único.
+- **RF-GEO-01:** solicitar localização somente quando o usuário iniciar uma
+  operação financeira ou preparar autorização offline explícita.
+- **RF-GEO-02:** consultar o backend com operação, carteira, coordenadas,
+  precisão e timestamp.
+- **RF-GEO-03:** impedir autenticação e assinatura quando a decisão for negada,
+  vencida, imprecisa ou indisponível.
+- **RF-GEO-04:** vincular `decisionId` à UserOperation, API Pix, emissão Layer 3
+  ou pacote offline v2.
+- **RF-GEO-05:** permitir no máximo um pagamento offline com autorização curta
+  previamente armazenada no SecureStore.
+- **RS-GEO-01:** não persistir coordenadas em Zustand, AsyncStorage, logs ou
+  analytics.
+- **RS-GEO-02:** considerar GPS falsificável e exigir controles adicionais em
+  produção, como Play Integrity e análise de risco.
+- **RN-GEO-01:** área `DENY` prevalece; se o recurso estiver habilitado e não
+  houver área `ALLOW` vigente, novas operações são bloqueadas.

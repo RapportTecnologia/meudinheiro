@@ -22,7 +22,7 @@ export function ScannerScreen({ navigation }: any) {
         decimals: baseToken.decimals, referenceCurrency: baseToken.referenceCurrency,
       }
     : undefined;
-  const selectedPaymentAsset: PaymentAsset | undefined = basePaymentAsset
+  const selectedPaymentAsset: PaymentAsset | undefined = basePaymentAsset?.kind === 'erc20'
     ? {
         ...basePaymentAsset,
         referenceCurrency: selectedAsset === 'BRL'
@@ -35,6 +35,9 @@ export function ScannerScreen({ navigation }: any) {
     if (locked) return;
     setLocked(true);
     try {
+      if (selectedAsset === 'BRL' && baseToken?.monetaryMode === 'independent') {
+        throw new Error('A região independente exige cotação válida antes do pagamento em moeda fiduciária.');
+      }
       const offline = parseOfflinePaymentUri(data.trim());
       if (offline) {
         navigation.replace('OfflineWallet', { incomingUri: data.trim() });

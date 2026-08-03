@@ -8,16 +8,11 @@
   url: /casos-de-uso/
 - title: Token e gás
   url: /modelo-economico/
+- title: Política monetária
+  url: /politica-monetaria/
 - title: Custo zero
   url: /custo-zero/
-- title: Off-line
-  url: /offline/
-- title: Geofencing
-  url: /geofencing/
 - title: Agenda
   url: /agenda/
-- title: Incentivos
-  url: /incentivos-locais/
-
-- title: Parcerias regulatórias
-  url: /parcerias-regulatorias/
+- title: Geofencing
+  url: /geofencing/

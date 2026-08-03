@@ -47,6 +47,7 @@ export function useLocalIncentivePayment() {
     const geofence = await geofencingGateway.authorize({
       operation: 'INCENTIVE_PAYMENT',
       walletAddress: account.smartAccountAddress,
+      counterpartyAddresses: [campaign.merchant],
     });
 
     await requireDeviceAuth(

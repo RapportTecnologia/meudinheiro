@@ -38,6 +38,7 @@ export function useSponsoredTransfer() {
     const geofence = await geofencingGateway.authorize({
       operation: 'TRANSFER',
       walletAddress: account.smartAccountAddress,
+      counterpartyAddresses: [payment.recipient],
     });
 
     await requireDeviceAuth(

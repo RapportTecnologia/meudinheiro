@@ -66,3 +66,13 @@ enfraqueceria o controle territorial.
 As áreas são administradas no repositório
 [`meudinheiro_dashboard`](https://github.com/RapportTecnologia/meudinheiro_dashboard)
 e aplicadas pelo backend regional.
+
+## Contas bloqueadas
+
+O backend verifica a carteira de origem e, quando informado, o destinatário.
+Uma resposta `ACCOUNT_BLOCKED` interrompe a operação antes da autenticação e da
+assinatura. Essa recusa explícita nunca pode usar autorização off-line em cache.
+
+O gateway/Paymaster repete a consulta imediatamente antes de patrocinar ou
+enviar a UserOperation. Assim, uma decisão geográfica emitida antes de um
+bloqueio administrativo deixa de ser utilizável.

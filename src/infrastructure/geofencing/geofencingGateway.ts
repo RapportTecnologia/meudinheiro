@@ -65,8 +65,11 @@ export const geofencingGateway = {
   async authorize(input: {
     operation: GeofencedOperation;
     walletAddress: Address;
+    counterpartyAddresses?: Address[];
   }): Promise<GeofenceDecision & { source: 'online' | 'cached-offline' }> {
     const walletAddress = getAddress(input.walletAddress) as Address;
+    const counterpartyAddresses = (input.counterpartyAddresses ?? [])
+      .map((address) => getAddress(address) as Address);
     const location = await currentLocation();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -81,6 +84,7 @@ export const geofencingGateway = {
           longitude: location.coords.longitude,
           accuracyMeters: location.coords.accuracy,
           deviceTimestamp: new Date(location.timestamp).toISOString(),
+          counterpartyAddresses,
         }),
         signal: controller.signal,
       });
@@ -97,6 +101,10 @@ export const geofencingGateway = {
       if (!decision.allowed) throw new Error(geofenceDenialMessage(decision.reason));
       return { ...decision, source: 'online' };
     } catch (error) {
+      const networkFailure = error instanceof TypeError
+        || (error as Error).name === 'AbortError'
+        || /network request failed/i.test((error as Error).message);
+      if (!networkFailure) throw error;
       const cached = await cachedOfflineDecision(input.operation, walletAddress);
       if (cached) return { ...cached, source: 'cached-offline' };
       if ((error as Error).name === 'AbortError') {

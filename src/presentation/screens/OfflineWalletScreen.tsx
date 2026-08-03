@@ -165,6 +165,7 @@ export function OfflineWalletScreen({ route }: Props) {
       const geofence = await geofencingGateway.authorize({
         operation: 'OFFLINE_PAYMENT',
         walletAddress: context.account.address,
+        counterpartyAddresses: [getAddress(recipient.trim()) as `0x${string}`],
       });
       const noteExpiry = Math.min(
         ...selected.map(({ note }) => new Date(note.expiresAt).getTime()),

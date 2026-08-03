@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://rapport.tec.br/cuscuz/sitemap.xml

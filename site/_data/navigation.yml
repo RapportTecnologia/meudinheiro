@@ -34,9 +34,7 @@
 
 - title: Ecossistema
   children:
-    - title: Cuscuz Token
-      url: /cuscuz-token/
-    - title: Site CusCuZ
+    - title: Subprojeto CusCuZ
       url: https://rapport.tec.br/cuscuz/
       external: true
     - title: App CusCuZ

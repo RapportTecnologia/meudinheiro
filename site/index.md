@@ -204,22 +204,21 @@ permalink: /
           >
           <div>
             <p class="section-kicker">Novo subprojeto</p>
-            <h3>Cuscuz Token <span>CCZ</span></h3>
+            <h3>CusCuZ <span>CCZ</span></h3>
           </div>
         </div>
         <p>
-          Fidelidade digital para aproximar consumidores e microempreendedores
-          nordestinos. Cada vendedor define sua campanha e concede CCZ para
-          benefícios como descontos, recompensas ou um lanche extra.
+          Subprojeto especializado em fidelidade digital e apoio operacional
+          para vendedores ambulantes de lanches e pequenas lanchonetes. Cada
+          vendedor define sua campanha e concede CCZ aos próprios clientes.
         </p>
         <ul class="subproject-points">
           <li>Token utilitário de fidelidade, sem promessa de rendimento.</li>
           <li>Autonomia comercial e benefícios vinculados ao vendedor.</li>
-          <li>Aplicativo CusCuZ separado, com descoberta por mapa e operação do ponto de venda.</li>
+          <li>Aplicativo separado, com mapa, estoque e apoio à operação do ponto de venda.</li>
         </ul>
         <div class="button-row">
-          <a class="button cuscuz-button" href="{{ '/cuscuz-token/' | relative_url }}">Conhecer o subprojeto</a>
-          <a class="button secondary" href="https://rapport.tec.br/cuscuz/" rel="noopener noreferrer">Visitar o site CusCuZ ↗</a>
+          <a class="button cuscuz-button" href="https://rapport.tec.br/cuscuz/" rel="noopener noreferrer">Conhecer o CusCuZ ↗</a>
           <a class="button secondary" href="https://github.com/RapportTecnologia/cuscuz" rel="noopener noreferrer">Repositório CCZ ↗</a>
         </div>
       </article>
@@ -228,7 +227,7 @@ permalink: /
         <p class="section-kicker">Limites claros</p>
         <h3>Integração sem confusão de finalidade.</h3>
         <div><strong>Meu Dinheiro</strong><span>Moeda social regional e pagamentos no Token Oficial.</span></div>
-        <div><strong>Cuscuz Token</strong><span>Fidelidade e benefícios definidos por cada vendedor.</span></div>
+        <div><strong>CusCuZ</strong><span>Lanches, fidelidade e benefícios definidos por cada vendedor.</span></div>
         <div><strong>.dindin</strong><span>Identidade amigável compartilhada na Polygon.</span></div>
       </aside>
     </div>
@@ -254,7 +253,6 @@ permalink: /
       <a class="doc-card" href="{{ '/incentivos-locais/' | relative_url }}"><div><p class="section-kicker">Economia local</p><h3>Cashback e descontos</h3><p>Benefícios pré-financiados, limites transparentes e liquidação atômica.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/offline/' | relative_url }}"><div><p class="section-kicker">Resiliência</p><h3>Pagamentos off-line</h3><p>Notas pré-financiadas, QR local, sincronização e liquidação posterior na Polygon.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/agenda/' | relative_url }}"><div><p class="section-kicker">Destinatários</p><h3>Agenda segura</h3><p>Contatos frequentes, conflitos, edição e solicitações compartilhadas.</p></div><span>Explorar →</span></a>
-      <a class="doc-card" href="{{ '/cuscuz-token/' | relative_url }}"><div><p class="section-kicker">Subprojeto</p><h3>Cuscuz Token</h3><p>CCZ, fidelidade digital, autonomia do vendedor e integração com o ecossistema.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="https://github.com/RapportTecnologia/meudinheiro"><div><p class="section-kicker">Código aberto</p><h3>Repositório</h3><p>React Native, Expo, ethers.js, testes e histórico de implementação.</p></div><span>Abrir GitHub ↗</span></a>
     </div>
   </div>

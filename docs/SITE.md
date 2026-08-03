@@ -17,8 +17,7 @@
 - `site/_data/`: dados de navegação;
 - `site/assets/`: estilos, JavaScript e imagens;
 - `site/assets/images/documentacao-meu-dinheiro.webp`: imagem editorial compartilhada pelas páginas documentais;
-- `site/cuscuz-token.md`: apresentação do Cuscuz Token como subprojeto do ecossistema;
-- `site/cuscuz/`: espelho de compatibilidade da landing page oficial do CusCuZ;
+- o portal apenas referencia subprojetos externos, sem duplicar suas páginas;
 - `.github/workflows/jekyll-gh-pages.yml`: único workflow do site;
 - `_site/`: resultado temporário gerado durante o job de build;
 - artefato `github-pages`: pacote entregue ao job oficial de deployment.
@@ -101,10 +100,9 @@ O `baseurl` de produção é `/meudinheiro`.
 - páginas essenciais, sitemap e imagens são verificados antes do deploy;
 - a navegação principal agrupa Produto, Economia, Engenharia e Ecossistema em submenus acessíveis;
 - todas as páginas documentais possuem imagem editorial e proteções responsivas contra conteúdo truncado;
-- a página `/cuscuz-token/` diferencia Token Oficial, app CusCuZ, CCZ e PNS `.dindin`;
-- a landing page oficial é publicada pelo repositório público `RapportTecnologia/cuscuz`;
-- a rota histórica `/meudinheiro/cuscuz/` permanece somente como espelho de compatibilidade;
-- o conteúdo do CCZ referencia `RapportTecnologia/cuscuz` como fonte oficial;
+- o portal `/meudinheiro/` documenta exclusivamente o ecossistema regionalizado Meu Dinheiro;
+- o subprojeto CusCuZ é apenas apresentado no ecossistema e direcionado para `https://rapport.tec.br/cuscuz/`;
+- páginas, conteúdo, SEO e assets específicos do CusCuZ pertencem exclusivamente ao repositório público `RapportTecnologia/cuscuz`;
 - a página `/custo-zero/` documenta Smart Account, Bundler e Paymaster;
 - apenas um workflow possui permissão para publicar no ambiente Pages;
 - o site novo, sua identidade visual e seus assets permanecem em `site/`.

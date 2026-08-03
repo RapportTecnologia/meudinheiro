@@ -4,8 +4,8 @@ description: >-
   Documentação pública do Meu Dinheiro, uma carteira autocustodial para a
   Polygon que conecta pagamentos digitais à economia local, com calculadora,
   Token Oficial, QR Code, Account Abstraction ERC-4337, gás patrocinado e
-  autenticação por transação, geofencing regional e o subprojeto de fidelidade
-  Cuscuz Token (CCZ).
+  autenticação por transação, geofencing regional e integração de subprojetos
+  com escopos econômicos separados.
 url: https://rapporttecnologia.github.io
 baseurl: /meudinheiro
 repository: RapportTecnologia/meudinheiro

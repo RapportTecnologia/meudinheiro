@@ -115,6 +115,7 @@ Polygon.
 
 - [CusCuZ — subprojeto de fidelidade local](https://github.com/RapportTecnologia/cuscuz)
 - [Aplicativo Android CusCuZ](https://github.com/RapportTecnologia/cuscuz_app_android)
+- [Aplicativo iPhone CusCuZ](https://github.com/RapportTecnologia/cuscuz_iphone)
 - [Backend regional](https://github.com/RapportTecnologia/meudinheiro_backend)
 - [Dashboard administrativo](https://github.com/RapportTecnologia/meudinheiro_dashboard)
 - [Smart contracts regionais](https://github.com/RapportTecnologia/meudinheiro_smartcontracts)

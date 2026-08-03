@@ -37,6 +37,9 @@
     - title: Subprojeto CusCuZ
       url: https://rapport.tec.br/cuscuz/
       external: true
-    - title: App CusCuZ
+    - title: App CusCuZ Android
       url: https://github.com/RapportTecnologia/cuscuz_app_android
+      external: true
+    - title: App CusCuZ iPhone
+      url: https://github.com/RapportTecnologia/cuscuz_iphone
       external: true

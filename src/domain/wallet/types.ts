@@ -8,6 +8,8 @@ export type WalletAccount = {
   /** Endereço operacional ERC-4337 que recebe e movimenta o Token Oficial. */
   smartAccountAddress?: Address;
   accountAbstractionActivatedAt?: string;
+  /** Nome público resolvido pelo registro global da plataforma. */
+  dindinName?: `${string}.dindin`;
   /** Somente o identificador do segredo; nunca a chave. */
   secretRef: string;
 };
@@ -18,12 +20,7 @@ export type BaseToken = {
   name: string;
   decimals: number;
   chainId: 137;
-  referenceCurrency: string;
-  monetaryMode: 'fiat_pegged' | 'independent';
-  policyManager: Address;
-  policyChangedAt: string;
-  activeAssessmentId?: string;
-  pricingSigner?: Address;
+  referenceCurrency?: 'BRL';
   configuredAt: string;
 };
 

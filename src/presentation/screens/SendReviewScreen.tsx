@@ -104,7 +104,8 @@ export function SendReviewScreen({
             && pendingPayment.asset.referenceCurrency === 'BRL' ? 'R$ ' : ''}
           {pendingPayment.amount}
         </Text>
-        <Text selectable>Destino: {pendingPayment.recipient}</Text>
+        {pendingPayment.recipientName && <Text>Nome resolvido: {pendingPayment.recipientName}</Text>}
+        <Text selectable>Destino resolvido: {pendingPayment.recipient}</Text>
       </View>
       <Text style={styles.warning}>
         Confirme o valor e o endereço. A transação blockchain não pode ser desfeita

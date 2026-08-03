@@ -13,15 +13,6 @@
 
 ## 1. Visão do produto
 
-### Regime monetário regional
-
-- Toda região nasce lastreada na moeda fiduciária soberana informada pelo backend.
-- A decisão de independência pertence exclusivamente ao gestor global on-chain.
-- O app não permite ao usuário escolher ou forçar a paridade.
-- No modo independente, QR e envio em valor fiduciário exigem cotação válida;
-  sem cotação, somente quantidade explícita do Token Oficial pode ser usada.
-- O app deve rejeitar Token Oficial divergente do endereço regional.
-
 O Meu Dinheiro é um aplicativo Android de carteira autocustodial para a rede
 Polygon. A tela principal oferece uma calculadora funcional, cujo resultado
 pode ser usado como valor inicial de uma intenção de envio ou swap.
@@ -486,3 +477,11 @@ nome ou endereço de outro contato.
   produção, como Play Integrity e análise de risco.
 - **RN-GEO-01:** área `DENY` prevalece; se o recurso estiver habilitado e não
   houver área `ALLOW` vigente, novas operações são bloqueadas.
+# Extensão PNS `.dindin`
+
+- Cada usuário pode escolher um nome público único terminado em `.dindin` durante o cadastro ou nas configurações.
+- O nome resolve para a Smart Account operacional, não para uma chave privada exibida ao usuário.
+- O registro usa commit–reveal, segredo no SecureStore e autorização forte em cada transação.
+- A taxa efetiva global/regional deve ser mostrada antes da confirmação.
+- Envio aceita `nome.dindin`, resolve na Polygon e mostra nome mais endereço antes da autorização.
+- O Paymaster global deve patrocinar commit e reveal antes do lançamento; o caminho direto é restrito à homologação.

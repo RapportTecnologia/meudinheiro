@@ -13,11 +13,6 @@
 
 ## 1. Escopo
 
-O bounded context `monetaryPolicy` consulta a identidade regional e impede que
-uma configuração local substitua o regime decidido on-chain. O snapshot compõe
-a Moeda Base; configurações legadas sem essa evidência são invalidadas. Veja
-[MONETARY_POLICY.md](MONETARY_POLICY.md).
-
 Carteira autocustodial Android para Polygon (chainId 137), com uma calculadora
 funcional como Home. O resultado matemático é apenas uma intenção de valor:
 nenhuma operação acontece sem revisão, endereço completo, rede, token, valor,
@@ -180,3 +175,6 @@ para o executor financeiro e é consumida de forma idempotente. O pacote Layer
 O dashboard administrativo é separado do app e usa BFF para impedir que chaves
 administrativas sejam incorporadas ao bundle web. Veja
 [GEOFENCING.md](GEOFENCING.md).
+# Extensão PNS `.dindin`
+
+O bounded context `naming` contém normalização e hash; o gateway `DindinRegistryGateway` encapsula resolução, taxa e commit–reveal. O registro é global por chain e fica fora do Diamond regional. O nome aponta para Smart Account e a revisão de transferência conserva nome e endereço resolvido. Consulte [PNS `.dindin`](PNS_DINDIN.md).

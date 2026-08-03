@@ -12,12 +12,14 @@ import {
 } from 'react-native';
 import { useWalletStore } from '../../application/hooks/useWalletStore';
 import { rankContacts } from '../../domain/contacts/contact';
+import { formatDindinName, isDindinName } from '../../domain/naming/dindinName';
 import {
   createPaymentRequestUri,
   parsePaymentRequestUri,
   type PaymentAsset,
 } from '../../domain/payment/paymentRequest';
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import { dindinRegistryGateway } from '../../infrastructure/naming/dindinRegistryGateway';
 
 export function ContactsScreen({
   navigation,
@@ -37,7 +39,7 @@ export function ContactsScreen({
         referenceCurrency: state.baseToken.referenceCurrency,
       }
     : undefined;
-  const selectedAsset: PaymentAsset | undefined = baseAsset?.kind === 'erc20'
+  const selectedAsset: PaymentAsset | undefined = baseAsset
     ? {
         ...baseAsset,
         referenceCurrency: state.selectedAsset === 'BRL'
@@ -46,12 +48,15 @@ export function ContactsScreen({
       }
     : undefined;
 
-  const selectRecipient = (recipient: string) => {
+  const selectRecipient = async (recipientInput: string) => {
     try {
-      if (state.selectedAsset === 'BRL' && state.baseToken?.monetaryMode === 'independent') {
-        throw new Error('A região independente exige cotação válida antes do envio em moeda fiduciária.');
-      }
       if (!selectedAsset) throw new Error('Configure a Moeda Base antes de pagar em BRL.');
+      const recipientName = isDindinName(recipientInput)
+        ? formatDindinName(recipientInput)
+        : undefined;
+      const recipient = recipientName
+        ? await dindinRegistryGateway.resolve(recipientName)
+        : recipientInput;
       const uri = createPaymentRequestUri({
         recipient,
         amount: state.homeAmount,
@@ -59,7 +64,7 @@ export function ContactsScreen({
       });
       const request = parsePaymentRequestUri(uri, baseAsset);
       if (!request) throw new Error('Não foi possível montar a solicitação.');
-      state.setPendingPayment(request);
+      state.setPendingPayment(recipientName ? { ...request, recipientName } : request);
       navigation.navigate('SendReview');
     } catch (error) {
       Alert.alert('Não foi possível preparar o envio', (error as Error).message);
@@ -109,7 +114,7 @@ export function ContactsScreen({
       <View style={styles.methods}>
         <Button title="Ler QR" onPress={() => navigation.navigate('Scanner')} />
         <TextInput
-          placeholder="Ou informe um novo endereço 0x..."
+          placeholder="Endereço 0x... ou nome.dindin"
           value={directAddress}
           onChangeText={setDirectAddress}
           autoCapitalize="none"
@@ -118,7 +123,7 @@ export function ContactsScreen({
         />
         <Button
           title="Revisar novo endereço"
-          onPress={() => selectRecipient(directAddress)}
+          onPress={() => void selectRecipient(directAddress)}
           disabled={!directAddress.trim()}
         />
       </View>
@@ -130,7 +135,7 @@ export function ContactsScreen({
         ListEmptyComponent={<Text>Nenhum contato salvo.</Text>}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Pressable onPress={() => selectRecipient(item.address)} style={styles.contact}>
+            <Pressable onPress={() => void selectRecipient(item.address)} style={styles.contact}>
               <Text style={styles.name}>{item.favorite ? '★ ' : ''}{item.name}</Text>
               <Text numberOfLines={1}>{item.address}</Text>
               <Text>{item.useCount} uso(s)</Text>

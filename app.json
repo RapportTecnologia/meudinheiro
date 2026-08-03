@@ -24,7 +24,8 @@
     "extra": {
       "polygonRpcUrl": "https://polygon-rpc.com",
       "chainId": 137,
-      "swapEnabled": false
+      "swapEnabled": false,
+      "dindinRegistryAddress": "0x0000000000000000000000000000000000000000"
     }
   }
 }

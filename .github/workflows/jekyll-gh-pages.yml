@@ -57,6 +57,14 @@ jobs:
           test -s _site/assets/images/documentacao-meu-dinheiro.webp
           test -s _site/sitemap.xml
           grep -q 'https://rapport.tec.br/cuscuz/' _site/index.html
+          grep -q 'Token Regional' _site/index.html
+
+          if grep -RniE --include='*.html' \
+            'Polygon|chainId[[:space:]]*137|(^|[^[:alnum:]_])POL([^[:alnum:]_]|$)|Amoy' \
+            _site; then
+            echo 'A comunicação pública deve usar Token Regional, sem expor a rede de infraestrutura.' >&2
+            exit 1
+          fi
 
           for page in \
             agenda arquitetura casos-de-uso custo-zero geofencing \

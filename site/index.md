@@ -1,6 +1,6 @@
 ---
 title: Meu Dinheiro
-description: Meu Dinheiro fortalece a região com pagamentos no Token Oficial, calculadora, QR Code e segurança na Polygon.
+description: Meu Dinheiro fortalece a região com pagamentos em um Token Regional definido por implantação, calculadora, QR Code e autenticação por transação.
 permalink: /
 ---
 
@@ -21,9 +21,9 @@ permalink: /
       <p class="eyebrow">Tecnologia que circula valor perto de você</p>
       <h1>Meu Dinheiro.<em>Fortalece minha região.</em></h1>
       <p class="hero-copy">
-        Uma carteira Polygon com a simplicidade de uma calculadora, criada para
-        tornar pagamentos locais mais acessíveis, seguros e conectados à
-        comunidade.
+        Uma carteira regional com a simplicidade de uma calculadora. Cada
+        implantação recebe identidade e token próprios para tornar pagamentos
+        locais mais acessíveis, seguros e conectados à comunidade.
       </p>
       <div class="hero-actions">
         <a class="button" href="{{ '/casos-de-uso/' | relative_url }}">Conhecer os fluxos <span aria-hidden="true">→</span></a>
@@ -40,10 +40,10 @@ permalink: /
 
 <section class="trust-strip" aria-label="Características principais">
   <div class="shell trust-grid">
-    <div><strong>Polygon PoS</strong><span>Rede EVM, chainId 137</span></div>
+    <div><strong>Implantação regional</strong><span>Nome e símbolo definidos no projeto</span></div>
     <div><strong>2 contas</strong><span>Limite local da primeira versão</span></div>
-    <div><strong>Token Oficial</strong><span>Único ativo de pagamento</span></div>
-    <div><strong>0 POL</strong><span>Gás patrocinado para o usuário</span></div>
+    <div><strong>Token Regional</strong><span>Ativo configurado para a comunidade</span></div>
+    <div><strong>Custo patrocinado</strong><span>Sem cobrança de rede ao usuário</span></div>
   </div>
 </section>
 
@@ -51,8 +51,8 @@ permalink: /
   <div class="shell product-grid">
     <div class="calculator" aria-label="Representação da calculadora do aplicativo">
       <div class="calculator-top">
-        <span>Token Oficial</span>
-        <span class="network-pill">Polygon</span>
+        <span>Token Regional</span>
+        <span class="network-pill">Região ativa</span>
       </div>
       <div class="calculator-display">
         <small>Valor proposto</small>
@@ -74,7 +74,12 @@ permalink: /
       <p>
         O valor digitado se transforma em uma intenção de pagamento. Antes de
         qualquer transferência, o aplicativo mostra destino, paridade, saldo do
-        Token Oficial e patrocínio do gás pela plataforma.
+        Token Regional e patrocínio do custo de rede pela plataforma.
+      </p>
+      <p>
+        <strong>Token Regional</strong> é a denominação genérica usada no portal.
+        Nome, símbolo, contrato e identidade são definidos em cada implantação,
+        como ocorre com o CusCuZ (CCZ).
       </p>
       <ul class="brand-values">
         <li><strong>Clareza</strong><span>O usuário entende quanto e para quem está enviando.</span></li>
@@ -94,7 +99,7 @@ permalink: /
       </div>
       <p>
         A calculadora prepara a intenção. Nenhum cálculo, QR Code ou contato
-        autoriza sozinho uma movimentação blockchain.
+        autoriza sozinho uma movimentação do Token Regional.
       </p>
     </div>
 
@@ -102,8 +107,9 @@ permalink: /
       <article class="feature-card">
         <h3>Calcule em reais</h3>
         <p>
-          Na carga, no pagamento e no resgate, R$ 1,00 corresponde a um Token
-          Oficial bruto, com reserva e reconciliação.
+          Na carga, no pagamento e no resgate, R$ 1,00 corresponde nominalmente
+          a uma unidade do Token Regional, conforme a política da implantação,
+          com reserva e reconciliação.
         </p>
       </article>
       <article class="feature-card">
@@ -136,16 +142,16 @@ permalink: /
     <div class="section-heading">
       <div>
         <p class="section-kicker">Jornada de pagamento</p>
-        <h2>Da calculadora à Polygon.</h2>
+        <h2>Da calculadora ao token da região.</h2>
       </div>
       <p>Um fluxo previsível para compras, abastecimentos e transferências pessoais.</p>
     </div>
 
     <div class="flow-grid">
-      <article class="flow-card"><h3>Informe</h3><p>Digite o valor em BRL ou em unidades do Token Oficial.</p></article>
+      <article class="flow-card"><h3>Informe</h3><p>Digite o valor em BRL ou em unidades do Token Regional.</p></article>
       <article class="flow-card"><h3>Resolva</h3><p>Selecione contato, leia QR ou cole uma solicitação EIP-681.</p></article>
-      <article class="flow-card"><h3>Confira</h3><p>Valide destino, paridade, taxa, saldo do token e custo de gás 0 POL.</p></article>
-      <article class="flow-card"><h3>Autorize</h3><p>Assine a UserOperation; o Paymaster paga o gás.</p></article>
+      <article class="flow-card"><h3>Confira</h3><p>Valide destino, paridade, taxa, saldo e patrocínio do custo da rede.</p></article>
+      <article class="flow-card"><h3>Autorize</h3><p>Assine a operação; a plataforma assume o custo elegível da rede.</p></article>
     </div>
   </div>
 </section>
@@ -170,8 +176,8 @@ permalink: /
         permanecem confiança, autonomia e relações locais.
       </p>
       <div class="impact-grid">
-        <div><strong>Moradores</strong><span>Pagam e transferem o Token Oficial com revisão simples.</span></div>
-        <div><strong>Comerciantes</strong><span>Abastecem a circulação regional sem exigir POL do cliente.</span></div>
+        <div><strong>Moradores</strong><span>Pagam e transferem o Token Regional com revisão simples.</span></div>
+        <div><strong>Comerciantes</strong><span>Abastecem a circulação regional sem repassar ao cliente o custo da rede.</span></div>
         <div><strong>Comunidade</strong><span>Constrói uma rede transparente, aberta e interoperável.</span></div>
       </div>
     </div>
@@ -226,9 +232,9 @@ permalink: /
       <aside class="ecosystem-boundary" aria-label="Separação dos produtos">
         <p class="section-kicker">Limites claros</p>
         <h3>Integração sem confusão de finalidade.</h3>
-        <div><strong>Meu Dinheiro</strong><span>Moeda social regional e pagamentos no Token Oficial.</span></div>
+        <div><strong>Meu Dinheiro</strong><span>Moeda social e pagamentos no Token Regional de cada implantação.</span></div>
         <div><strong>CusCuZ</strong><span>Lanches, fidelidade e benefícios definidos por cada vendedor.</span></div>
-        <div><strong>.dindin</strong><span>Identidade amigável compartilhada na Polygon.</span></div>
+        <div><strong>.dindin</strong><span>Identidade amigável compartilhada pelo ecossistema.</span></div>
       </aside>
     </div>
   </div>
@@ -248,10 +254,10 @@ permalink: /
       <a class="doc-card" href="{{ '/arquitetura/' | relative_url }}"><div><p class="section-kicker">Engenharia</p><h3>Arquitetura</h3><p>Camadas, domínio, infraestrutura, segurança e decisões técnicas.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/requisitos/' | relative_url }}"><div><p class="section-kicker">Especificação</p><h3>Requisitos</h3><p>Regras funcionais, não funcionais e critérios de aceite.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/casos-de-uso/' | relative_url }}"><div><p class="section-kicker">Experiência</p><h3>Casos de uso</h3><p>Abastecimento, compra, transferência, agenda e clipboard.</p></div><span>Explorar →</span></a>
-      <a class="doc-card" href="{{ '/modelo-economico/' | relative_url }}"><div><p class="section-kicker">Operação</p><h3>Token, reservas e gás</h3><p>Mint & Burn, resgate Pix, lastro, taxa e Paymaster.</p></div><span>Explorar →</span></a>
+      <a class="doc-card" href="{{ '/modelo-economico/' | relative_url }}"><div><p class="section-kicker">Operação</p><h3>Token, reservas e custos</h3><p>Mint & Burn, resgate Pix, lastro, taxa e Paymaster.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/custo-zero/' | relative_url }}"><div><p class="section-kicker">ERC-4337</p><h3>Custo zero</h3><p>Smart Account, Bundler, Paymaster e validação defensiva.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/incentivos-locais/' | relative_url }}"><div><p class="section-kicker">Economia local</p><h3>Cashback e descontos</h3><p>Benefícios pré-financiados, limites transparentes e liquidação atômica.</p></div><span>Explorar →</span></a>
-      <a class="doc-card" href="{{ '/offline/' | relative_url }}"><div><p class="section-kicker">Resiliência</p><h3>Pagamentos off-line</h3><p>Notas pré-financiadas, QR local, sincronização e liquidação posterior na Polygon.</p></div><span>Explorar →</span></a>
+      <a class="doc-card" href="{{ '/offline/' | relative_url }}"><div><p class="section-kicker">Resiliência</p><h3>Pagamentos off-line</h3><p>Notas pré-financiadas, QR local, sincronização e liquidação posterior no registro regional.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="{{ '/agenda/' | relative_url }}"><div><p class="section-kicker">Destinatários</p><h3>Agenda segura</h3><p>Contatos frequentes, conflitos, edição e solicitações compartilhadas.</p></div><span>Explorar →</span></a>
       <a class="doc-card" href="https://github.com/RapportTecnologia/meudinheiro"><div><p class="section-kicker">Código aberto</p><h3>Repositório</h3><p>React Native, Expo, ethers.js, testes e histórico de implementação.</p></div><span>Abrir GitHub ↗</span></a>
     </div>
@@ -273,8 +279,8 @@ permalink: /
     </div>
     <div class="safety-list">
       <div><strong>Segredos isolados</strong><span>Chaves privadas ficam no armazenamento seguro do dispositivo.</span></div>
-      <div><strong>Rede verificada</strong><span>As operações devem confirmar Polygon PoS, chainId 137.</span></div>
-      <div><strong>Gás patrocinado</strong><span>O Paymaster paga POL; a operação custa 0 POL ao usuário.</span></div>
+      <div><strong>Implantação verificada</strong><span>As operações confirmam região, contrato e token configurados.</span></div>
+      <div><strong>Custo patrocinado</strong><span>O Paymaster assume o custo elegível da rede.</span></div>
       <div><strong>Protótipo responsável</strong><span>Fundos reais exigem auditoria, testes de integração e threat model.</span></div>
     </div>
   </div>

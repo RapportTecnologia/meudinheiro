@@ -29,8 +29,9 @@ permalink: /requisitos/
       <ul>
         <li>Calculadora com operações básicas e parser restrito.</li>
         <li>Até duas EOAs proprietárias e suas Smart Accounts ERC-4337.</li>
-        <li>Token Oficial ERC-20 fixado por configuração confiável.</li>
-        <li>Paridade bruta de R$ 1,00 por Token Oficial em carga e resgate.</li>
+        <li>Token Regional ERC-20 fixado por configuração confiável.</li>
+        <li>Nome, símbolo, contrato e identidade definidos por implantação.</li>
+        <li>Paridade bruta de R$ 1,00 por unidade do Token Regional em carga e resgate.</li>
         <li>Mint somente após Pix liquidado; Burn somente após Pix de saída confirmado.</li>
         <li>Taxa de resgate entre 0% e 1%, apresentada antes da autenticação.</li>
         <li>Leitura e geração de solicitações EIP-681.</li>
@@ -40,9 +41,9 @@ permalink: /requisitos/
     <section id="transacoes" class="content-card">
       <h2>Transações</h2>
       <ul>
-        <li>O ativo de pagamento é sempre o Token Oficial.</li>
-        <li>O Paymaster paga POL em operações elegíveis.</li>
-        <li>O usuário final paga 0 POL pelo gás patrocinado.</li>
+        <li>O ativo de pagamento é sempre o Token Regional da implantação.</li>
+        <li>O Paymaster assume o custo da rede em operações elegíveis.</li>
+        <li>O usuário final não é cobrado pelo custo de rede patrocinado.</li>
         <li>Toda operação exibe revisão, patrocinador e destino.</li>
         <li>Biometria, PIN ou padrão são obrigatórios para movimentar fundos.</li>
       </ul>
@@ -58,7 +59,7 @@ permalink: /requisitos/
       <h2>Incentivos locais</h2>
       <ul>
         <li>Desconto reduz o valor enviado ao comerciante.</li>
-        <li>Cashback usa somente Token Oficial pré-financiado e lastreado.</li>
+        <li>Cashback usa somente Token Regional pré-financiado e lastreado.</li>
         <li>Campanhas possuem período, orçamento e limites por compra e cliente.</li>
         <li>Pagamento e cashback são atômicos e exigem autenticação.</li>
         <li>Não há sorteio, aposta ou aleatoriedade no benefício financeiro.</li>
@@ -79,7 +80,7 @@ permalink: /requisitos/
 
     <section id="aceite" class="content-card">
       <h2>Critérios essenciais</h2>
-      <p>A terceira conta é rejeitada; QR inválido não altera destino; autenticação precede acesso à chave; patrocínio recusado não cobra POL; calldata adulterada é rejeitada; nome ou endereço duplicado bloqueia o contato.</p>
+      <p>A terceira conta é rejeitada; QR inválido não altera destino; autenticação precede acesso à chave; patrocínio recusado não gera cobrança ao usuário; calldata adulterada é rejeitada; nome ou endereço duplicado bloqueia o contato.</p>
       <a href="https://github.com/RapportTecnologia/meudinheiro/blob/main/docs/REQUIREMENTS.md">Consultar requisitos completos no GitHub ↗</a>
     </section>
   </article>

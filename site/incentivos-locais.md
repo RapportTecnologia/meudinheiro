@@ -12,18 +12,18 @@ do pagamento e a autorização continua protegida por biometria, PIN ou padrão.
 
 ## Como funciona
 
-1. O comerciante ou patrocinador deposita Tokens Oficiais já lastreados no
+1. O comerciante ou patrocinador deposita unidades do Token Regional já lastreadas no
    orçamento da campanha.
 2. O cliente digita o valor na calculadora e escolhe uma campanha elegível.
 3. O app mostra preço bruto, desconto, valor a pagar e cashback.
 4. Após autenticação, uma única operação paga o comerciante e entrega o cashback.
-5. O Paymaster patrocina o gás elegível; o cliente paga `0 POL`.
+5. O Paymaster patrocina o custo elegível da rede; o cliente não é cobrado.
 
 ## Benefício sem criar moeda
 
 O desconto reduz o preço comercial. O cashback vem de um saldo pré-financiado de
 tokens existentes. A compra não executa Mint nem Burn e não altera o fornecimento
-total do Token Oficial.
+total do Token Regional.
 
 > Se o orçamento não for suficiente, o aplicativo não promete o cashback e
 > bloqueia o fluxo incentivado.

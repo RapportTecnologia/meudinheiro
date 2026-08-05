@@ -1,11 +1,11 @@
 title: Meu Dinheiro
 tagline: Fortalece minha região
 description: >-
-  Documentação pública do Meu Dinheiro, uma carteira autocustodial para a
-  Polygon que conecta pagamentos digitais à economia local, com calculadora,
-  Token Oficial, QR Code, Account Abstraction ERC-4337, gás patrocinado e
-  autenticação por transação, geofencing regional e integração de subprojetos
-  com escopos econômicos separados.
+  Documentação pública do Meu Dinheiro, uma carteira autocustodial regional que
+  conecta pagamentos digitais à economia local, com calculadora, Token Regional
+  definido em cada implantação, QR Code, Account Abstraction ERC-4337, custo de
+  rede patrocinado, autenticação por transação, geofencing e integração de
+  subprojetos com escopos econômicos separados.
 url: https://rapporttecnologia.github.io
 baseurl: /meudinheiro
 repository: RapportTecnologia/meudinheiro

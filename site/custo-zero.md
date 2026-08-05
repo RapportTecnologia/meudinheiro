@@ -1,6 +1,6 @@
 ---
 title: Custo zero
-description: Como Smart Accounts, Bundler e Paymaster ERC-4337 removem a exigência de POL do usuário.
+description: Como Smart Accounts, Bundler e Paymaster ERC-4337 removem a cobrança do custo de rede ao usuário.
 permalink: /custo-zero/
 ---
 
@@ -25,32 +25,32 @@ permalink: /custo-zero/
   <article class="doc-content">
     <section id="conceito" class="content-card highlight">
       <h2>Custo zero no ponto de uso</h2>
-      <p>Cada EOA controla uma Smart Account na Polygon. O usuário mantém apenas o Token Oficial. A UserOperation é assinada no dispositivo e o Paymaster paga o gás em POL.</p>
+      <p>Cada conta do usuário controla uma Smart Account da implantação. O usuário mantém apenas o Token Regional. A operação é assinada no dispositivo e o Paymaster assume o custo elegível da rede.</p>
       <div class="callout">A rede ainda cobra gás. O custo é assumido e contabilizado pela plataforma, não debitado do usuário.</div>
     </section>
 
     <section id="fluxo" class="content-card">
       <h2>Do toque ao bloco</h2>
       <ol>
-        <li>O usuário revisa Token Oficial, destino e quantidade.</li>
+        <li>O usuário revisa Token Regional, destino e quantidade.</li>
         <li>Biometria, PIN ou padrão autoriza a operação concreta.</li>
         <li>O Gateway prepara e patrocina uma UserOperation.</li>
         <li>O app confere a operação e assina o hash localmente.</li>
         <li>Bundler envia ao EntryPoint; Smart Account executa.</li>
-        <li>Paymaster paga POL e o app concilia o recibo.</li>
+        <li>O Paymaster assume o custo da rede e o app concilia o recibo.</li>
       </ol>
     </section>
 
     <section id="validacao" class="content-card">
       <h2>Confiança mínima no Gateway</h2>
-      <p>Antes de assinar, o app decodifica <code>callData</code>, compara Smart Account, Token Oficial, destino, quantidade e valor nativo zero. Também verifica EntryPoint, validade, limites de gás, Paymaster e reproduz <code>getUserOpHash</code>.</p>
+      <p>Antes de assinar, o app decodifica <code>callData</code>, compara Smart Account, Token Regional, destino, quantidade e valor nativo zero. Também verifica EntryPoint, validade, limites de custo, Paymaster e reproduz <code>getUserOpHash</code>.</p>
       <p>O backend repete essas regras, simula e aplica cotas. A chave privada nunca sai do aparelho.</p>
     </section>
 
     <section id="falhas" class="content-card">
       <h2>Falha segura</h2>
       <ul>
-        <li>Patrocínio recusado: não assinar e não cobrar POL.</li>
+        <li>Patrocínio recusado: não assinar e não cobrar o custo da rede.</li>
         <li>Gateway indisponível: não usar transação EOA como fallback.</li>
         <li>Hash ou calldata divergente: descartar a operação.</li>
         <li>Operação pendente: conciliar pelo <code>userOpHash</code>.</li>
@@ -59,7 +59,7 @@ permalink: /custo-zero/
 
     <section id="producao" class="content-card">
       <h2>Requisitos de produção</h2>
-      <p>Factory e Paymaster auditados, KMS/HSM, depósito e stake, rate limit, idempotência, proteção contra replay/griefing, alertas financeiros e testes em Amoy/fork são pré-requisitos.</p>
+      <p>Factory e Paymaster auditados, KMS/HSM, depósito e stake, rate limit, idempotência, proteção contra replay/griefing, alertas financeiros e testes em ambiente de homologação e fork são pré-requisitos.</p>
       <a href="https://github.com/RapportTecnologia/meudinheiro/blob/main/docs/ACCOUNT_ABSTRACTION.md">Consultar arquitetura ERC-4337 completa no GitHub ↗</a>
     </section>
   </article>

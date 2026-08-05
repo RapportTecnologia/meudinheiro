@@ -1,6 +1,6 @@
 ---
-title: Token, reservas e gás
-description: Token Oficial lastreado, Mint & Burn, taxa de resgate e gás patrocinado.
+title: Token, reservas e custo de rede
+description: Token Regional lastreado, Mint & Burn, taxa de resgate e custo de rede patrocinado.
 permalink: /modelo-economico/
 ---
 
@@ -9,7 +9,7 @@ permalink: /modelo-economico/
     <p class="section-kicker">Modelo operacional</p>
     <h1>Lastro em BRL, Mint & Burn e custo zero</h1>
     <p>Paridade bruta de R$ 1, reserva segregada e gás elegível pago pelo Paymaster.</p>
-    <div class="doc-meta"><span>ERC-20</span><span>Pix</span><span>1:1 bruto</span><span>0 POL para o usuário</span></div>
+    <div class="doc-meta"><span>Token Regional</span><span>Pix</span><span>1:1 bruto</span><span>Custo patrocinado</span></div>
   </div>
 </header>
 
@@ -25,8 +25,9 @@ permalink: /modelo-economico/
   </aside>
   <article class="doc-content">
     <section id="paridade" class="content-card highlight">
-      <h2>1 Token Oficial = R$ 1,00 bruto</h2>
+      <h2>1 unidade do Token Regional = R$ 1,00 bruto</h2>
       <p>Cada emissão corresponde a um real efetivamente liquidado na conta segregada. A taxa existe apenas no resgate para Pix e não altera a paridade bruta.</p>
+      <p>“Token Regional” é o nome genérico do modelo. Cada implantação define nome, símbolo, contrato e identidade próprios — como o CusCuZ (CCZ).</p>
     </section>
 
     <section id="mint" class="content-card">
@@ -49,8 +50,8 @@ permalink: /modelo-economico/
     </section>
 
     <section id="gas" class="content-card">
-      <h2>Custo de gás: 0 POL para o usuário</h2>
-      <p>O Paymaster da plataforma patrocina transferências e pedidos de resgate elegíveis. Se o patrocínio falhar, o app bloqueia sem cobrar POL silenciosamente.</p>
+      <h2>Custo de rede patrocinado para o usuário</h2>
+      <p>O Paymaster da plataforma patrocina transferências e pedidos de resgate elegíveis. Se o patrocínio falhar, o app bloqueia a operação sem realizar cobrança silenciosa.</p>
     </section>
 
     <section id="conformidade" class="content-card">

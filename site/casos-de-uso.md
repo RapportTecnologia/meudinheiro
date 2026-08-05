@@ -28,10 +28,10 @@ permalink: /casos-de-uso/
       <h2>Abastecer em estabelecimento</h2>
       <ol>
         <li>O cliente solicita um valor em reais.</li>
-        <li>O app aplica a paridade bruta de R$ 1,00 por Token Oficial.</li>
+        <li>O app aplica a paridade bruta de R$ 1,00 por unidade do Token Regional.</li>
         <li>O cliente apresenta QR com endereço e quantidade.</li>
         <li>O comerciante verifica contraprestação e estoque.</li>
-        <li>Após autenticação, envia o Token Oficial com gás patrocinado.</li>
+        <li>Após autenticação, envia o Token Regional com custo de rede patrocinado.</li>
       </ol>
     </section>
 
@@ -40,14 +40,14 @@ permalink: /casos-de-uso/
       <ol>
         <li>O caixa informa o preço em BRL e gera a cobrança.</li>
         <li>O cliente lê o QR e revisa paridade, tokens e destino.</li>
-        <li>O app verifica saldo do Token Oficial e elegibilidade do Paymaster.</li>
+        <li>O app verifica saldo do Token Regional e elegibilidade do Paymaster.</li>
         <li>O cliente autentica; a plataforma paga o gás; todos acompanham a confirmação.</li>
       </ol>
     </section>
 
     <section id="transferir" class="content-card">
       <h2>Transferir para um amigo</h2>
-      <p>O destinatário pode apresentar QR, copiar uma URI EIP-681 ou já estar na agenda. O emissor sempre chega à mesma revisão e vê custo de gás 0 POL antes da autenticação.</p>
+      <p>O destinatário pode apresentar QR, copiar uma solicitação de pagamento ou já estar na agenda. O emissor sempre chega à mesma revisão e confirma o patrocínio do custo de rede antes da autenticação.</p>
     </section>
 
     <section class="content-card">
@@ -67,7 +67,7 @@ permalink: /casos-de-uso/
 
     <section id="compartilhar" class="content-card">
       <h2>Compartilhar solicitação</h2>
-      <p>O código contém contrato, Polygon, destino e quantidade proposta. O pagador escolhe explicitamente colar, valida o conteúdo e só então revisa a intenção.</p>
+      <p>O código contém identificação da implantação, contrato do Token Regional, destino e quantidade proposta. O pagador escolhe explicitamente colar, valida o conteúdo e só então revisa a intenção.</p>
     </section>
 
     <section id="novo-contato" class="content-card">

@@ -9,7 +9,7 @@ permalink: /arquitetura/
     <p class="section-kicker">Documento técnico</p>
     <h1>Arquitetura do Meu Dinheiro</h1>
     <p>Separação entre domínio, casos de uso, infraestrutura e apresentação para reduzir o acoplamento de regras financeiras à interface mobile.</p>
-    <div class="doc-meta"><span>React Native + Expo</span><span>ERC-4337</span><span>Paymaster</span><span>Polygon 137</span></div>
+    <div class="doc-meta"><span>React Native + Expo</span><span>ERC-4337</span><span>Paymaster</span><span>Implantação regional</span></div>
   </div>
 </header>
 
@@ -39,19 +39,19 @@ permalink: /arquitetura/
     <section id="fluxo" class="content-card">
       <h2>Fluxo transacional</h2>
       <ol>
-        <li>A calculadora produz uma intenção em BRL ou Token Oficial.</li>
+        <li>A calculadora produz uma intenção em BRL ou Token Regional.</li>
         <li>O cotador transforma BRL em quantidade inteira do token.</li>
         <li>Agenda, QR ou clipboard resolve o destinatário.</li>
         <li>A revisão valida contrato, rede, saldo e patrocínio.</li>
         <li>A autenticação libera apenas aquela operação.</li>
         <li>O app confere a UserOperation, reproduz o hash e assina localmente.</li>
-        <li>Bundler envia; EntryPoint executa; Paymaster paga o gás em POL.</li>
+        <li>Bundler envia; EntryPoint executa; Paymaster assume o custo elegível da rede.</li>
       </ol>
     </section>
 
     <section id="pagamentos" class="content-card">
       <h2>Pedido de pagamento</h2>
-      <p>O value object <code>PaymentRequest</code> representa uma solicitação EIP-681. O contrato-alvo é o Token Oficial e a chamada descreve <code>transfer(address,uint256)</code>.</p>
+      <p>O value object <code>PaymentRequest</code> representa uma solicitação de pagamento. O contrato-alvo é o Token Regional configurado na implantação e a chamada descreve <code>transfer(address,uint256)</code>.</p>
       <div class="callout">QR Code e texto copiado carregam uma intenção. Nenhum dos dois assina ou transmite transações.</div>
     </section>
 

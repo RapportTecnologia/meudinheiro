@@ -47,7 +47,7 @@ permalink: /agenda/
 
     <section id="clipboard" class="content-card">
       <h2>Solicitação compartilhável</h2>
-      <p>QR e clipboard reutilizam a mesma URI EIP-681, contendo contrato oficial, chainId 137, destino e quantidade nas menores unidades.</p>
+      <p>QR e clipboard reutilizam a mesma solicitação de pagamento, contendo identificação da implantação, contrato do Token Regional, destino e quantidade nas menores unidades.</p>
       <p>O app só lê a área de transferência após ação explícita e nunca envia automaticamente.</p>
     </section>
 

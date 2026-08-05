@@ -16,7 +16,7 @@ permalink: /politica-monetaria/
 <div class="shell document">
   <article class="doc-content">
     <h2>Dois regimes, uma regra de segurança</h2>
-    <p>No lançamento, 1 Token Oficial representa nominalmente 1 unidade da moeda de referência. A wallet relay, o comerciante e o administrador regional não podem desligar essa regra.</p>
+    <p>No lançamento, 1 unidade do Token Regional representa nominalmente 1 unidade da moeda de referência. Nome, símbolo, contrato e identidade do token são definidos no projeto de cada implantação. A wallet relay, o comerciante e o administrador regional não podem desligar essa regra.</p>
     <h2>Condição para independência</h2>
     <p>Um atestador registra reservas líquidas, obrigações de resgate, capital de risco, perda em cenário de estresse, validade e hash do relatório. O contrato gestor global verifica os limiares; a decisão final pertence ao operador principal.</p>
     <h2>Preço explícito</h2>

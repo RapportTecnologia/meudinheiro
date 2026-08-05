@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Pagamentos off-line
-description: Layer 3 regional para pagamentos locais temporariamente sem internet, com liquidação posterior na Polygon.
+description: Layer 3 regional para pagamentos locais temporariamente sem internet, com liquidação posterior no registro regional.
 permalink: /offline/
 ---
 
@@ -9,7 +9,7 @@ permalink: /offline/
   <div class="shell narrow">
     <p class="eyebrow">Layer 3 regional</p>
     <h1>Valor local mesmo quando a conexão falha.</h1>
-    <p class="lead">Notas pré-financiadas circulam por QR, ficam pendentes no dispositivo e são liquidadas na Polygon quando a internet volta.</p>
+    <p class="lead">Notas pré-financiadas circulam por QR, ficam pendentes no dispositivo e são liquidadas no registro regional quando a internet volta.</p>
   </div>
 </section>
 
@@ -17,11 +17,11 @@ permalink: /offline/
   <div class="shell narrow prose">
     <h2>Como funciona</h2>
     <ol>
-      <li>Com internet, a Smart Account bloqueia Token Oficial numa reserva regional.</li>
+      <li>Com internet, a Smart Account bloqueia o Token Regional numa reserva regional.</li>
       <li>A API confere a reserva e assina notas até o saldo bloqueado.</li>
       <li>Sem internet, o pagador autentica e mostra um QR ao recebedor.</li>
       <li>O recebedor valida assinaturas e guarda o pagamento como <strong>pendente off-line</strong>.</li>
-      <li>Ao reconectar, a API rejeita gasto repetido e o worker liquida o lote na Polygon.</li>
+      <li>Ao reconectar, a API rejeita gasto repetido e o worker liquida o lote na infraestrutura regional.</li>
     </ol>
 
     <div class="callout warning">
@@ -33,7 +33,7 @@ permalink: /offline/
     <ul>
       <li>biometria, PIN ou padrão em emissão, envio, aceitação e sincronização;</li>
       <li>segredos no SecureStore, fora de Zustand, logs e telemetria;</li>
-      <li>região, Token Oficial, emissor, valor, destinatário, prazo e decisão geográfica assinados;</li>
+      <li>região, Token Regional, emissor, valor, destinatário, prazo e decisão geográfica assinados;</li>
       <li>gasto único transacional no PostgreSQL e replay bloqueado no Diamond;</li>
       <li>saldo não usado só retorna após a janela de sincronização.</li>
     </ul>
